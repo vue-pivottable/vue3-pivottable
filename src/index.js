@@ -1,5 +1,4 @@
-import VuePivottable from './components/Pivottable'
-import VuePivottableUi from './components/PivottableUi'
+import * as components from './components/index'
 // import TableRenderer from './TableRenderer'
 
 import {
@@ -30,23 +29,17 @@ const Renderer = {
   // TableRenderer
 }
 
-const components = [
-  VuePivottable,
-  VuePivottableUi
-]
-
 // if (typeof window !== 'undefined' && window.Vue) window.Vue.use(VuePivottable)
 
 const install = (app) => {
-  components.forEach(component => {
-    app.component(component.name, component)
+  Object.entries(components).forEach(([componentName, component]) => {
+    app.component(componentName, component)
   })
 }
 
+export default install
+export * from './components/index'
 export {
-  install as default,
-  VuePivottable,
-  VuePivottableUi,
   PivotUtilities,
   Renderer
 }

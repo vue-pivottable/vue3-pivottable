@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    Pivottable
   </div>
 </template>
 

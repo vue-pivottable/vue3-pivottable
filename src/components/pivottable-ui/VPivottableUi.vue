@@ -1,6 +1,6 @@
 <template>
   <div>
-<!-- makeDnDCell -->
+    Pivottable Ui
   </div>
 </template>
 

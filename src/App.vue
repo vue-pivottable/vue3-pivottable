@@ -1,5 +1,5 @@
 <script setup>
-import { VuePivottable, VuePivottableUi } from './index.js'
+import { VPivottable, VPivottableUi } from './index.js'
 
 </script>
 
@@ -7,8 +7,8 @@ import { VuePivottable, VuePivottableUi } from './index.js'
 
   <div>
     Demo
-    <VuePivottable/>
-    <VuePivottableUi/>
+    <VPivottable/>
+    <VPivottableUi/>
   </div>
 
 </template>
