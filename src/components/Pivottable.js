@@ -1,9 +1,9 @@
 import { defineComponent, h } from "vue";
 
 export default defineComponent({
-  name: 'vue-pivottable-ui',
+  name: 'vue-pivottable',
   props: {},
   setup (props) {
-    return () => h('div', 'PivottableUi.js')
+    return () => h('div', 'Pivottable.js')
   }
 })

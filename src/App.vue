@@ -1,10 +1,13 @@
 <script setup>
-
+import VuePivottalbe from './index.js'
 </script>
 
 <template>
+  
   <div>
-    Vue Pivottable3
+    Demo
+    <vue-pivottable/>
+    <vue-pivottable-ui/>
   </div>
 
 </template>
