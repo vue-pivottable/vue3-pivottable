@@ -11,7 +11,7 @@ import { VPivottable } from './index.js'
       :rows="['color']"
       :cols="['shape']"
     />
-    <!-- <VPivottableUi/> -->
+    <VPivottableUi/>
   </div>
 
 </template>
