@@ -6,4 +6,5 @@ import VuePivottable from './index.js'
 const app = createApp(App)
 
 app.use(VuePivottable)
+
 app.mount('#app')
