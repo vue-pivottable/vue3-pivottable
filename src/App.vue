@@ -1,14 +1,17 @@
 <script setup>
-import { VPivottable, VPivottableUi } from './index.js'
-
+import { VPivottable } from './index.js'
+// import tips from './tips.js'
 </script>
 
 <template>
 
   <div>
-    Demo
-    <VPivottable/>
-    <VPivottableUi/>
+    <VPivottable
+      :data="[{color: 'blue', shape: 'circle'},{color: 'red', shape: 'triangle'}]"
+      :rows="['color']"
+      :cols="['shape']"
+    />
+    <!-- <VPivottableUi/> -->
   </div>
 
 </template>

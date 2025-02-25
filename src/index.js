@@ -11,7 +11,7 @@ import {
   getSort,
   sortAs,
   PivotData
-} from './Utilities'
+} from './helper/utilities'
 
 const PivotUtilities = {
   aggregatorTemplates,
