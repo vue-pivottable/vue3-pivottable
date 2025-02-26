@@ -7,7 +7,16 @@ import { VPivottable } from './index.js'
 
   <div>
     <VPivottable
-      :data="[{color: 'blue', shape: 'circle'},{color: 'red', shape: 'triangle'}]"
+      :data="[
+        {
+          color: 'blue',
+          shape: 'circle'
+        },
+        {
+          color: 'red',
+          shape: 'triangle'
+        }
+      ]"
       :rows="['color']"
       :cols="['shape']"
     />
