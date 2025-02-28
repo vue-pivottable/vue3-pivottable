@@ -6,12 +6,15 @@
         v-if="showDropdown"
         class="pvtTriangle"
       > ▾</span>
-      <slot v-if="open" name="filterbox"></slot>
+      <VFilterBox v-if="true" ></VFilterBox>
+      <!-- <VFilterBox v-if="open" ></VFilterBox> -->
+      <!-- <slot v-if="open" name="filterbox"></slot> -->
     </span>
   </div>
 </template>
 
 <script setup>
+import VFilterBox from './VFilterBox.vue'
 import { computed } from 'vue'
 
 const props = defineProps({

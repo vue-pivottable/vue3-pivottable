@@ -18,15 +18,13 @@
 <script setup>
 import { onMounted } from 'vue'
 const props = defineProps({
-  // values: Array,
-  // value: String
   values: {
     type: Array,
-    default: () => ['a', 'b']
+    default: () => []
   },
   value: {
     type: String,
-    default: 'a'
+    default: ''
   }
 })
 const emit = defineEmits(['input'])

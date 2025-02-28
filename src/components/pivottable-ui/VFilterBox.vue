@@ -153,4 +153,4 @@ const setValuesInFilter = (attribute, values) => {
 
 // *** 논의 ***
 // bind(this)
-// !(x in valueFilter)
+// !(x in valueFilter) => 함수
