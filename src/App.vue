@@ -1,12 +1,16 @@
 <script setup>
-import { VPivottable } from './index.js'
+// import { VPivottable } from './index.js'
+import { VDropdown } from './index.js'
+// import { VFilterBox } from './index.js'
 // import tips from './tips.js'
 </script>
 
 <template>
 
   <div>
-    <VPivottable
+    <VDropdown></VDropdown>
+    <!-- <VFilterBox></VFilterBox> -->
+    <!-- <VPivottable
       :data="[
         {
           color: 'blue',
@@ -20,7 +24,7 @@ import { VPivottable } from './index.js'
       :rows="['color']"
       :cols="['shape']"
     />
-    <VPivottableUi/>
+    <VPivottableUi/> -->
   </div>
 
 </template>
