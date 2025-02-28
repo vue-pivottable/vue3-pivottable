@@ -6,7 +6,15 @@
         v-if="showDropdown"
         class="pvtTriangle"
       > ▾</span>
-      <VFilterBox v-if="true" ></VFilterBox>
+      <VFilterBox
+        v-if="open"
+        :valueFilter="valueFilter"
+        :name="name"
+        :attrValues="attrValues"
+        :sorter="sorter"
+        :menuLimit="menuLimit"
+      >
+      </VFilterBox>
       <!-- <VFilterBox v-if="open" ></VFilterBox> -->
       <!-- <slot v-if="open" name="filterbox"></slot> -->
     </span>
@@ -41,7 +49,16 @@ const props = defineProps({
     default: () => {
       return {}
     }
-  }
+  },
+  attrValues: {
+    type: Object,
+    required: false
+  },
+  sorter: {
+    type: Function,
+    required: true
+  },
+  menuLimit: Number
 })
 
 const disabled = computed(() => !props.sortable && !props.draggable)

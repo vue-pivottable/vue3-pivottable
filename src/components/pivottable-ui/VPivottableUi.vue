@@ -9,6 +9,9 @@
               v-for="item in testItems"
               :key="item"
               :name="item"
+              :attrValues="{}"
+              :sorter="getSort(() => {}, item)"
+              :menuLimit="500"
               class="list-group-item"
             >
               <template #pvtAttr="{ attrName }">
@@ -38,6 +41,7 @@
 import VDraggableAttribute from './VDraggableAttribute.vue'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 import { ref } from 'vue'
+import { PivotData, getSort, sortAs, aggregators } from '../../helper'
 
 const testItems = ref([
   'coffee',
