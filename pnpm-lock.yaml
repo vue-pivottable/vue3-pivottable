@@ -11,6 +11,9 @@ importers:
       vue:
         specifier: ^3.5.13
         version: 3.5.13
+      vue-draggable-next:
+        specifier: ^2.2.1
+        version: 2.2.1(sortablejs@1.15.6)(vue@3.5.13)
     devDependencies:
       '@eslint/js':
         specifier: ^9.21.0
@@ -1126,6 +1129,9 @@ packages:
     resolution: {integrity: sha512-ZX99e6tRweoUXqR+VBrslhda51Nh5MTQwou5tnUDgbtyM0dBgmhEDtWGP/xbKn6hqfPRHujUNwz5fy/wbbhnpw==}
     engines: {node: '>= 0.4'}
 
+  sortablejs@1.15.6:
+    resolution: {integrity: sha512-aNfiuwMEpfBM/CN6LY0ibyhxPfPbyFeBTYJKCvzkJ2GkUpazIt3H+QIPAMHwqQ7tMKaHz1Qj+rJJCqljnf4p3A==}
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -1234,6 +1240,12 @@ packages:
         optional: true
       yaml:
         optional: true
+
+  vue-draggable-next@2.2.1:
+    resolution: {integrity: sha512-EAMS1IRHF0kZO0o5PMOinsQsXIqsrKT1hKmbICxG3UEtn7zLFkLxlAtajcCcUTisNvQ6TtCB5COjD9a1raNADw==}
+    peerDependencies:
+      sortablejs: ^1.14.0
+      vue: ^3.2.2
 
   vue-eslint-parser@9.4.3:
     resolution: {integrity: sha512-2rYRLWlIpaiN8xbPiDyXZXRgLGOtWxERV7ND5fFAv5qo1D2N9Fu9MNajBNc6o13lZ+24DAWCkQCvj4klgmcITg==}
@@ -2473,6 +2485,8 @@ snapshots:
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
 
+  sortablejs@1.15.6: {}
+
   source-map-js@1.2.1: {}
 
   string.prototype.trim@1.2.10:
@@ -2574,6 +2588,11 @@ snapshots:
       rollup: 4.34.8
     optionalDependencies:
       fsevents: 2.3.3
+
+  vue-draggable-next@2.2.1(sortablejs@1.15.6)(vue@3.5.13):
+    dependencies:
+      sortablejs: 1.15.6
+      vue: 3.5.13
 
   vue-eslint-parser@9.4.3(eslint@9.21.0):
     dependencies:
