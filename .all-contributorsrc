@@ -8,10 +8,20 @@
   "commitConvention": "angular",
   "contributors": [
     {
+
       "login": "gingerbeerlime",
       "name": "Sumin",
       "avatar_url": "https://avatars.githubusercontent.com/u/89768065?v=4",
       "profile": "https://github.com/gingerbeerlime",
+      "contributions": [
+        "code"
+      ],
+    },
+    {
+      "login": "Seungwoo321",
+      "name": "Seungwoo321",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13829929?v=4",
+      "profile": "https://seungwoo321.github.io",
       "contributions": [
         "code"
       ]
