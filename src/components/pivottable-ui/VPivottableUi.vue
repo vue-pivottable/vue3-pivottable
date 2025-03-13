@@ -1,26 +1,260 @@
 <template>
   <table class="pvtUi">
+    <slot name="colGroup" />
     <tbody>
       <tr>
-        <VRendererCell />
-        <VDragAndDropCell attrs="unused" />
+        <VRendererCell
+          :rendererName="rendererName"
+          @update:propUpdater="propUpdater"
+        />
+        <VDragAndDropCell
+          attrs="unused"
+          :items="unusedAttrs"
+          :unusedOrder="newProps.unusedOrder"
+          :unusedItems="unusedAttrs"
+          :sortonlyFromDragDrop="newProps.sortonlyFromDragDrop"
+          :fields="newProps.unusedOrder"
+          :attrValues="newProps.attrValues"
+          :menuLimit="newProps.menuLimit"
+          :maxZIndex="newProps.maxZIndex"
+          :valueFilter="newProps.valueFilter"
+          :async="newProps.async"
+          :localeStrings="newProps.locales[newProps.locale].localeStrings"
+          :getSort="getSort"
+          @update:filter="onUpdateValueFilter"
+          @moveToTop:filterbox="onMoveFilterBoxToTop"
+          @no:filterbox="onNoFilterBox"
+        >
+          <template v-slot:pvtAttr="props">
+            <slot name="pvtAttr" v-bind="props"/>
+          </template>
+
+        </VDragAndDropCell>
       </tr>
       <tr>
-        <VAggregatorCell />
-        <VDragAndDropCell attrs="col" />
+        <slot name="aggregatorCell">
+          <VAggregatorCell
+            :aggregatorItems="aggregatorItems"
+            :aggregatorName="newProps.aggregatorName"
+            :rowOrder="newProps.rowOrder"
+            :colOrder="newProps.colOrder"
+            :vals="newProps.vals"
+            :attrValues="newProps.attrValues"
+            :hiddenAttributes="newProps.hiddenAttributes"
+            :hiddenFromAggregators="newProps.hiddenFromAggregators"
+            :numValsAllowed="numValsAllowed"
+            @update:propUpdater="propUpdater"
+            @update:valSlice="onValSlice"
+          />
+        </slot>
+
+        <VDragAndDropCell
+          attrs="col"
+          :items="colAttrs"
+          :unusedOrder="newProps.unusedOrder"
+          :unusedItems="unusedAttrs"
+          :sortonlyFromDragDrop="newProps.sortonlyFromDragDrop"
+          :fields="newProps.cols"
+          :attrValues="newProps.attrValues"
+          :menuLimit="newProps.menuLimit"
+          :maxZIndex="newProps.maxZIndex"
+          :valueFilter="newProps.valueFilter"
+          :async="newProps.async"
+          :localeStrings="newProps.locales[newProps.locale].localeStrings"
+          :getSort="getSort"
+          @update:filter="onUpdateValueFilter"
+          @moveToTop:filterbox="onMoveFilterBoxToTop"
+          @no:filterbox="onNoFilterBox"
+        >
+          <template v-slot:pvtAttr="props">
+            <slot name="pvtAttr" v-bind="props"/>
+          </template>
+        </VDragAndDropCell>
+
       </tr>
       <tr>
-        <VDragAndDropCell attrs="row" />
-        <td>table rendered</td>
+        <VDragAndDropCell
+          attrs="row"
+          :items="rowAttrs"
+          :unusedOrder="newProps.unusedOrder"
+          :unusedItems="unusedAttrs"
+          :sortonlyFromDragDrop="newProps.sortonlyFromDragDrop"
+          :fields="newProps.rows"
+          :attrValues="newProps.attrValues"
+          :menuLimit="newProps.menuLimit"
+          :maxZIndex="newProps.maxZIndex"
+          :valueFilter="newProps.valueFilter"
+          :async="newProps.async"
+          :localeStrings="newProps.locales[newProps.locale].localeStrings"
+          :getSort="getSort"
+          @update:filter="onUpdateValueFilter"
+          @moveToTop:filterbox="onMoveFilterBoxToTop"
+          @no:filterbox="onNoFilterBox"
+        >
+          <template v-slot:pvtAttr="props">
+            <slot
+              v-bind="props"
+              name="pvtAttr"
+            />
+          </template>
+          <!-- <slot name="pvtAttr" v-bind="$props"></slot> -->
+
+        </VDragAndDropCell>
+        <td class="pvtOutput">
+          <slot name="outputSlot" :outputSlot="{ pivotData }">
+            <VPivottable v-bind="newProps" />
+          </slot>
+        </td>
       </tr>
     </tbody>
   </table>
 </template>
 
 <script setup>
+import { defaultProps, PivotData, aggregators, sortAs, getSort } from '../../helper'
 import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
+import { VPivottable } from '../'
+import { computed, ref, watch } from 'vue'
+import { usePropsData } from '../../composables'
+const props = defineProps({
+  ...defaultProps,
+  async: {
+    type: Boolean,
+    default: false
+  },
+  hiddenAttributes: {
+    type: Array,
+    default: function () {
+      return []
+    }
+  },
+  hiddenFromAggregators: {
+    type: Array,
+    default: function () {
+      return []
+    }
+  },
+  hiddenFromDragDrop: {
+    type: Array,
+    default: function () {
+      return []
+    }
+  },
+  sortonlyFromDragDrop: {
+    type: Array,
+    default: function () {
+      return []
+    }
+  },
+  disabledFromDragDrop: {
+    type: Array,
+    default: function () {
+      return []
+    }
+  },
+  menuLimit: {
+    type: Number,
+    default: 500
+  },
+  config: {
+    type: Object,
+    default: function () {
+      return {}
+    }
+  }
+})
+const state = ref({
+  unusedOrder: props.unusedAttrs,
+  zIndices: {},
+  maxZIndex: 1000,
+  openDropdown: false,
+  openStatus: {},
+  attrValues: {},
+  materializedInput: []
+})
+const { newProps, setProps, propUpdater } = usePropsData(props)
+const rowAttrs = computed(() => {
+  return newProps.value.rows.filter(
+    e =>
+      !newProps.value.hiddenAttributes.includes(e) &&
+        !newProps.value.hiddenFromDragDrop.includes(e)
+  )
+})
+
+const colAttrs = computed(() => {
+  return newProps.value.cols.filter(
+    e =>
+      !newProps.value.hiddenAttributes.includes(e) &&
+        !newProps.value.hiddenFromDragDrop.includes(e)
+  )
+})
+const unusedAttrs = computed(() => {
+  return newProps.value.attributes.filter(
+    e =>
+      !newProps.rows.includes(e) &&
+          !newProps.value.cols.includes(e) &&
+          !newProps.value.hiddenAttributes.includes(e) &&
+          !newProps.value.hiddenFromDragDrop.includes(e)
+  ).sort(sortAs(newProps.value.unusedOrder))
+})
+const aggregatorItems = computed(() => (newProps.value.aggregators) || aggregators)
+const numValsAllowed = computed(() => aggregatorItems.value[newProps.value.aggregatorName]([])().numInputs || 0)
+const materializeInput = (nextData) => {
+  if (props.data === nextData) {
+    return
+  }
+  const newState = {
+    data: nextData,
+    attrValues: {},
+    materializedInput: []
+  }
+
+  let recordsProcessed = 0
+  PivotData.forEachRecord(newState.data, props.derivedAttributes, function (record) {
+    newState.materializedInput.push(record)
+    for (const attr of Object.keys(record)) {
+      if (!(attr in newState.attrValues)) {
+        newState.attrValues[attr] = {}
+        if (recordsProcessed > 0) {
+          newState.attrValues[attr].null = recordsProcessed
+        }
+      }
+    }
+    for (const attr in newState.attrValues) {
+      const value = attr in record ? record[attr] : 'null'
+      if (!(value in newState.attrValues[attr])) {
+        newState.attrValues[attr][value] = 0
+      }
+      newState.attrValues[attr][value]++
+    }
+    recordsProcessed++
+  })
+  state.value = newState
+  setProps({
+    ...newProps.value,
+    ...state.value
+  })
+}
+const onUpdateValueFilter = ({ attribute, valueFilter }) => {
+  newProps.value.valueFilter[attribute] = valueFilter
+}
+const onMoveFilterBoxToTop = ({ attribute }) => {
+  newProps.value.maxZIndex += 1
+  newProps.value.zIndices[attribute] = newProps.value.maxZIndex + 1
+}
+const onNoFilterBox = () => this.$emit('no:filterbox')
+const onValSlice = (e, i) => newProps.value.vals.splice(i, 1, e.target.value)
+
+const pivotData = new PivotData(newProps.value)
+
+watch(() => props.data, (value) => {
+  state.value.unusedOrder = props.unusedAttrs
+  materializeInput(value)
+}, {
+  immediate: false
+})
 
 </script>
 
