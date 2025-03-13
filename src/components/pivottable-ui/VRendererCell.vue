@@ -1,4 +1,3 @@
-<!-- rendererCell -->
 <template>
     <template>
         <td

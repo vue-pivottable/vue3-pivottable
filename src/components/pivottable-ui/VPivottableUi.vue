@@ -2,35 +2,15 @@
   <table class="pvtUi">
     <tbody>
       <tr>
-        <td>rendererCell</td>
-        <td>
-          <Draggable v-model="testItems" class="list-group">
-            <VDraggableAttribute
-              v-for="item in testItems"
-              :key="item"
-              :name="item"
-              :attrValues="{}"
-              :sorter="getSort(() => {}, item)"
-              :menuLimit="500"
-              class="list-group-item"
-            >
-              <template #pvtAttr="{ attrName }">
-                {{ attrName }}
-              </template>
-            </VDraggableAttribute>
-          </Draggable>
-        </td>
+        <VRendererCell />
+        <VDragAndDropCell attrs="unused" />
       </tr>
       <tr>
-        <td>
-          aggregatorCell
-        </td>
-        <td>
-          draggable(colAttrsCell)
-        </td>
+        <VAggregatorCell />
+        <VDragAndDropCell attrs="col" />
       </tr>
       <tr>
-        <td>draggable(rowAttrsCell)</td>
+        <VDragAndDropCell attrs="row" />
         <td>table rendered</td>
       </tr>
     </tbody>
@@ -38,25 +18,13 @@
 </template>
 
 <script setup>
-import VDraggableAttribute from './VDraggableAttribute.vue'
-import { VueDraggableNext as Draggable } from 'vue-draggable-next'
-import { ref } from 'vue'
-import { PivotData, getSort, sortAs, aggregators } from '../../helper'
-
-const testItems = ref([
-  'coffee',
-  'iced tea',
-  'apple tea',
-  'pouch',
-  'green tea',
-  'subway',
-  'cookie',
-  'hand cream'
-])
+import VRendererCell from './VRendererCell.vue'
+import VAggregatorCell from './VAggregatorCell.vue'
+import VDragAndDropCell from './VDragAndDropCell.vue'
 
 </script>
 
-<style scoped>
+<style>
 .pvtUi {
   border-collapse: collapse;
   width: 100%;

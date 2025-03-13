@@ -22,7 +22,7 @@
 
 <script setup>
 import { spanSize } from '../../helper'
-const { pivotData, index, rowKeys, rowKey, colKeys, rowAttrs, colAttrs, rowTotal } = defineProps({
+const props = defineProps({
   pivotData: Object,
   index: Number,
   rowKeys: Array,
@@ -34,11 +34,11 @@ const { pivotData, index, rowKeys, rowKey, colKeys, rowAttrs, colAttrs, rowTotal
   rowTotal: Boolean
 })
 const getValue = (rowKey, colKey) => {
-  const aggregator = pivotData.getAggregator(rowKey, colKey)
+  const aggregator = props.pivotData.getAggregator(rowKey, colKey)
   return aggregator.format(aggregator.value())
 }
 const getTotalValue = (rowKey, colKey) => {
-  const totalAggregator = pivotData.getAggregator(rowKey, colKey)
+  const totalAggregator = props.pivotData.getAggregator(rowKey, colKey)
   return totalAggregator.format(totalAggregator.value())
 }
 
