@@ -1,42 +1,24 @@
 <script setup>
 import { VPivottable } from './index.js'
-// import tips from './tips.js'
+import tips from './tips.js'
 </script>
 
 <template>
 
   <div>
     <VPivottable
-      :data="[
-        {
-          color: 'blue',
-          shape: 'circle'
-        },
-        {
-          color: 'red',
-          shape: 'triangle'
-        }
-      ]"
-      :rows="['color']"
-      :cols="['shape']"
+      :data="tips"
+      :rows="['Payer Smoker']"
+      :cols="['Payer Gender']"
     />
     <VPivottableUi
-      :data="[
-          {
-            color: 'blue',
-            shape: 'circle'
-          },
-          {
-            color: 'red',
-            shape: 'triangle'
-          }
-        ]"
-        :rows="['color']"
-        :cols="['shape']"
+      :data="tips"
+      :rows="['Payer Smoker']"
+      :cols="['Payer Gender']"
     >
-        <template v-slot:pvtAttr="props">
-          {{ props }} 11
-        </template>
+        <!-- <template v-slot:pvtAttr="props">
+          {{ props }}
+        </template> -->
 
         <!-- <template v-slot:outputSlot>
           <div>slot</div>
