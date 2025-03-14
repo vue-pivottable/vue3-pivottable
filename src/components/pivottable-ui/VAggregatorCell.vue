@@ -2,7 +2,7 @@
 <template>
     <template>
         <td
-            v-if="this.$slots.aggregatorCell"
+            v-if="slots.aggregatorCell"
             class="pvtVals pvtText"
         >
             <slot name="aggregatorCell"></slot>
@@ -13,38 +13,34 @@
         >
             <div>
                 <VDropdown
-                    :values="Object.keys(this.aggregatorItems)"
+                    :values="Object.keys(aggregatorItems)"
                     :value="aggregatorName"
-                    @input="handleInputAggregatorName"
+                    @input="emitPropUpdater({ key: 'aggregatorName', value: $event.target.value})"
                 >
                 </VDropdown>
                 <a
                     class="pvtRowOrder"
                     role="button"
-                    @click="handleClickRowOrder"
+                    @click="emitPropUpdater({ key: 'rowOrder', value: sortIcons[props.rowOrder].next})"
                 >
+                    {{ sortIcons[props.rowOrder].rowSymbol }}
                 </a>
                 <a
                     class="pvtColOrder"
                     role="button"
-                    @click="handleClickColOrder"
+                    @click="emitPropUpdater({ key: 'colOrder', value: sortIcons[props.colOrder].next})"
                 >
-
+                    {{ sortIcons[props.colOrder].colSymbol }}
                 </a>
             </div>
-            <template
-                v-if="numValsAllowed > 0"
-            >
+            <template v-if="numValsAllowed">
                 <VDropdown
-                    v-for="(item, i) in numValsAllowed"
+                    v-for="(item, i) in new Array(numValsAllowed).fill()"
                     :key="i"
-                    :values="Object.keys(this.attrValues).filter(e =>
-                    !this.hiddenAttributes.includes(e) &&
-                    !this.hiddenFromAggregators.includes(e))"
+                    :values="fetchValues"
                     :value="vals[i]"
-                    @input="(i) => {handleInputHidden(value, i)}"
+                    @input="emitValSlice($event, i)"
                 >
-
                 </VDropdown>
             </template>
         </td>
@@ -52,17 +48,45 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, useSlots } from 'vue'
 import VDropdown from './VDropdown'
 import defaultProps from '../../helper/defaultProps'
+import { aggregators } from './helper/utils'
+
+const sortIcons = {
+  key_a_to_z: { rowSymbol: '↕', colSymbol: '↔', next: 'value_a_to_z' },
+  value_a_to_z: { rowSymbol: '↓', colSymbol: '→', next: 'value_z_to_a' },
+  value_z_to_a: { rowSymbol: '↑', colSymbol: '←', next: 'key_a_to_z' }
+}
+const props = defineProps({
+  propsData: {
+    type: Object,
+    default: () => {}
+  },
+  attrValues: {
+    type: Object,
+    default: () => {}
+  },
+  hiddenAttributes: {
+    type: Array,
+    default: () => []
+  },
+  hiddenFromAggregators: {
+    type: Array,
+    default: () => []
+  }
+})
+const slots = useSlots()
+const emit = defineEmits(['update:propUpdater', 'update:valSlice'])
 
 const aggregatorItems = computed(() => (defaultProps.aggregators) || aggregators)
-const numValsAllowed = computed(() => aggregatorItems[this.propsData.aggregatorName]([])().numInputs || 0)
-const handleInputAggregatorName = (value) => this.propUpdater('aggregatorName')(value)
-// const handleInputHidden = (value) => Object.keys(this.attrValues).filter(e => !this.hiddenAttributes.includes(e) && !this.hiddenFromAggregators.includes(e))
-const handleInputHidden = (value, i) => this.propsData.vals.splice(i, 1, value)
-const handleClickRowOrder = () => { this.propUpdater('rowOrder')(this.sortIcons[this.propsData.rowOrder].next) }
-const handleClickColOrder = () => { this.propUpdater('colOrder')(this.sortIcons[this.propsData.colOrder].next) }
+const numValsAllowed = computed(() => aggregatorItems[props.aggregatorName]([])().numInputs || 0)
+const fetchValues = computed(() => Object.keys(props.attrValues).filter(e => !props.hiddenAttributes.includes(e) && !props.hiddenFromAggregators.includes(e)))
+
+const emitValSlice = (e, i) => { emit('update:valSlice', { key: i, value: e.target.value }) }
+const emitPropUpdater = (updateObj) => emit('update:propUpdater', updateObj)
+// const emitPropUpdaterRowOrder = () => emit('update:propUpdater', { key: 'rowOrder', value: sortIcons[props.rowOrder].next })
+// const emitPropUpdaterColOrder = () => emit('update:propUpdater', { key: 'colOrder', value: sortIcons[props.colOrder].next })
 </script>
 
-// aggregators props로 넘겨주기
+// @input="(e) => emitPropUpdater({ key: 'aggregatorName', value: e.target.value})"
