@@ -166,6 +166,11 @@ table.pvtTable tbody tr td {
   height: 35px;
 }
 
+/* 수민 추가 */
+.pvtAxisContainer {
+  border: 0;
+}
+
 .pvtAxisContainer li {
   padding: 8px 6px;
   list-style-type: none;
@@ -174,15 +179,15 @@ table.pvtTable tbody tr td {
 
 .pvtAxisContainer li.pvtPlaceholder {
   -webkit-border-radius: 5px;
-  padding: 3px 15px;
+  /* padding: 3px 15px; */
+  padding: 8px 6px;
   -moz-border-radius: 5px;
   border-radius: 5px;
-  border: 1px dashed #a2b1c6;
 }
 
-.pvtAxisContainer li.pvtPlaceholder span.pvtAttr {
+/* .pvtAxisContainer li.pvtPlaceholder span.pvtAttr {
   display: none;
-}
+} */
 .pvtAxisContainer li span.pvtAttr {
   -webkit-text-size-adjust: 100%;
   background: #f3f6fa;

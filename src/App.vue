@@ -4,7 +4,6 @@ import tips from './tips.js'
 </script>
 
 <template>
-
   <div>
     <VPivottable
       :data="tips"

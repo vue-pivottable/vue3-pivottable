@@ -256,6 +256,11 @@ watch(() => props.data, (value) => {
   immediate: false
 })
 
+const updateFilters = ({ cellType, filters }) => {
+  console.log('updated cell type', cellType)
+  console.log('updated filter items', filters)
+}
+
 </script>
 
 <style>
