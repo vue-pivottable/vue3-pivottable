@@ -1,0 +1,44 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "hyemyn2",
+      "name": "hyemyn2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/67949202?v=4",
+      "profile": "https://github.com/hyemyn2",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "gingerbeerlime",
+      "name": "Sumin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/89768065?v=4",
+      "profile": "https://github.com/gingerbeerlime",
+      "contributions": [
+        "code"
+      ],
+    },
+    {
+      "login": "Seungwoo321",
+      "name": "Seungwoo321",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13829929?v=4",
+      "profile": "https://seungwoo321.github.io",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "vue3-pivottable",
+  "projectOwner": "vue-pivottable"
+}
