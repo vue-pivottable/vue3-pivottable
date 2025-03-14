@@ -1,5 +1,5 @@
 <template>
-  <div :data-id="!disabled ? name : undefined">
+  <li :data-id="!disabled ? name : undefined">
     <span class="pvtAttr" :class="[filtered, { sortonly, disabled }]">
       <slot name="pvtAttr" :attrName="name">{{ name }}</slot>
       <span
@@ -18,7 +18,7 @@
       <!-- <VFilterBox v-if="open" ></VFilterBox> -->
       <!-- <slot v-if="open" name="filterbox"></slot> -->
     </span>
-  </div>
+  </li>
 </template>
 
 <script setup>
@@ -68,3 +68,7 @@ const filtered = computed(() => Object.keys(props.valueFilter).length !== 0 ? 'p
 const showDropdown = computed(() => !disabled.value && (props.async ? !props.unused : true))
 
 </script>
+
+<style scoped>
+
+</style>
