@@ -4,7 +4,6 @@ import { VPivottable } from './index.js'
 </script>
 
 <template>
-
   <div>
     <VPivottable
       :data="[
