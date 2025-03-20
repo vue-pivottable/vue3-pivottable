@@ -6,6 +6,8 @@
         <VRendererCell
           :rendererName="rendererName"
           @update:propUpdater="propUpdater"
+          :tableRenderer="TableRenderer"
+          :renderers="defaultProps.renderers"
         />
         <VDragAndDropCell
           attrs="unused"
@@ -118,6 +120,7 @@ import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '../'
 import { computed, ref, watch } from 'vue'
 import { usePropsData } from '../../composables'
+import TableRenderer from '../pivottable/renderer'
 const props = defineProps({
   ...defaultProps,
   async: {

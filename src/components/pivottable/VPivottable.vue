@@ -1,43 +1,22 @@
 <template>
-  <table class='pvtTable'>
-    <VPivottableHeader
-      :rowTotal="props.rowTotal"
-      :localeStrings="props.localeStrings"
-    />
-    <VPivottableBody
-      :rowTotal="props.rowTotal"
-      :tableOptions="props.tableOptions"
-    />
-  </table>
+  <component
+    :is="rendererComponent"
+    v-bind="props"
+  ></component>
 </template>
 
 <script setup>
-import { defaultProps } from '../../helper'
-import { providePivotData } from '../../composables/pivotData'
-import VPivottableHeader from './VPivottableHeader.vue'
-import VPivottableBody from './VPivottableBody.vue'
-
+import { computed } from 'vue'
+import { defaultProps } from '@/helper'
+import TableRenderer from './renderer'
 const props = defineProps({
   ...defaultProps,
-  localeStrings: {
+  rendererItems: {
     type: Object,
-    default: function () {
-      return {
-        totals: 'Totals'
-      }
-    }
-  },
-  tableOptions: {
-    type: Object,
-    default: function () {
-      return {
-        clickCallback: null
-      }
-    }
+    default: () => TableRenderer
   }
 })
-
-providePivotData(props)
+const rendererComponent = computed(() => props.rendererItems[props.rendererName] || TableRenderer.Table)
 
 </script>
 
