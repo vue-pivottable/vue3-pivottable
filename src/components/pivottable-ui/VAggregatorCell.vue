@@ -1,4 +1,3 @@
-<!-- aggregatorCell -->
 <template>
   <td
       v-if="slots.aggregatorCell"
@@ -12,24 +11,24 @@
   >
       <div>
           <VDropdown
-              :values="Object.keys(aggregatorItems)"
+              :values="aggregatorItemsKeys"
               :value="aggregatorName"
-              @input="emitPropUpdater({ key: 'aggregatorName', value: $event.target?.value})"
+              @update:value="emitPropUpdater({ key: 'aggregatorName', value: $event.target?.value})"
           >
           </VDropdown>
           <a
               class="pvtRowOrder"
               role="button"
-              @click="emitPropUpdater({ key: 'rowOrder', value: sortIcons[props.rowOrder].next})"
+              @click="emitPropUpdater(nextRowSortIconObj)"
           >
-              {{ sortIcons[props.rowOrder].rowSymbol }}
+              {{ currentRowSortIcon }}
           </a>
           <a
               class="pvtColOrder"
               role="button"
-              @click="emitPropUpdater({ key: 'colOrder', value: sortIcons[props.colOrder].next})"
+              @click="emitPropUpdater(nextColSortIconObj)"
           >
-              {{ sortIconsOfColOrder }}
+              {{ currentColSortIcon }}
           </a>
       </div>
       <template v-if="numValsAllowed">
@@ -38,7 +37,7 @@
               :key="i"
               :values="fetchValues"
               :value="vals[i]"
-              @input="emitValSlice($event, i)"
+              @update:value="emitValSlice($event, i)"
           >
           </VDropdown>
       </template>
@@ -55,6 +54,7 @@ const sortIcons = {
   value_a_to_z: { rowSymbol: '↓', colSymbol: '→', next: 'value_z_to_a' },
   value_z_to_a: { rowSymbol: '↑', colSymbol: '←', next: 'key_a_to_z' }
 }
+
 const props = defineProps({
   aggregatorName: {
     type: String,
@@ -94,17 +94,19 @@ const props = defineProps({
   }
 })
 const slots = useSlots()
-const emit = defineEmits(['update:propUpdater', 'update:valSlice'])
+const emit = defineEmits(['update:propUpdater', 'update:valsSplice'])
 
-const aggregatorItems = computed(() => (props.aggregators) || aggregators)
 const numValsAllowed = computed(() => aggregatorItems.value[props.aggregatorName]([])().numInputs || 0)
 const fetchValues = computed(() => Object.keys(props.attrValues).filter(e => !props.hiddenAttributes.includes(e) && !props.hiddenFromAggregators.includes(e)))
 
-const sortIconsOfColOrder = computed(() => {
-  console.log(sortIcons[props.colOrder].colSymbol)
-  return sortIcons[props.colOrder].colSymbol
-})
+const aggregatorItems = computed(() => (props.aggregators) || aggregators)
+const aggregatorItemsKeys = computed(() => Object.keys(aggregatorItems.value))
 
-const emitValSlice = (e, i) => { emit('update:valSlice', { key: i, value: e.target.value }) }
+const currentRowSortIcon = computed(() => sortIcons[props.rowOrder].rowSymbol)
+const currentColSortIcon = computed(() => sortIcons[props.colOrder].colSymbol)
+const nextRowSortIconObj = computed(() => ({ key: 'rowOrder', value: sortIcons[props.rowOrder].next }))
+const nextColSortIconObj = computed(() => ({ key: 'colOrder', value: sortIcons[props.colOrder].next }))
+
+const emitValSlice = (e, i) => { emit('update:valsSplice', { key: i, value: e.target.value }) }
 const emitPropUpdater = (updateObj) => emit('update:propUpdater', updateObj)
 </script>

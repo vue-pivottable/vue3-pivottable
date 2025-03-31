@@ -10,9 +10,9 @@
     </slot>
     <VDropdown
       v-else
-      :values="Object.keys(rendererItems)"
+      :values="rendererItemKeys"
       :value="rendererName"
-      @input="emitPropUpdater"
+      @update:value="emitPropUpdater"
     >
     </VDropdown>
   </td>
@@ -20,9 +20,7 @@
 
 <script setup>
 import { computed, useSlots } from 'vue'
-// import TableRenderer from './TableRenderer'
 import VDropdown from './VDropdown.vue'
-import defaultProps from '../../helper/defaultProps'
 
 const slots = useSlots()
 
@@ -30,20 +28,23 @@ const props = defineProps({
   rendererName: {
     type: String,
     default: ''
+  },
+  tableRenderer: {
+    type: Object,
+    default: () => {}
+  },
+  renderers: {
+    type: Object,
+    default: () => {}
   }
 })
 const emit = defineEmits(['update:propUpdater'])
 const emitPropUpdater = (e) => {
-  emit('update:propUpdater', { key: 'rendererName', value: '' }) // e.target.value })
+  emit('update:propUpdater', { key: 'rendererName', value: '' })
   emit('update:propUpdater', { key: 'renderer', value: rendererItems[props.rendererName] })
 }
-
-const TableRenderer = {
-  Table: {},
-  'Table Heatmap': {}
-}
-
-const rendererItems = computed(() => (defaultProps.renderers) || Object.assign({}, TableRenderer))
+const rendererItems = computed(() => (props.renderers) || Object.assign({}, props.tableRenderer))
+const rendererItemKeys = computed(() => Object.keys(rendererItems))
 </script>
 
 // TableRenderer 받아서 사용

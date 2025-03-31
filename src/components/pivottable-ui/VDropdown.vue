@@ -2,7 +2,7 @@
   <select
     class="pvtDropdown"
     :value="value"
-    @change="handleChange($event)"
+    v-model="selected"
   >
     <option
       v-for="(text, key) in values"
@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, watch } from 'vue'
 const props = defineProps({
   values: {
     type: Array,
@@ -27,15 +27,11 @@ const props = defineProps({
     default: ''
   }
 })
-const emit = defineEmits(['input'])
-const handleChange = (e) => emit('input', e.target.value)
-onMounted(() => {
-  emit('input', props.value || props.values[0])
+const emit = defineEmits(['update:value'])
+const selected = ref(props.value || props.values[0])
+watch(selected, (newVal) => {
+  emit('update:value', newVal)
 })
 </script>
 
-// *** model ***
-// model: {
-//   prop: 'value',
-//   event: 'input'
-// }
+// v-model 구현

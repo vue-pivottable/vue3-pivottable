@@ -8,15 +8,14 @@
       class="pvtSearchContainer"
     >
         <p v-if="!showMenu">
-          (too many to list)
+          {{ localeStrings.tooMany }}
         </p>
         <input
           v-if="showMenu"
           class="pvSearch"
           type="text"
-          placeholder="Filter values"
-          :value="filterText"
-          @input="handleInput($event)"
+          :placeholder="localeStrings.filterResults"
+          v-model="filterText"
         >
         <a
           class="pvtFilterTextClear"
@@ -28,14 +27,14 @@
           role="button"
           @click="removeValuesFromFilter(name, Object.keys(attrValues).filter(matchesFilter))"
         >
-          Select All
+          {{  localeStrings.selectAll }}
         </a>
         <a
           class="pvtButton"
           role="button"
           @click="addValuesToFilter(name, Object.keys(attrValues).filter(matchesFilter))"
         >
-          Select None
+          {{ localeStrings.selectNone }}
         </a>
     </div>
     <div
@@ -57,7 +56,7 @@
           class="pvtOnly"
           @click="selectOnly($event, x)"
         >
-          only
+          {{ localeStrings.only }}
         </a>
         <a
           class="pvtOnlySpacer"
@@ -77,11 +76,23 @@ const props = defineProps({
   name: String,
   attrValues: Object,
   sorter: Function,
-  menuLimit: Number
+  menuLimit: Number,
+  localeStrings: {
+    type: Object,
+    default: function () {
+      return {
+        selectAll: 'Select All',
+        selectNone: 'Select None',
+        tooMany: '(too many to list)',
+        filterResults: 'Filter values',
+        only: 'only'
+      }
+    }
+  }
 })
+
 const emit = defineEmits([
   'moveToTop:filterbox',
-  'input',
   'update:filter'
 ])
 
@@ -97,10 +108,6 @@ const handleClick = (e) => {
 }
 const moveFilterBoxToTop = (attribute) => {
   emit('moveToTop:filterbox', { attribute })
-}
-const handleInput = (e) => {
-  filterText.value = e.target.value
-  emit('input', e.target.value)
 }
 const handleFilterTextClear = () => { filterText.value = '' }
 const matchesFilter = (x) => {
@@ -144,13 +151,3 @@ const setValuesInFilter = (attribute, values) => {
   emit('update:filter', { attribute, valueFilter })
 }
 </script>
-
-// *** Draggable Attribute ***
-// data/filterText 삭제 (VFilterBox.vue로 이동)
-// data/values 삭제
-// data/attribute 삭제
-// data/filter 삭제
-
-// *** 논의 ***
-// bind(this)
-// !(x in valueFilter) => 함수
