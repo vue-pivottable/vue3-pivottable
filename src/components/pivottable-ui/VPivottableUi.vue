@@ -253,7 +253,8 @@ const onValSlice = (e, i) => newProps.value.vals.splice(i, 1, e.target.value)
 const pivotData = new PivotData(newProps.value)
 
 watch(() => props.data, (value) => {
-  state.value.unusedOrder = props.unusedAttrs
+  // TODO
+  state.value.unusedOrder = props.unusedAttrs // unusedAttrs 없음
   materializeInput(value)
 }, {
   immediate: false
