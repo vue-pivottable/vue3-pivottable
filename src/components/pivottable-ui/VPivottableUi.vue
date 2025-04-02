@@ -8,7 +8,7 @@
           @update:propUpdater="propUpdater"
         />
         <VDragAndDropCell
-          attrs="unused"
+          cellType="unused"
           :items="unusedAttrs"
           :unusedOrder="newProps.unusedOrder"
           :unusedItems="unusedAttrs"
@@ -21,9 +21,11 @@
           :async="newProps.async"
           :localeStrings="newProps.locales[newProps.locale].localeStrings"
           :getSort="getSort"
+          classes="pvtAxisContainer pvtUnused pvtHorizList"
           @update:filter="onUpdateValueFilter"
           @moveToTop:filterbox="onMoveFilterBoxToTop"
           @no:filterbox="onNoFilterBox"
+          @dragged:attribute="onDragAttribute"
         >
           <template v-slot:pvtAttr="props">
             <slot name="pvtAttr" v-bind="props"/>
@@ -49,12 +51,11 @@
         </slot>
 
         <VDragAndDropCell
-          attrs="col"
+          cellType="cols"
           :items="colAttrs"
           :unusedOrder="newProps.unusedOrder"
           :unusedItems="unusedAttrs"
           :sortonlyFromDragDrop="newProps.sortonlyFromDragDrop"
-          :fields="newProps.cols"
           :attrValues="newProps.attrValues"
           :menuLimit="newProps.menuLimit"
           :maxZIndex="newProps.maxZIndex"
@@ -62,10 +63,14 @@
           :async="newProps.async"
           :localeStrings="newProps.locales[newProps.locale].localeStrings"
           :getSort="getSort"
+          classes="pvtAxisContainer pvtHorizList pvtCols"
           @update:filter="onUpdateValueFilter"
           @moveToTop:filterbox="onMoveFilterBoxToTop"
           @no:filterbox="onNoFilterBox"
+          @dragged:attribute="onDragAttribute"
         >
+        <!-- items를 colAttrs로 내려야하는지 newProps.cols로 내려야하는지 -->
+        <!-- :fields="newProps.cols" -->
           <template v-slot:pvtAttr="props">
             <slot name="pvtAttr" v-bind="props"/>
           </template>
@@ -74,12 +79,11 @@
       </tr>
       <tr>
         <VDragAndDropCell
-          attrs="row"
+          cellType="rows"
           :items="rowAttrs"
           :unusedOrder="newProps.unusedOrder"
           :unusedItems="unusedAttrs"
           :sortonlyFromDragDrop="newProps.sortonlyFromDragDrop"
-          :fields="newProps.rows"
           :attrValues="newProps.attrValues"
           :menuLimit="newProps.menuLimit"
           :maxZIndex="newProps.maxZIndex"
@@ -87,10 +91,13 @@
           :async="newProps.async"
           :localeStrings="newProps.locales[newProps.locale].localeStrings"
           :getSort="getSort"
+          classes="pvtAxisContainer pvtVertList pvtRows"
           @update:filter="onUpdateValueFilter"
           @moveToTop:filterbox="onMoveFilterBoxToTop"
           @no:filterbox="onNoFilterBox"
+          @dragged:attribute="onDragAttribute"
         >
+        <!-- :fields="newProps.rows" -->
           <template v-slot:pvtAttr="props">
             <slot
               v-bind="props"
@@ -190,6 +197,7 @@ const colAttrs = computed(() => {
         !newProps.value.hiddenFromDragDrop.includes(e)
   )
 })
+
 const unusedAttrs = computed(() => {
   return newProps.value.attributes.filter(
     e =>
@@ -247,6 +255,50 @@ const onMoveFilterBoxToTop = ({ attribute }) => {
 const onNoFilterBox = () => this.$emit('no:filterbox')
 const onValSlice = (e, i) => newProps.value.vals.splice(i, 1, e.target.value)
 
+const openFilterBox = ({ attribute, open }) => {
+  state.value.openStatus[attribute] = open
+}
+
+// onChange 함수가 cell마다 각가 3개의 함수가 정의되어있는데 공통으로 합침(unusedAttrsCell, colAttrsCell, rowAttrsCell)
+const onDragAttribute = (e, cellType) => {
+  const cellClass = 'pvt' + cellType.charAt(0).toUpperCase() + cellType.slice(1)
+  const item = e.item.getAttribute('data-id')
+  // 에러남,, newProps.sortonlyFromDragDrop - undefined
+  // if (newProps.sortonlyFromDragDrop.includes(item) && (!e.from.classList.contains(cellClass) || !e.to.classList.contains(cellClass))) {
+  //   return
+  // }
+  console.log('옮기는 속성', item)
+  if (e.from.classList.contains(cellClass)) {
+    if (cellType === 'unused') {
+      openFilterBox({ attribute: item, open: false }) // 이거 VDragAndDropCell에 있어도 되지 않나?
+      const newAttributes = [...state.value.unusedOrder]
+      newAttributes.splice(e.oldIndex, 1)
+      state.value.unusedOrder = newAttributes
+    } else {
+      const newAttributes = [...newProps.value[cellType]]
+      newAttributes.splice(e.oldIndex, 1)
+      propUpdater({ key: cellType, value: newAttributes })
+      // 업데이트가 되나 리렌더링되지 않음
+    }
+    // emit 정의되지 않음
+    // this.$emit(`dragged:${cellType}`, item)
+  }
+  if (e.to.classList.contains(cellClass)) {
+    if (cellType === 'unused') {
+      openFilterBox({ attribute: item, open: false }) // 이거 VDragAndDropCell에 있어도 되지 않나?
+      const newAttributes = [...state.value.unusedOrder]
+      newAttributes.splice(e.newIndex, 0, item)
+      state.value.unusedOrder = newAttributes
+    } else {
+      const newAttributes = [...newProps.value[cellType]]
+      newAttributes.splice(e.newIndex, 0, item)
+      propUpdater({ key: cellType, value: newAttributes })
+    }
+    // emit 정의되지 않음
+    // this.$emit(`dropped:${cellType}`, item)
+  }
+}
+
 const pivotData = new PivotData(newProps.value)
 
 watch(() => props.data, (value) => {
@@ -255,11 +307,6 @@ watch(() => props.data, (value) => {
 }, {
   immediate: false
 })
-
-const updateFilters = ({ cellType, filters }) => {
-  console.log('updated cell type', cellType)
-  console.log('updated filter items', filters)
-}
 
 </script>
 

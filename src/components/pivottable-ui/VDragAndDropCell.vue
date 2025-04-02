@@ -1,20 +1,19 @@
 <template>
   <td>
-    <h3>VDragAndDropCell ({{ attrs }})</h3>
+    <h3>VDragAndDropCell ({{ cellType }})</h3>
     <Draggable
-      v-model="modelItems"
-      :class="classNames"
+      tag="ul"
+      :list="items"
       :group="{ name: 'sharted', pull: true, put: true }"
       ghost-class="pvtPlaceholder"
-      @change="onChange"
-      tag="ul"
+      filter=".pvtFilterBox"
       :preventOnfFilter="false"
+      :class="classes"
+      @sort="(e) => $emit('dragged:attribute', e, cellType)"
     >
-    <!-- :modelValue="items" -->
-    <!-- @update:modelValue="onChange" -->
-    <!-- @sort="onChange"-->
+    <!-- filter=".pvtFilterBox" 이게 모지 -->
       <VDraggableAttribute
-        v-for="item in modelItems"
+        v-for="item in items"
         :key="item"
         :name="item"
         :sortable="true"
@@ -28,6 +27,10 @@
         :async="false"
         :unused="false"
         :localeStrings="{}"
+        @update:filter="$emit('update:filter')"
+        @moveToTop:filterbox="$emit('moveToTop:filterbox')"
+        @open:filterbox="$emit('open:filterbox')"
+        @no:filterbox="$emit('no:filterbox')"
       >
         <template #pvtAttr="{ attrName }">
           {{ attrName }}
@@ -40,38 +43,89 @@
 <script setup>
 import VDraggableAttribute from './VDraggableAttribute.vue'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
-import { ref, onMounted } from 'vue'
-import { PivotData, getSort, sortAs, aggregators } from '../../helper'
+import { getSort } from '../../helper'
 
-const emit = defineEmits(['update:filters'])
-
-const props = defineProps({
-  attrs: {
+// 여기 안에 있는 데이터들 props데이터 맞는지 다 확인
+defineProps({
+  cellType: {
     type: String,
     default: ''
   },
+  // items랑 onChange, classes는 makeDnDCell 파라미터임
   items: {
     type: Array,
     default: () => []
   },
-  classNames: {
+  // onChange: Function,
+  classes: String,
+  // 없어도 될거같기도 하고
+  sortonlyFromDragDrop: {
     type: Array,
-    default: () => []
-  }
+    default: function () {
+      return []
+    }
+  },
+  // 없어도 될거같기도 하고
+  disabledFromDragDrop: {
+    type: Array,
+    default: function () {
+      return []
+    }
+  },
+  // propsData(attrValues, )
+  attrValues: Object,
+  sorters: Object,
+  menuLimit: {
+    type: Number,
+    default: 500
+  },
+  zIndices: Object,
+  maxZIndex: {
+    type: Number
+  },
+  propsData: Object,
+  openStatus: Object,
+  async: Boolean,
+  unusedAttrs: Array,
+  locales: Object,
+  locale: String
 })
 
-const modelItems = ref([])
-
-const onChange = evt => {
-  console.log('event', Object.keys(evt)[0])
-  emit('update:filters', { cellType: props.attrs, filters: modelItems.value })
-}
-
-onMounted(() => {
-  modelItems.value = [...props.items]
-})
+defineEmits([
+  'update:filter',
+  'moveToTop:filterbox',
+  'open:filterbox',
+  'no:filterbox',
+  'dragged:attribute'
+])
 
 </script>
 
 <style scoped>
 </style>
+
+<!--
+<template v-for="x in items" :key="x">
+  <DraggableAttribute
+    :sortable="sortonlyFromDragDrop.includes(x) || !disabledFromDragDrop.includes(x)"
+    :draggable="!sortonlyFromDragDrop.includes(x) && !disabledFromDragDrop.includes(x)"
+    :name="x"
+    :attr-values="attrValues[x]"
+    :sorter="getSort(sorters, x)"
+    :menu-limit="menuLimit"
+    :z-index="zIndices[x] || maxZIndex"
+    :value-filter="propsData.valueFilter[x]"
+    :open="openStatus[x]"
+    :async="async"
+    :unused="unusedAttrs.includes(x)"
+    :locale-strings="locales[locale].localeStrings"
+    @update:filter="$emit('update:filter')"
+    @moveToTop:filterbox="$emit('moveToTop:filterbox')"
+    @open:filterbox="$emit('open:filterbox')"
+    @no:filterbox="handleNoFilterBox"
+  >
+    <template v-if="slots.pvtAttr" #pvtAttr="props">
+      <slot name="pvtAttr" v-bind="props"></slot>
+    </template>
+  </DraggableAttribute>
+</template> -->
