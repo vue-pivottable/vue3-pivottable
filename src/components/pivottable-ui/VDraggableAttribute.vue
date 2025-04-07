@@ -74,6 +74,14 @@ const toggleFilterBox = () => {
 const hideDropDownButton = computed(
   () => props.hideDropDown || !props.attributeValues.length || props.disabled
 )
+
+const filtered = computed(() => {
+  return Object.keys(props.unselectedFilterValues).length !== 0
+    ? 'pvtFilteredAttribute'
+    : null
+})
 </script>
 
-<style scoped></style>
+<style scoped>
+/* css sortonly를 sortOnly로 변경해야함 */
+</style>

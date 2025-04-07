@@ -1,6 +1,6 @@
 <template>
   <td>
-    <h3>VDragAndDropCell ({{ attrs }})</h3>
+    <h3>VDragAndDropCell ({{ cellType }})</h3>
     <Draggable
       tag="ul"
       :list="modelItems"
@@ -72,7 +72,7 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  hideFilterBoxOfUnusedAttrs: {
+  hideFilterBoxOfUnusedAttributes: {
     type: Boolean,
     default: false
   },
