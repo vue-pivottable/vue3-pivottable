@@ -1,19 +1,23 @@
 <template>
-  <li :data-id="!disabled ? name : undefined">
-    <span class="pvtAttr" :class="[filtered, { sortonly, disabled }]">
-      <slot name="pvtAttr" :attrName="name">{{ name }}</slot>
-      <span v-if="!hideDropDownButton" class="pvtTriangle"> ▾</span>
+  <li>
+    <span class="pvtAttr" :class="[filtered, { sortOnly, disabled }]">
+      <slot name="pvtAttr" :attrName="attributeName">{{ attributeName }}</slot>
+      <span
+        v-if="!hideDropDownButton"
+        @click="toggleFilterBox"
+        class="pvtTriangle"
+      >
+        ▾
+      </span>
       <VFilterBox
         v-if="open"
-        :valueFilter="valueFilter"
-        :name="name"
-        :attrValues="attrValues"
-        :sorter="sorter"
-        :menuLimit="menuLimit"
+        :unselectedFilterValues="unselectedFilterValues"
+        :filterBoxKey="attributeName"
+        :zIndex="zIndex"
+        @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox')"
+        @update:unselectedFilterValues="$emit('update:unselectedFilterValues')"
       >
       </VFilterBox>
-      <!-- <VFilterBox v-if="open" ></VFilterBox> -->
-      <!-- <slot v-if="open" name="filterbox"></slot> -->
     </span>
   </li>
 </template>
@@ -62,6 +66,10 @@ const props = defineProps({
     default: () => []
   }
 })
+
+const toggleFilterBox = () => {
+  emit('update:openStatusOfFilterBox', props.attributeName)
+}
 
 const hideDropDownButton = computed(
   () => props.hideDropDown || !props.attributeValues.length || props.disabled
