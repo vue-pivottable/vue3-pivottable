@@ -2,10 +2,7 @@
   <li :data-id="!disabled ? name : undefined">
     <span class="pvtAttr" :class="[filtered, { sortonly, disabled }]">
       <slot name="pvtAttr" :attrName="name">{{ name }}</slot>
-      <span
-        v-if="showDropdown"
-        class="pvtTriangle"
-      > ▾</span>
+      <span v-if="showDropdown" class="pvtTriangle"> ▾</span>
       <VFilterBox
         v-if="open"
         :valueFilter="valueFilter"
@@ -26,49 +23,44 @@ import VFilterBox from './VFilterBox.vue'
 import { computed } from 'vue'
 
 const props = defineProps({
-  draggable: {
-    type: Boolean,
-    default: true
-  },
-  sortable: {
-    type: Boolean,
-    default: true
-  },
-  name: {
+  attributeName: {
     type: String,
     required: true
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  sortOnly: {
+    type: Boolean,
+    default: false
   },
   open: {
     type: Boolean,
     default: false
   },
-  async: Boolean,
-  unused: Boolean,
-  valueFilter: {
+  unselectedFilterValues: {
     type: Object,
-    default: () => {
-      return {}
-    }
+    default: () => ({})
   },
-  attrValues: {
-    type: Object,
-    required: false
+  zIndex: {
+    type: Number
   },
-  sorter: {
-    type: Function,
-    required: true
-  },
-  menuLimit: Number
+  hideDropDown: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const disabled = computed(() => !props.sortable && !props.draggable)
 const sortonly = computed(() => props.sortable && !props.draggable)
 
-const filtered = computed(() => Object.keys(props.valueFilter).length !== 0 ? 'pvtFilteredAttribute' : '')
-const showDropdown = computed(() => !disabled.value && (props.async ? !props.unused : true))
-
+const filtered = computed(() =>
+  Object.keys(props.valueFilter).length !== 0 ? 'pvtFilteredAttribute' : ''
+)
+const showDropdown = computed(
+  () => !disabled.value && (props.async ? !props.unused : true)
+)
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
