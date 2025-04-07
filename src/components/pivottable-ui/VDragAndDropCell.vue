@@ -10,9 +10,9 @@
       tag="ul"
       :preventOnfFilter="false"
     >
-    <!-- :modelValue="items" -->
-    <!-- @update:modelValue="onChange" -->
-    <!-- @sort="onChange"-->
+      <!-- :modelValue="items" -->
+      <!-- @update:modelValue="onChange" -->
+      <!-- @sort="onChange"-->
       <VDraggableAttribute
         v-for="item in modelItems"
         :key="item"
@@ -20,7 +20,7 @@
         :sortable="true"
         :draggable="true"
         :attrValues="{}"
-        :sorter="getSort(() => { }, item)"
+        :sorter="getSort(() => {}, item)"
         :menuLimit="500"
         :zIndex="1000"
         :valueFilter="{}"
@@ -41,22 +41,50 @@
 import VDraggableAttribute from './VDraggableAttribute.vue'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 import { ref, onMounted } from 'vue'
-import { PivotData, getSort, sortAs, aggregators } from '../../helper'
 
-const emit = defineEmits(['update:filters'])
+const emit = defineEmits([
+  'update:draggedAttribute',
+  'update:zIndexOfFilterbox'
+])
 
 const props = defineProps({
-  attrs: {
+  cellType: {
+    type: String,
+    required: true
+  },
+  // 삭제할 수 있으면 삭제
+  classes: {
     type: String,
     default: ''
   },
-  items: {
+  attributeNames: {
     type: Array,
     default: () => []
   },
-  classNames: {
+  valueFilter: {
+    type: Object,
+    default: () => ({})
+  },
+  // 같은 셀 내 이동만 가능(정렬)
+  restrictedFromDragDrop: {
     type: Array,
     default: () => []
+  },
+  disabledFromDragDrop: {
+    type: Array,
+    default: () => []
+  },
+  hideFilterBoxOfUnusedAttrs: {
+    type: Boolean,
+    default: false
+  },
+  zIndices: {
+    type: Array,
+    default: () => []
+  },
+  openStatus: {
+    type: Object,
+    default: () => ({})
   }
 })
 
@@ -64,14 +92,15 @@ const modelItems = ref([])
 
 const onChange = evt => {
   console.log('event', Object.keys(evt)[0])
-  emit('update:filters', { cellType: props.attrs, filters: modelItems.value })
+  emit('update:filters', {
+    cellType: props.cellType,
+    filters: modelItems.value
+  })
 }
 
 onMounted(() => {
-  modelItems.value = [...props.items]
+  modelItems.value = [...props.attributeNames]
 })
-
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
