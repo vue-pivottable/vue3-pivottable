@@ -2,7 +2,7 @@
   <li :data-id="!disabled ? name : undefined">
     <span class="pvtAttr" :class="[filtered, { sortonly, disabled }]">
       <slot name="pvtAttr" :attrName="name">{{ name }}</slot>
-      <span v-if="showDropdown" class="pvtTriangle"> ▾</span>
+      <span v-if="!hideDropDownButton" class="pvtTriangle"> ▾</span>
       <VFilterBox
         v-if="open"
         :valueFilter="valueFilter"
@@ -21,6 +21,12 @@
 <script setup>
 import VFilterBox from './VFilterBox.vue'
 import { computed } from 'vue'
+
+const emit = defineEmits([
+  'update:zIndexOfFilterBox',
+  'update:unselectedFilterValues',
+  'update:openStatusOfFilterBox'
+])
 
 const props = defineProps({
   attributeName: {
@@ -49,17 +55,16 @@ const props = defineProps({
   hideDropDown: {
     type: Boolean,
     default: false
+  },
+  // 임시 데이터; 필터 목록은 어떻게 할 것인지?
+  attributeValues: {
+    type: Array,
+    default: () => []
   }
 })
 
-const disabled = computed(() => !props.sortable && !props.draggable)
-const sortonly = computed(() => props.sortable && !props.draggable)
-
-const filtered = computed(() =>
-  Object.keys(props.valueFilter).length !== 0 ? 'pvtFilteredAttribute' : ''
-)
-const showDropdown = computed(
-  () => !disabled.value && (props.async ? !props.unused : true)
+const hideDropDownButton = computed(
+  () => props.hideDropDown || !props.attributeValues.length || props.disabled
 )
 </script>
 
