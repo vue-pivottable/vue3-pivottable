@@ -13,7 +13,7 @@
           classes="pvtAxisContainer pvtUnused pvtHorizList"
           :restrictedFromDragDrop="[]"
           :disabledFromDragDrop="[]"
-          :zIndices="[]"
+          :zIndices="{}"
           :openStatus="{}"
           :hideFilterBoxOfUnusedAttributes="false"
           :valueFilter="{}"
@@ -46,7 +46,7 @@
           classes="pvtAxisContainer pvtHorizList pvtCols"
           :restrictedFromDragDrop="[]"
           :disabledFromDragDrop="[]"
-          :zIndices="[]"
+          :zIndices="{}"
           :openStatus="{}"
           :valueFilter="{}"
         >
@@ -62,7 +62,7 @@
           classes="pvtAxisContainer pvtVertList pvtRows"
           :restrictedFromDragDrop="[]"
           :disabledFromDragDrop="[]"
-          :zIndices="[]"
+          :zIndices="{}"
           :openStatus="{}"
           :valueFilter="{}"
         >

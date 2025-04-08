@@ -77,8 +77,8 @@ const props = defineProps({
     default: false
   },
   zIndices: {
-    type: Array,
-    default: () => []
+    type: Object,
+    default: () => ({})
   },
   openStatus: {
     type: Object,
