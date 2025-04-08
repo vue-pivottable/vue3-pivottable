@@ -4,8 +4,9 @@
     <tbody>
       <tr>
         <VRendererCell
+          :rendererItems="rendererItems"
           :rendererName="rendererName"
-          @update:propUpdater="propUpdater"
+
         />
         <VDragAndDropCell
           attrs="unused"
@@ -118,6 +119,7 @@ import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '../'
 import { computed, ref, watch } from 'vue'
 import { usePropsData } from '../../composables'
+import { Renderer } from '../pivottable/'
 const props = defineProps({
   ...defaultProps,
   async: {
@@ -174,6 +176,7 @@ const state = ref({
   attrValues: {},
   materializedInput: []
 })
+const rendererItems = computed(() => props.renderers || Renderer)
 const { newProps, setProps, propUpdater } = usePropsData(props)
 const rowAttrs = computed(() => {
   return newProps.value.rows.filter(
