@@ -6,7 +6,6 @@
         <VRendererCell
           :rendererItems="rendererItems"
           :rendererName="rendererName"
-
         />
         <VDragAndDropCell
           attrs="unused"
@@ -119,7 +118,7 @@ import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '../'
 import { computed, ref, watch } from 'vue'
 import { usePropsData } from '../../composables'
-import { Renderer } from '../pivottable/'
+import TableRenderer from '../pivottable/renderer'
 const props = defineProps({
   ...defaultProps,
   async: {
@@ -176,7 +175,7 @@ const state = ref({
   attrValues: {},
   materializedInput: []
 })
-const rendererItems = computed(() => props.renderers || Renderer)
+const rendererItems = computed(() => props.renderers || TableRenderer)
 const { newProps, setProps, propUpdater } = usePropsData(props)
 const rowAttrs = computed(() => {
   return newProps.value.rows.filter(
@@ -253,7 +252,8 @@ const onValSlice = (e, i) => newProps.value.vals.splice(i, 1, e.target.value)
 const pivotData = new PivotData(newProps.value)
 
 watch(() => props.data, (value) => {
-  state.value.unusedOrder = props.unusedAttrs
+  // TODO
+  state.value.unusedOrder = props.unusedAttrs // unusedAttrs 없음
   materializeInput(value)
 }, {
   immediate: false
