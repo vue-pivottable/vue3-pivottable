@@ -1,33 +1,28 @@
 <template>
   <td>
-    <h3>VDragAndDropCell ({{ attrs }})</h3>
+    <h3>VDragAndDropCell ({{ cellType }})</h3>
     <Draggable
-      v-model="modelItems"
-      :class="classNames"
-      :group="{ name: 'sharted', pull: true, put: true }"
-      ghost-class="pvtPlaceholder"
-      @change="onChange"
       tag="ul"
+      :list="modelItems"
+      :group="{ name: 'sharted', pull: true, put: true }"
+      ghost-class=".pvtFilterBox"
       :preventOnfFilter="false"
+      :class="classes"
+      @sort="onDrag"
     >
-    <!-- :modelValue="items" -->
-    <!-- @update:modelValue="onChange" -->
-    <!-- @sort="onChange"-->
       <VDraggableAttribute
         v-for="item in modelItems"
         :key="item"
-        :name="item"
-        :sortable="true"
-        :draggable="true"
-        :attrValues="{}"
-        :sorter="getSort(() => { }, item)"
-        :menuLimit="500"
-        :zIndex="1000"
-        :valueFilter="{}"
-        :open="false"
-        :async="false"
-        :unused="false"
-        :localeStrings="{}"
+        :disabled="disabledFromDragDrop.includes(item)"
+        :sortOnly="restrictedFromDragDrop.includes(item)"
+        :open="openStatus?.[item]"
+        :unSelectedFilterValues="valueFilter?.[item]"
+        :attributeName="item"
+        :zIndex="zIndices[item]"
+        :hideDropDown="hideDropDown"
+        @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox')"
+        @update:unselectedFilterValues="$emit('update:unselectedFilterValues')"
+        @update:openStatusOfFilterBox="$emit('update:unselectedFilterValues')"
       >
         <template #pvtAttr="{ attrName }">
           {{ attrName }}
@@ -38,40 +33,77 @@
 </template>
 
 <script setup>
-import VDraggableAttribute from './VDraggableAttribute.vue'
+import { ref, onMounted, computed } from 'vue'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
-import { ref, onMounted } from 'vue'
-import { PivotData, getSort, sortAs, aggregators } from '../../helper'
+import VDraggableAttribute from './VDraggableAttribute.vue'
 
-const emit = defineEmits(['update:filters'])
+const emit = defineEmits([
+  'update:draggedAttribute',
+  'update:zIndexOfFilterBox',
+  'update:unselectedFilterValues',
+  'update:openStatusOfFilterBox'
+])
 
 const props = defineProps({
-  attrs: {
+  cellType: {
+    type: String,
+    required: true
+  },
+  // 삭제할 수 있으면 삭제
+  classes: {
     type: String,
     default: ''
   },
-  items: {
+  attributeNames: {
     type: Array,
     default: () => []
   },
-  classNames: {
+  valueFilter: {
+    type: Object,
+    default: () => ({})
+  },
+  // 같은 셀 내 이동만 가능(정렬)
+  restrictedFromDragDrop: {
     type: Array,
     default: () => []
+  },
+  // 삭제 보류
+  disabledFromDragDrop: {
+    type: Array,
+    default: () => []
+  },
+  hideFilterBoxOfUnusedAttributes: {
+    type: Boolean,
+    default: false
+  },
+  zIndices: {
+    type: Object,
+    default: () => ({})
+  },
+  openStatus: {
+    type: Object,
+    default: () => ({})
   }
 })
 
 const modelItems = ref([])
 
-const onChange = evt => {
+const onDrag = evt => {
   console.log('event', Object.keys(evt)[0])
-  emit('update:filters', { cellType: props.attrs, filters: modelItems.value })
+  emit('update:draggedAttribute', {
+    cellType: props.cellType,
+    attributes: modelItems.value
+  })
 }
 
 onMounted(() => {
-  modelItems.value = [...props.items]
+  modelItems.value = [...props.attributeNames]
 })
 
+// 이름 변경해야할 것 같음 hideDropDownInUnusedCell
+const hideDropDown = computed(() => {
+  return props.cellType === 'unused' && props.hideFilterBoxOfUnusedAttrs
+})
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

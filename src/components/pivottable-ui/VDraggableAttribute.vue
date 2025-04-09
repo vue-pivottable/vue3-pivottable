@@ -1,22 +1,23 @@
 <template>
-  <li :data-id="!disabled ? name : undefined">
-    <span class="pvtAttr" :class="[filtered, { sortonly, disabled }]">
-      <slot name="pvtAttr" :attrName="name">{{ name }}</slot>
+  <li>
+    <span class="pvtAttr" :class="[filtered, { sortOnly, disabled }]">
+      <slot name="pvtAttr" :attrName="attributeName">{{ attributeName }}</slot>
       <span
-        v-if="showDropdown"
+        v-if="!hideDropDownButton"
+        @click="toggleFilterBox"
         class="pvtTriangle"
-      > ▾</span>
+      >
+        ▾
+      </span>
       <VFilterBox
         v-if="open"
-        :valueFilter="valueFilter"
-        :name="name"
-        :attrValues="attrValues"
-        :sorter="sorter"
-        :menuLimit="menuLimit"
+        :unselectedFilterValues="unselectedFilterValues"
+        :filterBoxKey="attributeName"
+        :zIndex="zIndex"
+        @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox')"
+        @update:unselectedFilterValues="$emit('update:unselectedFilterValues')"
       >
       </VFilterBox>
-      <!-- <VFilterBox v-if="open" ></VFilterBox> -->
-      <!-- <slot v-if="open" name="filterbox"></slot> -->
     </span>
   </li>
 </template>
@@ -25,50 +26,62 @@
 import VFilterBox from './VFilterBox.vue'
 import { computed } from 'vue'
 
+const emit = defineEmits([
+  'update:zIndexOfFilterBox',
+  'update:unselectedFilterValues',
+  'update:openStatusOfFilterBox'
+])
+
 const props = defineProps({
-  draggable: {
-    type: Boolean,
-    default: true
-  },
-  sortable: {
-    type: Boolean,
-    default: true
-  },
-  name: {
+  attributeName: {
     type: String,
     required: true
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  sortOnly: {
+    type: Boolean,
+    default: false
   },
   open: {
     type: Boolean,
     default: false
   },
-  async: Boolean,
-  unused: Boolean,
-  valueFilter: {
+  unselectedFilterValues: {
     type: Object,
-    default: () => {
-      return {}
-    }
+    default: () => ({})
   },
-  attrValues: {
-    type: Object,
-    required: false
+  zIndex: {
+    type: Number
   },
-  sorter: {
-    type: Function,
-    required: true
+  hideDropDown: {
+    type: Boolean,
+    default: false
   },
-  menuLimit: Number
+  // 임시 데이터; 필터 목록은 어떻게 할 것인지?
+  attributeValues: {
+    type: Array,
+    default: () => []
+  }
 })
 
-const disabled = computed(() => !props.sortable && !props.draggable)
-const sortonly = computed(() => props.sortable && !props.draggable)
+const toggleFilterBox = () => {
+  emit('update:openStatusOfFilterBox', props.attributeName)
+}
 
-const filtered = computed(() => Object.keys(props.valueFilter).length !== 0 ? 'pvtFilteredAttribute' : '')
-const showDropdown = computed(() => !disabled.value && (props.async ? !props.unused : true))
+const hideDropDownButton = computed(
+  () => props.hideDropDown || !props.attributeValues.length || props.disabled
+)
 
+const filtered = computed(() => {
+  return Object.keys(props.unselectedFilterValues).length !== 0
+    ? 'pvtFilteredAttribute'
+    : null
+})
 </script>
 
 <style scoped>
-
+/* css sortonly를 sortOnly로 변경해야함 */
 </style>
