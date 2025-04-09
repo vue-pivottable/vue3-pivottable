@@ -25,14 +25,14 @@
         <a
           class="pvtButton"
           role="button"
-          @click="removeValuesFromFilter(filterBoxKey, Object.keys(filterBoxValues).filter(matchesFilter))"
+          @click="removeValuesFromFilter(filterBoxKey, filterBoxValues.filter(matchesFilter))"
         >
           {{  localeStrings.selectAll }}
         </a>
         <a
           class="pvtButton"
           role="button"
-          @click="addValuesToFilter(filterBoxKey, Object.keys(filterBoxValues).filter(matchesFilter))"
+          @click="addValuesToFilter(filterBoxKey, filterBoxValues.filter(matchesFilter))"
         >
           {{ localeStrings.selectNone }}
         </a>
@@ -92,8 +92,8 @@ const props = defineProps({
 })
 /** state */
 const filterText = ref('')
-const showMenu = ref(Object.keys(filterBoxValues.value).length < menuLimit)
-const shown = computed(() => Object.keys(filterBoxValues.value).filter(matchesFilter).sort(sorters(props.filterBoxKey)))
+const showMenu = ref(filterBoxValues.value.length < menuLimit)
+const shown = computed(() => filterBoxValues.value.filter(matchesFilter).sort(sorters(props.filterBoxKey)))
 const unselectedValues = ref(props.unselectedFilterValues)
 /** emit */
 const emit = defineEmits([
@@ -107,8 +107,6 @@ const moveFilterBoxToTop = (e) => {
 }
 const handleFilterTextClear = () => { filterText.value = '' }
 const matchesFilter = (x) => x.toLowerCase().trim().includes(filterText.value.toLowerCase().trim())
-// ----- start
-// const updateUnselectedFilterValues = () => {}
 const addValuesToFilter = (attribute, values) => {
   const filterValues = values.reduce((r, v) => {
     r[v] = true
@@ -132,10 +130,9 @@ const toggleValue = (value) => {
     addValuesToFilter(props.filterBoxKey, [value])
   }
 }
-// ----- end
 const selectOnly = (e, value) => {
   e.stopPropagation()
-  setValuesInFilter(props.filterBoxKey, Object.keys(filterBoxValues.value).filter(y => y !== value))
+  setValuesInFilter(props.filterBoxKey, filterBoxValues.value.filter(y => y !== value))
 }
 const setValuesInFilter = (attribute, values) => {
   const filterValues = values.reduce((r, v) => {
