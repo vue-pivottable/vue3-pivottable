@@ -1,14 +1,13 @@
 <template>
   <select
     class="pvtDropdown"
-    :value="value"
-    v-model="selected"
+    v-model="valueModel"
   >
     <option
-      v-for="(text, key) in values"
+      v-for="(text, key) in options"
       :key="key"
       :value="text"
-      :selected="text === value ? 'selected' : undefined"
+      :selected="text === valueModel ? 'selected' : undefined"
     >
       {{ text }}
     </option>
@@ -18,7 +17,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 const props = defineProps({
-  values: {
+  options: {
     type: Array,
     default: () => []
   },
@@ -27,9 +26,9 @@ const props = defineProps({
     default: ''
   }
 })
+const valueModel = ref(props.value)
 const emit = defineEmits(['update:value'])
-const selected = ref(props.value || props.values[0])
-watch(selected, (newVal) => {
+watch(valueModel, (newVal) => {
   emit('update:value', newVal)
 })
 </script>

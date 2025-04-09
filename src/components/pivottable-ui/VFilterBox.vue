@@ -2,7 +2,7 @@
   <div
     class="pvtFilterBox"
     :style="{ display: block, cursor: initial, zIndex: props.zIndex}"
-    @click="handleClick($event)"
+    @click="moveFilterBoxToTop($event)"
   >
     <div
       class="pvtSearchContainer"
@@ -25,14 +25,14 @@
         <a
           class="pvtButton"
           role="button"
-          @click="removeValuesFromFilter(name, Object.keys(attrValues).filter(matchesFilter))"
+          @click="removeValuesFromFilter(filterBoxKey, Object.keys(filterBoxValues).filter(matchesFilter))"
         >
           {{  localeStrings.selectAll }}
         </a>
         <a
           class="pvtButton"
           role="button"
-          @click="addValuesToFilter(name, Object.keys(attrValues).filter(matchesFilter))"
+          @click="addValuesToFilter(filterBoxKey, Object.keys(filterBoxValues).filter(matchesFilter))"
         >
           {{ localeStrings.selectNone }}
         </a>
@@ -44,12 +44,12 @@
       <p
         v-for="x in shown"
         :key="x"
-        :class="{'selected': !(x in valueFilter)}"
+        :class="{'selected': !(x in unselectedValues)}"
         @click="toggleValue(x)"
       >
         <input
           type="checkbox"
-          :checked="!(x in valueFilter)"
+          :checked="!(x in unselectedValues)"
         >
         <template v-html="x"></template>
         <a
@@ -68,86 +68,77 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-
-/** props & emit */
+import { ref, computed, inject } from 'vue'
+/** inject */
+const sorters = inject('sorters')
+const menuLimit = inject('menuLimit')
+const localeStrings = inject('localeStrings')
+const allFilters = inject('allFilters')
+const filterBoxValues = computed(() => allFilters[props.filterBoxKey])
+/** props */
 const props = defineProps({
-  valueFilter: Object,
-  name: String,
-  attrValues: Object,
-  sorter: Function,
-  menuLimit: Number,
-  localeStrings: {
+  unselectedFilterValues: {
     type: Object,
-    default: function () {
-      return {
-        selectAll: 'Select All',
-        selectNone: 'Select None',
-        tooMany: '(too many to list)',
-        filterResults: 'Filter values',
-        only: 'only'
-      }
-    }
+    default: () => {}
+  },
+  filterBoxKey: {
+    type: String,
+    default: ''
+  },
+  zIndex: {
+    type: Number,
+    default: 0
   }
 })
-
-const emit = defineEmits([
-  'moveToTop:filterbox',
-  'update:filter'
-])
-
 /** state */
 const filterText = ref('')
-const showMenu = ref(Object.keys(props.attrValues).length < props.menuLimit)
-const shown = computed(() => Object.keys(props.attrValues).filter(matchesFilter).sort(props.sorter)) // ref vs computed
-
+const showMenu = ref(Object.keys(filterBoxValues.value).length < menuLimit)
+const shown = computed(() => Object.keys(filterBoxValues.value).filter(matchesFilter).sort(sorters(props.filterBoxKey)))
+const unselectedValues = ref(props.unselectedFilterValues)
+/** emit */
+const emit = defineEmits([
+  'update:zIndexOfFilterbox',
+  'update:unselectedFilterValues'
+])
 /** method */
-const handleClick = (e) => {
+const moveFilterBoxToTop = (e) => {
   e.stopPropagation()
-  moveFilterBoxToTop(props.name)
-}
-const moveFilterBoxToTop = (attribute) => {
-  emit('moveToTop:filterbox', { attribute })
+  emit('update:zIndexOfFilterbox', props.filterBoxKey)
 }
 const handleFilterTextClear = () => { filterText.value = '' }
-const matchesFilter = (x) => {
-  return x
-    .toLowerCase()
-    .trim()
-    .includes(filterText.value.toLowerCase().trim())
-}
+const matchesFilter = (x) => x.toLowerCase().trim().includes(filterText.value.toLowerCase().trim())
 const addValuesToFilter = (attribute, values) => {
-  const valueFilter = values.reduce((r, v) => {
+  const filterValues = values.reduce((r, v) => {
     r[v] = true
     return r
-  }, Object.assign({}, props.valueFilter))
-  emit('update:filter', { attribute, valueFilter })
+  }, Object.assign({}, unselectedValues.value))
+  emit('update:unselectedFilterValues', { attribute, filterValues })
 }
 const removeValuesFromFilter = (attribute, values) => {
-  const valueFilter = values.reduce((r, v) => {
+  const filterValues = values.reduce((r, v) => {
     if (r[v]) {
       delete r[v]
     }
     return r
-  }, Object.assign({}, props.valueFilter))
-  emit('update:filter', { attribute, valueFilter })
+  }, Object.assign({}, unselectedValues.value))
+  emit('update:unselectedFilterValues', { attribute, filterValues })
 }
 const toggleValue = (value) => {
-  if (value in props.valueFilter) {
-    removeValuesFromFilter(props.name, [value])
+  if (value in unselectedValues.value) {
+    removeValuesFromFilter(props.filterBoxKey, [value])
   } else {
-    addValuesToFilter(props.name, [value])
+    addValuesToFilter(props.filterBoxKey, [value])
   }
 }
 const selectOnly = (e, value) => {
   e.stopPropagation()
-  setValuesInFilter(props.name, Object.keys(props.attrValues).filter(y => y !== value))
+  setValuesInFilter(props.filterBoxKey, Object.keys(filterBoxValues.value).filter(y => y !== value))
 }
 const setValuesInFilter = (attribute, values) => {
-  const valueFilter = values.reduce((r, v) => {
+  const filterValues = values.reduce((r, v) => {
     r[v] = true
     return r
   }, {})
-  emit('update:filter', { attribute, valueFilter })
+  emit('update:unselectedFilterValues', { attribute, filterValues })
 }
 </script>
