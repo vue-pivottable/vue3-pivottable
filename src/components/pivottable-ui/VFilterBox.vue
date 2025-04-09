@@ -25,14 +25,14 @@
         <a
           class="pvtButton"
           role="button"
-          @click="removeValuesFromFilter(filterBoxKey, filterBoxValues.filter(matchesFilter))"
+          @click="removeValuesFromFilter(filterBoxValues.filter(matchesFilter))"
         >
           {{  localeStrings.selectAll }}
         </a>
         <a
           class="pvtButton"
           role="button"
-          @click="addValuesToFilter(filterBoxKey, filterBoxValues.filter(matchesFilter))"
+          @click="addValuesToFilter(filterBoxValues.filter(matchesFilter))"
         >
           {{ localeStrings.selectNone }}
         </a>
@@ -97,37 +97,37 @@ const shown = computed(() => filterBoxValues.value.filter(matchesFilter).sort(so
 const unselectedValues = ref(props.unselectedFilterValues)
 /** emit */
 const emit = defineEmits([
-  'update:zIndexOfFilterbox',
+  'update:zIndexOfFilterBox',
   'update:unselectedFilterValues'
 ])
 /** method */
 const moveFilterBoxToTop = (e) => {
   e.stopPropagation()
-  emit('update:zIndexOfFilterbox', props.filterBoxKey)
+  emit('update:zIndexOfFilterBox', props.filterBoxKey)
 }
 const handleFilterTextClear = () => { filterText.value = '' }
 const matchesFilter = (x) => x.toLowerCase().trim().includes(filterText.value.toLowerCase().trim())
-const addValuesToFilter = (attribute, values) => {
+const addValuesToFilter = (values) => {
   const filterValues = values.reduce((r, v) => {
     r[v] = true
     return r
   }, Object.assign({}, unselectedValues.value))
-  emit('update:unselectedFilterValues', { attribute, filterValues })
+  emit('update:unselectedFilterValues', { attribute: props.filterBoxKey, filterValues })
 }
-const removeValuesFromFilter = (attribute, values) => {
+const removeValuesFromFilter = (values) => {
   const filterValues = values.reduce((r, v) => {
     if (r[v]) {
       delete r[v]
     }
     return r
   }, Object.assign({}, unselectedValues.value))
-  emit('update:unselectedFilterValues', { attribute, filterValues })
+  emit('update:unselectedFilterValues', { attribute: props.filterBoxKey, filterValues })
 }
 const toggleValue = (value) => {
   if (value in unselectedValues.value) {
-    removeValuesFromFilter(props.filterBoxKey, [value])
+    removeValuesFromFilter([value])
   } else {
-    addValuesToFilter(props.filterBoxKey, [value])
+    addValuesToFilter([value])
   }
 }
 const selectOnly = (e, value) => {
