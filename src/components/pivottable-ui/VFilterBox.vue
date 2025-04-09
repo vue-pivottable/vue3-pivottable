@@ -107,6 +107,8 @@ const moveFilterBoxToTop = (e) => {
 }
 const handleFilterTextClear = () => { filterText.value = '' }
 const matchesFilter = (x) => x.toLowerCase().trim().includes(filterText.value.toLowerCase().trim())
+// ----- start
+// const updateUnselectedFilterValues = () => {}
 const addValuesToFilter = (attribute, values) => {
   const filterValues = values.reduce((r, v) => {
     r[v] = true
@@ -130,6 +132,7 @@ const toggleValue = (value) => {
     addValuesToFilter(props.filterBoxKey, [value])
   }
 }
+// ----- end
 const selectOnly = (e, value) => {
   e.stopPropagation()
   setValuesInFilter(props.filterBoxKey, Object.keys(filterBoxValues.value).filter(y => y !== value))
