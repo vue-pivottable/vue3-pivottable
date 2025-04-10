@@ -8,27 +8,19 @@
           :rendererName="rendererName"
         />
         <VDragAndDropCell
-          attrs="unused"
-          :items="unusedAttrs"
-          :unusedOrder="newProps.unusedOrder"
-          :unusedItems="unusedAttrs"
-          :sortonlyFromDragDrop="newProps.sortonlyFromDragDrop"
-          :fields="newProps.unusedOrder"
-          :attrValues="newProps.attrValues"
-          :menuLimit="newProps.menuLimit"
-          :maxZIndex="newProps.maxZIndex"
-          :valueFilter="newProps.valueFilter"
-          :async="newProps.async"
-          :localeStrings="newProps.locales[newProps.locale].localeStrings"
-          :getSort="getSort"
-          @update:filter="onUpdateValueFilter"
-          @moveToTop:filterbox="onMoveFilterBoxToTop"
-          @no:filterbox="onNoFilterBox"
+          cellType="unused"
+          :attributeNames="unusedAttrs"
+          classes="pvtAxisContainer pvtUnused pvtHorizList"
+          :restrictedFromDragDrop="[]"
+          :disabledFromDragDrop="[]"
+          :zIndices="{}"
+          :openStatus="{}"
+          :hideFilterBoxOfUnusedAttributes="false"
+          :valueFilter="{}"
         >
           <template v-slot:pvtAttr="props">
-            <slot name="pvtAttr" v-bind="props"/>
+            <slot name="pvtAttr" v-bind="props" />
           </template>
-
         </VDragAndDropCell>
       </tr>
       <tr>
@@ -49,56 +41,35 @@
         </slot>
 
         <VDragAndDropCell
-          attrs="col"
-          :items="colAttrs"
-          :unusedOrder="newProps.unusedOrder"
-          :unusedItems="unusedAttrs"
-          :sortonlyFromDragDrop="newProps.sortonlyFromDragDrop"
-          :fields="newProps.cols"
-          :attrValues="newProps.attrValues"
-          :menuLimit="newProps.menuLimit"
-          :maxZIndex="newProps.maxZIndex"
-          :valueFilter="newProps.valueFilter"
-          :async="newProps.async"
-          :localeStrings="newProps.locales[newProps.locale].localeStrings"
-          :getSort="getSort"
-          @update:filter="onUpdateValueFilter"
-          @moveToTop:filterbox="onMoveFilterBoxToTop"
-          @no:filterbox="onNoFilterBox"
+          cellType="col"
+          :attributeNames="colAttrs"
+          classes="pvtAxisContainer pvtHorizList pvtCols"
+          :restrictedFromDragDrop="[]"
+          :disabledFromDragDrop="[]"
+          :zIndices="{}"
+          :openStatus="{}"
+          :valueFilter="{}"
         >
           <template v-slot:pvtAttr="props">
-            <slot name="pvtAttr" v-bind="props"/>
+            <slot name="pvtAttr" v-bind="props" />
           </template>
         </VDragAndDropCell>
-
       </tr>
       <tr>
         <VDragAndDropCell
-          attrs="row"
-          :items="rowAttrs"
-          :unusedOrder="newProps.unusedOrder"
-          :unusedItems="unusedAttrs"
-          :sortonlyFromDragDrop="newProps.sortonlyFromDragDrop"
-          :fields="newProps.rows"
-          :attrValues="newProps.attrValues"
-          :menuLimit="newProps.menuLimit"
-          :maxZIndex="newProps.maxZIndex"
-          :valueFilter="newProps.valueFilter"
-          :async="newProps.async"
-          :localeStrings="newProps.locales[newProps.locale].localeStrings"
-          :getSort="getSort"
-          @update:filter="onUpdateValueFilter"
-          @moveToTop:filterbox="onMoveFilterBoxToTop"
-          @no:filterbox="onNoFilterBox"
+          cellType="row"
+          :attributeNames="rowAttrs"
+          classes="pvtAxisContainer pvtVertList pvtRows"
+          :restrictedFromDragDrop="[]"
+          :disabledFromDragDrop="[]"
+          :zIndices="{}"
+          :openStatus="{}"
+          :valueFilter="{}"
         >
           <template v-slot:pvtAttr="props">
-            <slot
-              v-bind="props"
-              name="pvtAttr"
-            />
+            <slot v-bind="props" name="pvtAttr" />
           </template>
           <!-- <slot name="pvtAttr" v-bind="$props"></slot> -->
-
         </VDragAndDropCell>
         <td class="pvtOutput">
           <slot name="outputSlot" :outputSlot="{ pivotData }">
@@ -111,7 +82,13 @@
 </template>
 
 <script setup>
-import { defaultProps, PivotData, aggregators, sortAs, getSort } from '../../helper'
+import {
+  defaultProps,
+  PivotData,
+  aggregators,
+  sortAs,
+  getSort
+} from '../../helper'
 import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
@@ -181,7 +158,7 @@ const rowAttrs = computed(() => {
   return newProps.value.rows.filter(
     e =>
       !newProps.value.hiddenAttributes.includes(e) &&
-        !newProps.value.hiddenFromDragDrop.includes(e)
+      !newProps.value.hiddenFromDragDrop.includes(e)
   )
 })
 
@@ -189,21 +166,28 @@ const colAttrs = computed(() => {
   return newProps.value.cols.filter(
     e =>
       !newProps.value.hiddenAttributes.includes(e) &&
-        !newProps.value.hiddenFromDragDrop.includes(e)
+      !newProps.value.hiddenFromDragDrop.includes(e)
   )
 })
 const unusedAttrs = computed(() => {
-  return newProps.value.attributes.filter(
-    e =>
-      !newProps.rows.includes(e) &&
-          !newProps.value.cols.includes(e) &&
-          !newProps.value.hiddenAttributes.includes(e) &&
-          !newProps.value.hiddenFromDragDrop.includes(e)
-  ).sort(sortAs(newProps.value.unusedOrder))
+  return newProps.value.attributes
+    .filter(
+      e =>
+        !newProps.rows.includes(e) &&
+        !newProps.value.cols.includes(e) &&
+        !newProps.value.hiddenAttributes.includes(e) &&
+        !newProps.value.hiddenFromDragDrop.includes(e)
+    )
+    .sort(sortAs(newProps.value.unusedOrder))
 })
-const aggregatorItems = computed(() => (newProps.value.aggregators) || aggregators)
-const numValsAllowed = computed(() => aggregatorItems.value[newProps.value.aggregatorName]([])().numInputs || 0)
-const materializeInput = (nextData) => {
+const aggregatorItems = computed(
+  () => newProps.value.aggregators || aggregators
+)
+const numValsAllowed = computed(
+  () =>
+    aggregatorItems.value[newProps.value.aggregatorName]([])().numInputs || 0
+)
+const materializeInput = nextData => {
   if (props.data === nextData) {
     return
   }
@@ -214,25 +198,29 @@ const materializeInput = (nextData) => {
   }
 
   let recordsProcessed = 0
-  PivotData.forEachRecord(newState.data, props.derivedAttributes, function (record) {
-    newState.materializedInput.push(record)
-    for (const attr of Object.keys(record)) {
-      if (!(attr in newState.attrValues)) {
-        newState.attrValues[attr] = {}
-        if (recordsProcessed > 0) {
-          newState.attrValues[attr].null = recordsProcessed
+  PivotData.forEachRecord(
+    newState.data,
+    props.derivedAttributes,
+    function (record) {
+      newState.materializedInput.push(record)
+      for (const attr of Object.keys(record)) {
+        if (!(attr in newState.attrValues)) {
+          newState.attrValues[attr] = {}
+          if (recordsProcessed > 0) {
+            newState.attrValues[attr].null = recordsProcessed
+          }
         }
       }
-    }
-    for (const attr in newState.attrValues) {
-      const value = attr in record ? record[attr] : 'null'
-      if (!(value in newState.attrValues[attr])) {
-        newState.attrValues[attr][value] = 0
+      for (const attr in newState.attrValues) {
+        const value = attr in record ? record[attr] : 'null'
+        if (!(value in newState.attrValues[attr])) {
+          newState.attrValues[attr][value] = 0
+        }
+        newState.attrValues[attr][value]++
       }
-      newState.attrValues[attr][value]++
+      recordsProcessed++
     }
-    recordsProcessed++
-  })
+  )
   state.value = newState
   setProps({
     ...newProps.value,
@@ -251,19 +239,21 @@ const onValSlice = (e, i) => newProps.value.vals.splice(i, 1, e.target.value)
 
 const pivotData = new PivotData(newProps.value)
 
-watch(() => props.data, (value) => {
-  // TODO
-  state.value.unusedOrder = props.unusedAttrs // unusedAttrs 없음
-  materializeInput(value)
-}, {
-  immediate: false
-})
+watch(
+  () => props.data,
+  value => {
+    state.value.unusedOrder = props.unusedAttrs
+    materializeInput(value)
+  },
+  {
+    immediate: false
+  }
+)
 
 const updateFilters = ({ cellType, filters }) => {
   console.log('updated cell type', cellType)
   console.log('updated filter items', filters)
 }
-
 </script>
 
 <style>
@@ -272,7 +262,8 @@ const updateFilters = ({ cellType, filters }) => {
   width: 100%;
 }
 
-.pvtUi td, .pvtUi th {
+.pvtUi td,
+.pvtUi th {
   border: 1px solid black;
   padding: 8px;
 }
