@@ -241,7 +241,6 @@ const onUpdateRendererName = (rendererName) => {
   updateState('rendererName', rendererName)
 }
 const onUpdateAggregatorName = (aggregatorName) => {
-  console.log(aggregatorName)
   updateState('aggregatorName', aggregatorName)
 }
 const onDraggedAttribute = ({ cellType, attributes }) => {
@@ -261,13 +260,6 @@ watch(() => props.data, value => {
 }, {
   immediate: false
 })
-
-watch(() => state.value.rows, newState => {
-  console.log(newState, 'newState')
-}, {
-  deep: true
-})
-
 </script>
 
 <style>
