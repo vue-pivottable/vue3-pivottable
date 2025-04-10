@@ -5,7 +5,7 @@
       <tr>
         <VRendererCell
           :rendererItems="rendererItems"
-          :rendererName="rendererName"
+          :rendererName="state.rendererName"
           :update:rendererName="onUpdateRendererName"
         />
         <VDragAndDropCell
@@ -40,7 +40,7 @@
 
         <VDragAndDropCell
           classes="pvtAxisContainer pvtHorizList pvtCols"
-          cellType="col"
+          cellType="cols"
           :attributeNames="colAttrs"
           :valueFilter="state.valueFilter"
           :disabledFromDragDrop="state.disabledFromDragDrop"
@@ -58,7 +58,7 @@
       <tr>
         <VDragAndDropCell
           classes="pvtAxisContainer pvtVertList pvtRows"
-          cellType="row"
+          cellType="rows"
           :attributeNames="rowAttrs"
           :valueFilter="state.valueFilter"
           :disabledFromDragDrop="state.disabledFromDragDrop"
@@ -80,7 +80,9 @@
       </tr>
       <tr>
         <td colspan="2">
+          (test) <br>
           {{ state.rows }}
+          {{ state.rendererName }}
         </td>
       </tr>
     </tbody>
@@ -91,7 +93,6 @@
 import {
   defaultProps,
   PivotData,
-  aggregators,
   sortAs
 } from '@/helper'
 import VRendererCell from './VRendererCell.vue'
@@ -100,7 +101,8 @@ import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '@/'
 import { computed, ref, toRefs, watch } from 'vue'
 import { usePropsState } from '@/composables'
-import TableRenderer from '../pivottable/renderer'
+import TableRenderer from '../pivottable/renderer/index'
+
 const props = defineProps({
   ...defaultProps,
   hiddenAttributes: {
@@ -148,8 +150,8 @@ const pivotUiState = ref({
 const propsRefs = toRefs(props)
 
 const { state, updateState, updateMultiple } = usePropsState(propsRefs)
-const rendererItems = computed(() => state.value.renderers || TableRenderer)
-const aggregatorItems = computed(() => state.value.aggregators || aggregators)
+const rendererItems = computed(() => Object.keys(state.value.renderers).length ? state.value.renderers : TableRenderer)
+const aggregatorItems = computed(() => state.value.aggregators)
 const rowAttrs = computed(() => {
   return state.value.rows.filter(
     e =>
