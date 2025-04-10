@@ -2,7 +2,7 @@
   <div
     class="pvtFilterBox"
     :style="{ display: block, cursor: initial, zIndex: props.zIndex}"
-    @click="moveFilterBoxToTop($event)"
+    @click="moveFilterBoxToTop"
   >
     <div
       class="pvtSearchContainer"
@@ -79,7 +79,7 @@ const filterBoxValues = computed(() => allFilters[props.filterBoxKey])
 const props = defineProps({
   unselectedFilterValues: {
     type: Object,
-    default: () => {}
+    default: () => ({})
   },
   filterBoxKey: {
     type: String,
@@ -105,7 +105,9 @@ const moveFilterBoxToTop = (e) => {
   e.stopPropagation()
   emit('update:zIndexOfFilterBox', props.filterBoxKey)
 }
-const handleFilterTextClear = () => { filterText.value = '' }
+const handleFilterTextClear = () => {
+  filterText.value = ''
+}
 const matchesFilter = (x) => x.toLowerCase().trim().includes(filterText.value.toLowerCase().trim())
 const addValuesToFilter = (values) => {
   const filterValues = values.reduce((r, v) => {

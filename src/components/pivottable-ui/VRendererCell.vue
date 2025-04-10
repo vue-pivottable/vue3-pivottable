@@ -23,7 +23,7 @@ import { computed, useSlots } from 'vue'
 import VDropdown from './VDropdown.vue'
 
 const slots = useSlots()
-const rendererOptions = computed(() => props.rendererItems)
+const rendererOptions = computed(() => Object.keys(props.rendererItems))
 const props = defineProps({
   rendererName: {
     type: String,
@@ -31,7 +31,7 @@ const props = defineProps({
   },
   rendererItems: {
     type: Object,
-    default: () => {}
+    default: () => ({})
   }
 })
 const emit = defineEmits(['update:rendererName'])

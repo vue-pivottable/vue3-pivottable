@@ -52,7 +52,7 @@ const emit = defineEmits(['update:aggregatorName', 'update:rowOrder', 'update:co
 const props = defineProps({
   aggregatorItems: {
     type: Object,
-    default: () => {}
+    default: () => ({})
   },
   aggregatorName: {
     type: String,
@@ -92,7 +92,7 @@ const sortIcons = {
   value_a_to_z: { rowSymbol: '↓', colSymbol: '→', next: 'value_z_to_a' },
   value_z_to_a: { rowSymbol: '↑', colSymbol: '←', next: 'key_a_to_z' }
 }
-const aggregatorOptions = computed(() => props.aggregatorItems)
+const aggregatorOptions = computed(() => Object.keys(props.aggregatorItems))
 const valsOptions = computed(() => props.attributeNames.filter(item => !props.hiddenFromAggregators.includes(item)))
 const numValsAllowed = computed(() => props.aggregatorItems[props.aggregatorName]([])().numInputs || 0)
 const currentRowSortIcon = computed(() => sortIcons[props.rowOrder].rowSymbol)
