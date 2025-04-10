@@ -10,9 +10,9 @@
     </slot>
     <VDropdown
       v-else
-      :values="Object.keys(rendererItems)"
+      :options="rendererOptions"
       :value="rendererName"
-      @input="emitPropUpdater"
+      @update:value="updateRendererName"
     >
     </VDropdown>
   </td>
@@ -20,33 +20,20 @@
 
 <script setup>
 import { computed, useSlots } from 'vue'
-// import TableRenderer from './TableRenderer'
 import VDropdown from './VDropdown.vue'
-import defaultProps from '../../helper/defaultProps'
 
 const slots = useSlots()
-
+const rendererOptions = computed(() => Object.keys(props.rendererItems))
 const props = defineProps({
   rendererName: {
     type: String,
     default: ''
+  },
+  rendererItems: {
+    type: Object,
+    default: () => ({})
   }
 })
-const emit = defineEmits(['update:propUpdater'])
-const emitPropUpdater = (e) => {
-  emit('update:propUpdater', { key: 'rendererName', value: '' }) // e.target.value })
-  emit('update:propUpdater', { key: 'renderer', value: rendererItems[props.rendererName] })
-}
-
-const TableRenderer = {
-  Table: {},
-  'Table Heatmap': {}
-}
-
-const rendererItems = computed(() => (defaultProps.renderers) || Object.assign({}, TableRenderer))
+const emit = defineEmits(['update:rendererName'])
+const updateRendererName = (value) => emit('update:rendererName', value)
 </script>
-
-// TableRenderer 받아서 사용
-// defaultProps.renderers 받아서 사용
-// Object.keys(rendererItems) -> computed로 사용
-// chat gpt -> class computed?, slots.rendererCell, Object.keys(rendererItems)
