@@ -1,11 +1,11 @@
 <template>
   <table class='pvtTable'>
     <VPivottableHeader
-      :rowTotal="props.rowTotal"
+      :rowTotal="props.showRowTotal"
       :localeStrings="props.localeStrings"
     />
     <VPivottableBody
-      :rowTotal="props.rowTotal"
+      :rowTotal="props.showRowTotal"
       :tableOptions="props.tableOptions"
     />
   </table>

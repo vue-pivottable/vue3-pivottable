@@ -6,9 +6,7 @@ export default {
   },
   aggregators: {
     type: Object,
-    default: function () {
-      return aggregators
-    }
+    default: () => aggregators
   },
   aggregatorName: {
     type: String,
@@ -20,11 +18,12 @@ export default {
   },
   tableOptions: {
     type: Object,
-    default: function () {
-      return {}
-    }
+    default: () => ({})
   },
-  renderers: Object,
+  renderers: {
+    type: Object,
+    default: () => ({})
+  },
   rendererName: {
     type: String,
     default: 'Table'
@@ -33,89 +32,59 @@ export default {
     type: String,
     default: 'en'
   },
-  locales: {
+  languagePack: {
     type: Object,
-    default: function () {
-      return locales
-    }
+    default: () => locales
   },
-  rowTotal: {
+  showRowTotal: {
     type: Boolean,
     default: true
   },
-  colTotal: {
+  showColTotal: {
     type: Boolean,
     default: true
   },
   cols: {
     type: Array,
-    default: function () {
-      return []
-    }
+    default: () => []
   },
   rows: {
     type: Array,
-    default: function () {
-      return []
-    }
+    default: () => []
   },
   vals: {
     type: Array,
-    default: function () {
-      return []
-    }
+    default: () => []
   },
   attributes: {
     type: Array,
-    default: function () {
-      return []
-    }
+    default: () => []
   },
   valueFilter: {
     type: Object,
-    default: function () {
-      return {}
-    }
+    default: () => ({})
   },
   sorters: {
     type: [Function, Object],
-    default: function () {
-      return {}
-    }
+    default: () => ({})
   },
   derivedAttributes: {
     type: [Function, Object],
-    default: function () {
-      return {}
-    }
+    default: () => ({})
   },
   rowOrder: {
     type: String,
     default: 'key_a_to_z',
-    validator: function (value) {
-      return ['key_a_to_z', 'value_a_to_z', 'value_z_to_a'].indexOf(value) !== -1
-    }
+    validator: (value) => ['key_a_to_z', 'value_a_to_z', 'value_z_to_a'].indexOf(value) !== -1
   },
   colOrder: {
     type: String,
     default: 'key_a_to_z',
-    validator: function (value) {
-      return ['key_a_to_z', 'value_a_to_z', 'value_z_to_a'].indexOf(value) !== -1
-    }
+    validator: value => ['key_a_to_z', 'value_a_to_z', 'value_z_to_a'].indexOf(value) !== -1
   },
   tableMaxWidth: {
     type: Number,
     default: 0,
-    validator: function (value) {
-      return value >= 0
-    }
-  },
-  colLimit: {
-    type: Number,
-    default: 100
-  },
-  rowLimit: {
-    type: Number,
-    default: 100
+    validator: value => value >= 0
   }
 }

@@ -1,15 +1,9 @@
 <script setup>
-import { VPivottable } from './index.js'
 import tips from './tips.js'
 </script>
 
 <template>
   <div>
-    <VPivottable
-      :data="tips"
-      :rows="['Payer Smoker']"
-      :cols="['Payer Gender']"
-    />
     <VPivottableUi
       :data="tips"
       :rows="['Payer Smoker']"
