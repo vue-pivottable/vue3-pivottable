@@ -6,7 +6,7 @@
         <VRendererCell
           :rendererItems="rendererItems"
           :rendererName="state.rendererName"
-          :update:rendererName="onUpdateRendererName"
+          @update:rendererName="onUpdateRendererName"
         />
         <VDragAndDropCell
           classes="pvtAxisContainer pvtUnused pvtHorizList"
@@ -35,6 +35,7 @@
             :attributeNames="state.attributeNames"
             :hiddenFromAggregators="state.hiddenFromAggregators"
             :vals="state.vals"
+            @update:aggregatorName="onUpdateAggregatorName"
           />
         </slot>
 
@@ -80,9 +81,12 @@
       </tr>
       <tr>
         <td colspan="2">
-          (test) <br>
-          {{ state.rows }}
-          {{ state.rendererName }}
+          <h4>State</h4>
+          rows: {{ state.rows }} <br>
+          cols: {{ state.cols }} <br>
+          aggregatorName: {{ state.aggregatorName }} <br>
+          rendererName: {{ state.rendererName }} <br>
+          vals: {{ state.vals }}
         </td>
       </tr>
     </tbody>
@@ -236,7 +240,10 @@ const onUpdateValueFilter = ({ attribute, valueFilter }) => {
 const onUpdateRendererName = (rendererName) => {
   updateState('rendererName', rendererName)
 }
-
+const onUpdateAggregatorName = (aggregatorName) => {
+  console.log(aggregatorName)
+  updateState('aggregatorName', aggregatorName)
+}
 const onDraggedAttribute = ({ cellType, attributes }) => {
   updateState(cellType, attributes)
 }
