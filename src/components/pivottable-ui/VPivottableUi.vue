@@ -228,7 +228,7 @@ const onMoveFilterBoxToTop = ({ attribute }) => {
   updateState('maxZIndex', state.value.maxZIndex++)
   updateState('zIndices', {
     ...state.value.zIndices,
-    [attribute]: state.value.maxZIndex + 1
+    [attribute]: state.value.maxZIndex
   })
 }
 const onUpdateValueFilter = ({ attribute, valueFilter }) => {
