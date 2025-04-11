@@ -21,19 +21,15 @@ const props = defineProps({
   ...defaultProps,
   localeStrings: {
     type: Object,
-    default: function () {
-      return {
-        totals: 'Totals'
-      }
-    }
+    default: () => ({
+      totals: 'Totals'
+    })
   },
   tableOptions: {
     type: Object,
-    default: function () {
-      return {
-        clickCallback: null
-      }
-    }
+    default: () => ({
+      clickCallback: null
+    })
   }
 })
 providePivotData(props)

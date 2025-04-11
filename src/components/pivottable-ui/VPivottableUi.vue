@@ -257,8 +257,6 @@ const pivotData = computed(() => new PivotData(state.value))
 watch(() => props.data, value => {
   updateState('unusedOrder', props.unusedAttrs)
   materializeInput(value)
-}, {
-  immediate: false
 })
 </script>
 
