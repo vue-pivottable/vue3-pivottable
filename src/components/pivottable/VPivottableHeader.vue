@@ -16,7 +16,7 @@
 
 <script setup>
 import VPivottableHeaderRows from './VPivottableHeaderRows.vue'
-import { usePivotData } from '../../composables/pivotData.js'
+import { usePivotData } from '@/composables/usePivotData'
 
 const { rowAttrs, colAttrs, colKeys } = usePivotData()
 const { localeStrings, rowTotal } = defineProps(['localeStrings', 'rowTotal'])
