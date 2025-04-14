@@ -32,7 +32,7 @@
             :aggregatorName="state.aggregatorName"
             :rowOrder="state.rowOrder"
             :colOrder="state.colOrder"
-            :attributeNames="state.attributeNames"
+            :attributeNames="attributeNames"
             :hiddenFromAggregators="state.hiddenFromAggregators"
             :vals="state.vals"
             @update:aggregatorName="onUpdateAggregatorName"
