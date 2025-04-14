@@ -86,13 +86,14 @@ const props = defineProps({
     default: 0
   },
   filterBoxValues: {
-    type: Array,
-    default: () => []
+    type: Object,
+    default: () => ({})
   }
 })
+const filterBoxValuesList = Object.keys(props.filterBoxValues)
 const filterText = ref('')
-const showMenu = ref(props.filterBoxValues.length < menuLimit)
-const sortedList = [...props.filterBoxValues].sort(sorters(props.filterBoxKey))
+const showMenu = ref(filterBoxValuesList.length < menuLimit)
+const sortedList = [...filterBoxValuesList].sort(sorters(props.filterBoxKey))
 const filteredList = computed(() => sortedList.filter(matchesFilter))
 const unselectedValues = ref(props.unselectedFilterValues)
 const emit = defineEmits([
@@ -132,7 +133,7 @@ const toggleValue = (value) => {
 }
 const selectOnly = (e, value) => {
   e.stopPropagation()
-  setValuesInFilter(props.filterBoxKey, props.filterBoxValues.filter(y => y !== value))
+  setValuesInFilter(props.filterBoxKey, filterBoxValuesList.filter(y => y !== value))
 }
 const setValuesInFilter = (filterBoxKey, values) => {
   const filterValues = values.reduce((r, v) => {
