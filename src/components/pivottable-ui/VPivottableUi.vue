@@ -104,7 +104,7 @@ import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '@/'
 import { computed, ref, toRefs, watch } from 'vue'
-import { usePropsState } from '@/composables'
+import { usePropsState, usePivotDataProcessing } from '@/composables'
 import TableRenderer from '../pivottable/renderer/index'
 
 const props = defineProps({
@@ -153,7 +153,14 @@ const pivotUiState = ref({
 })
 const propsRefs = toRefs(props)
 
-const { state, updateState, updateMultiple } = usePropsState(propsRefs)
+const { state, updateState } = usePropsState(propsRefs)
+const { allFilters } = usePivotDataProcessing(
+  computed(() => props.data),
+  {
+    derivedAttributes: computed(() => props.derivedAttributes)
+  }
+)
+
 const rendererItems = computed(() => Object.keys(state.value.renderers).length ? state.value.renderers : TableRenderer)
 const aggregatorItems = computed(() => state.value.aggregators)
 const rowAttrs = computed(() => {
@@ -170,8 +177,14 @@ const colAttrs = computed(() => {
       !state.value.hiddenFromDragDrop.includes(e)
   )
 })
+const attributeNames = computed(() => {
+  return Object.keys(allFilters.value).filter(e =>
+    !state.value.hiddenAttributes.includes(e) &&
+    !state.value.hiddenFromAggregators.includes(e)
+  )
+})
 const unusedAttrs = computed(() => {
-  return state.value.attributes
+  return attributeNames.value
     .filter(
       e =>
         !state.value.rows.includes(e) &&
@@ -181,48 +194,6 @@ const unusedAttrs = computed(() => {
     )
     .sort(sortAs(state.value.unusedOrder))
 })
-
-const materializeInput = nextData => {
-  if (props.data === nextData) {
-    return
-  }
-  const newState = {
-    data: nextData,
-    attrValues: {},
-    materializedInput: []
-  }
-
-  let recordsProcessed = 0
-  PivotData.forEachRecord(
-    newState.data,
-    props.derivedAttributes,
-    function (record) {
-      newState.materializedInput.push(record)
-      for (const attr of Object.keys(record)) {
-        if (!(attr in newState.attrValues)) {
-          newState.attrValues[attr] = {}
-          if (recordsProcessed > 0) {
-            newState.attrValues[attr].null = recordsProcessed
-          }
-        }
-      }
-      for (const attr in newState.attrValues) {
-        const value = attr in record ? record[attr] : 'null'
-        if (!(value in newState.attrValues[attr])) {
-          newState.attrValues[attr][value] = 0
-        }
-        newState.attrValues[attr][value]++
-      }
-      recordsProcessed++
-    }
-  )
-
-  updateMultiple({
-    ...state.value,
-    ...newState,
-    ...pivotUiState.value
-  })
-}
 
 const onMoveFilterBoxToTop = ({ attribute }) => {
   updateState('maxZIndex', state.value.maxZIndex++)
@@ -256,7 +227,6 @@ const pivotData = computed(() => new PivotData(state.value))
 
 watch(() => props.data, value => {
   updateState('unusedOrder', props.unusedAttrs)
-  materializeInput(value)
 })
 </script>
 
