@@ -1,7 +1,7 @@
 import { ref, watch } from 'vue'
 import { PivotData } from '@/helper/utilities.js'
 
-export function usePivotDataProcessing (dataSource, options) {
+export function useMaterializeInput (dataSource, options) {
   const rawData = ref(null)
   const allFilters = ref({})
   const materializedInput = ref([])
