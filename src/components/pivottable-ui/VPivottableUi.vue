@@ -107,7 +107,7 @@ import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '@/'
 import { computed, ref, toRefs, watch } from 'vue'
-import { usePropsState, usePivotDataProcessing } from '@/composables'
+import { usePropsState, useMaterializeInput } from '@/composables'
 import TableRenderer from '../pivottable/renderer/index'
 
 const props = defineProps({
@@ -145,6 +145,7 @@ const props = defineProps({
     default: false
   }
 })
+// TODO
 const pivotUiState = ref({
   unusedOrder: props.unusedAttrs,
   zIndices: {},
@@ -157,7 +158,7 @@ const pivotUiState = ref({
 const propsRefs = toRefs(props)
 
 const { state, updateState } = usePropsState(propsRefs)
-const { allFilters } = usePivotDataProcessing(
+const { allFilters } = useMaterializeInput(
   computed(() => props.data),
   {
     derivedAttributes: computed(() => props.derivedAttributes)
