@@ -1,6 +1,5 @@
 <template>
   <td>
-    <h3>VDragAndDropCell ({{ cellType }})</h3>
     <Draggable
       tag="ul"
       :list="modelItems"
@@ -92,12 +91,13 @@ const props = defineProps({
 
 const modelItems = ref([])
 
-const onDrag = evt => {
-  console.log('event', Object.keys(evt)[0])
-  emit('update:draggedAttribute', {
-    cellType: props.cellType,
-    attributes: Object.values(modelItems.value)
-  })
+const onDrag = () => {
+  if (props.cellType !== 'unused') {
+    emit('update:draggedAttribute', {
+      key: props.cellType,
+      value: modelItems.value
+    })
+  }
 }
 
 onMounted(() => {

@@ -231,8 +231,8 @@ const onUpdateColOrder = colOrder => {
 const onUpdateVals = vals => {
   updateState('vals', vals)
 }
-const onDraggedAttribute = ({ cellType, attributes }) => {
-  updateState(cellType, attributes)
+const onDraggedAttribute = ({ key, value }) => {
+  updateState(key, value)
 }
 const onUpdateOpenStatus = ({ attribute, status }) => {
   updateState('openStatus', {
