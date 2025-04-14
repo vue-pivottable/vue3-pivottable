@@ -93,7 +93,7 @@ const props = defineProps({
 const modelItems = ref([])
 
 const onDrag = evt => {
-  // console.log('event', Object.keys(evt)[0])
+  console.log('event', Object.keys(evt)[0])
   emit('update:draggedAttribute', {
     cellType: props.cellType,
     attributes: Object.values(modelItems.value)

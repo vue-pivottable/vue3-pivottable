@@ -1,6 +1,6 @@
 <template>
   <li>
-    <span class="pvtAttr" :class="[filtered, { sortOnly, disabled }]">
+    <span class="pvtAttr" :class="[filtered, { restricted, fixed }]">
       <slot name="pvtAttr" :attrName="attributeName">{{ attributeName }}</slot>
       <span v-if="!hideDropDown" @click="toggleFilterBox" class="pvtTriangle">
         ▾
