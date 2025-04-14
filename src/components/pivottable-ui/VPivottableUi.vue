@@ -36,6 +36,9 @@
             :hiddenFromAggregators="state.hiddenFromAggregators"
             :vals="state.vals"
             @update:aggregatorName="onUpdateAggregatorName"
+            @update:rowOrder="onUpdateRowOrder"
+            @update:colOrder="onUpdateColOrder"
+            @update:vals="onUpdateVals"
           />
         </slot>
 
@@ -213,6 +216,15 @@ const onUpdateRendererName = (rendererName) => {
 }
 const onUpdateAggregatorName = (aggregatorName) => {
   updateState('aggregatorName', aggregatorName)
+}
+const onUpdateRowOrder = (rowOrder) => {
+  updateState('rowOrder', rowOrder)
+}
+const onUpdateColOrder = (colOrder) => {
+  updateState('colOrder', colOrder)
+}
+const onUpdateVals = (vals) => {
+  updateState('vals', vals)
 }
 const onDraggedAttribute = ({ cellType, attributes }) => {
   updateState(cellType, attributes)
