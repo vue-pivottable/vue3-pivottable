@@ -18,7 +18,7 @@
 
 <script setup>
 import VPivottableBodyRows from './VPivottableBodyRows.vue'
-import { usePivotData } from '../../composables/pivotData.js'
+import { usePivotData } from '@/composables/usePivotData'
 
 const { pivotData, rowKeys, colKeys, rowAttrs, colAttrs } = usePivotData()
 const { rowTotal, tableOptions } = defineProps(['rowTotal', 'tableOptions'])

@@ -4,19 +4,21 @@
     <tbody>
       <tr>
         <VRendererCell
-          :rendererName="rendererName"
-          @update:propUpdater="propUpdater"
+          :rendererItems="rendererItems"
+          :rendererName="state.rendererName"
+          @update:rendererName="onUpdateRendererName"
         />
         <VDragAndDropCell
+          classes="pvtAxisContainer pvtUnused pvtHorizList"
           cellType="unused"
           :attributeNames="unusedAttrs"
-          classes="pvtAxisContainer pvtUnused pvtHorizList"
-          :restrictedFromDragDrop="[]"
-          :disabledFromDragDrop="[]"
-          :zIndices="{}"
-          :openStatus="{}"
-          :hideFilterBoxOfUnusedAttributes="false"
-          :valueFilter="{}"
+          :valueFilter="state.valueFilter"
+          :disabledFromDragDrop="state.disabledFromDragDrop"
+          :hideFilterBoxOfUnusedAttrs="state.hideFilterBoxOfUnusedAttrs"
+          @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
+          @update:unselectedFilterValues="onUpdateValueFilter"
+          @update:openStatusOfFilterBox="onUpdateOpenStatus"
+          @update:draggedAttribute="onDraggedAttribute"
         >
           <template v-slot:pvtAttr="props">
             <slot name="pvtAttr" v-bind="props" />
@@ -27,28 +29,30 @@
         <slot name="aggregatorCell">
           <VAggregatorCell
             :aggregatorItems="aggregatorItems"
-            :aggregatorName="newProps.aggregatorName"
-            :rowOrder="newProps.rowOrder"
-            :colOrder="newProps.colOrder"
-            :vals="newProps.vals"
-            :attrValues="newProps.attrValues"
-            :hiddenAttributes="newProps.hiddenAttributes"
-            :hiddenFromAggregators="newProps.hiddenFromAggregators"
-            :numValsAllowed="numValsAllowed"
-            @update:propUpdater="propUpdater"
-            @update:valSlice="onValSlice"
+            :aggregatorName="state.aggregatorName"
+            :rowOrder="state.rowOrder"
+            :colOrder="state.colOrder"
+            :attributeNames="state.attributeNames"
+            :hiddenFromAggregators="state.hiddenFromAggregators"
+            :vals="state.vals"
+            @update:aggregatorName="onUpdateAggregatorName"
+            @update:rowOrder="onUpdateRowOrder"
+            @update:colOrder="onUpdateColOrder"
+            @update:vals="onUpdateVals"
           />
         </slot>
 
         <VDragAndDropCell
-          cellType="col"
-          :attributeNames="colAttrs"
           classes="pvtAxisContainer pvtHorizList pvtCols"
-          :restrictedFromDragDrop="[]"
-          :disabledFromDragDrop="[]"
-          :zIndices="{}"
-          :openStatus="{}"
-          :valueFilter="{}"
+          cellType="cols"
+          :attributeNames="colAttrs"
+          :valueFilter="state.valueFilter"
+          :disabledFromDragDrop="state.disabledFromDragDrop"
+          :hideFilterBoxOfUnusedAttrs="state.hideFilterBoxOfUnusedAttrs"
+          @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
+          @update:unselectedFilterValues="onUpdateValueFilter"
+          @update:openStatusOfFilterBox="onUpdateOpenStatus"
+          @update:draggedAttribute="onDraggedAttribute"
         >
           <template v-slot:pvtAttr="props">
             <slot name="pvtAttr" v-bind="props" />
@@ -57,24 +61,35 @@
       </tr>
       <tr>
         <VDragAndDropCell
-          cellType="row"
-          :attributeNames="rowAttrs"
           classes="pvtAxisContainer pvtVertList pvtRows"
-          :restrictedFromDragDrop="[]"
-          :disabledFromDragDrop="[]"
-          :zIndices="{}"
-          :openStatus="{}"
-          :valueFilter="{}"
+          cellType="rows"
+          :attributeNames="rowAttrs"
+          :valueFilter="state.valueFilter"
+          :disabledFromDragDrop="state.disabledFromDragDrop"
+          :hideFilterBoxOfUnusedAttrs="state.hideFilterBoxOfUnusedAttrs"
+          @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
+          @update:unselectedFilterValues="onUpdateValueFilter"
+          @update:openStatusOfFilterBox="onUpdateOpenStatus"
+          @update:draggedAttribute="onDraggedAttribute"
         >
           <template v-slot:pvtAttr="props">
             <slot v-bind="props" name="pvtAttr" />
           </template>
-          <!-- <slot name="pvtAttr" v-bind="$props"></slot> -->
         </VDragAndDropCell>
         <td class="pvtOutput">
           <slot name="outputSlot" :outputSlot="{ pivotData }">
-            <VPivottable v-bind="newProps" />
+            <VPivottable v-bind="state" />
           </slot>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <h4>State</h4>
+          rows: {{ state.rows }} <br>
+          cols: {{ state.cols }} <br>
+          aggregatorName: {{ state.aggregatorName }} <br>
+          rendererName: {{ state.rendererName }} <br>
+          vals: {{ state.vals }}
         </td>
       </tr>
     </tbody>
@@ -85,64 +100,52 @@
 import {
   defaultProps,
   PivotData,
-  aggregators,
-  sortAs,
-  getSort
-} from '../../helper'
+  sortAs
+} from '@/helper'
 import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
-import { VPivottable } from '../'
-import { computed, ref, watch } from 'vue'
-import { usePropsData } from '../../composables'
+import { VPivottable } from '@/'
+import { computed, ref, toRefs, watch } from 'vue'
+import { usePropsState } from '@/composables'
+import TableRenderer from '../pivottable/renderer/index'
+
 const props = defineProps({
   ...defaultProps,
-  async: {
-    type: Boolean,
-    default: false
-  },
   hiddenAttributes: {
     type: Array,
-    default: function () {
-      return []
-    }
+    default: () => []
   },
   hiddenFromAggregators: {
     type: Array,
-    default: function () {
-      return []
-    }
+    default: () => []
   },
   hiddenFromDragDrop: {
     type: Array,
-    default: function () {
-      return []
-    }
+    default: () => []
   },
-  sortonlyFromDragDrop: {
+  restrictedFromDragDrop: {
     type: Array,
-    default: function () {
-      return []
-    }
+    default: () => []
   },
   disabledFromDragDrop: {
     type: Array,
-    default: function () {
-      return []
-    }
+    default: () => []
   },
   menuLimit: {
     type: Number,
     default: 500
   },
-  config: {
+  pivotModel: {
     type: Object,
-    default: function () {
-      return {}
-    }
+    default: () => ({})
+  },
+  hideFilterBoxOfUnusedAttrs: {
+    type: Boolean,
+    default: false
   }
 })
-const state = ref({
+const pivotUiState = ref({
   unusedOrder: props.unusedAttrs,
   zIndices: {},
   maxZIndex: 1000,
@@ -151,40 +154,37 @@ const state = ref({
   attrValues: {},
   materializedInput: []
 })
-const { newProps, setProps, propUpdater } = usePropsData(props)
+const propsRefs = toRefs(props)
+
+const { state, updateState, updateMultiple } = usePropsState(propsRefs)
+const rendererItems = computed(() => Object.keys(state.value.renderers).length ? state.value.renderers : TableRenderer)
+const aggregatorItems = computed(() => state.value.aggregators)
 const rowAttrs = computed(() => {
-  return newProps.value.rows.filter(
+  return state.value.rows.filter(
     e =>
-      !newProps.value.hiddenAttributes.includes(e) &&
-      !newProps.value.hiddenFromDragDrop.includes(e)
+      !state.value.hiddenAttributes.includes(e) &&
+      !state.value.hiddenFromDragDrop.includes(e)
   )
 })
-
 const colAttrs = computed(() => {
-  return newProps.value.cols.filter(
+  return state.value.cols.filter(
     e =>
-      !newProps.value.hiddenAttributes.includes(e) &&
-      !newProps.value.hiddenFromDragDrop.includes(e)
+      !state.value.hiddenAttributes.includes(e) &&
+      !state.value.hiddenFromDragDrop.includes(e)
   )
 })
 const unusedAttrs = computed(() => {
-  return newProps.value.attributes
+  return state.value.attributes
     .filter(
       e =>
-        !newProps.rows.includes(e) &&
-        !newProps.value.cols.includes(e) &&
-        !newProps.value.hiddenAttributes.includes(e) &&
-        !newProps.value.hiddenFromDragDrop.includes(e)
+        !state.value.rows.includes(e) &&
+        !state.value.cols.includes(e) &&
+        !state.value.hiddenAttributes.includes(e) &&
+        !state.value.hiddenFromDragDrop.includes(e)
     )
-    .sort(sortAs(newProps.value.unusedOrder))
+    .sort(sortAs(state.value.unusedOrder))
 })
-const aggregatorItems = computed(
-  () => newProps.value.aggregators || aggregators
-)
-const numValsAllowed = computed(
-  () =>
-    aggregatorItems.value[newProps.value.aggregatorName]([])().numInputs || 0
-)
+
 const materializeInput = nextData => {
   if (props.data === nextData) {
     return
@@ -219,39 +219,57 @@ const materializeInput = nextData => {
       recordsProcessed++
     }
   )
-  state.value = newState
-  setProps({
-    ...newProps.value,
-    ...state.value
+
+  updateMultiple({
+    ...state.value,
+    ...newState,
+    ...pivotUiState.value
+  })
+}
+
+const onMoveFilterBoxToTop = ({ attribute }) => {
+  updateState('maxZIndex', state.value.maxZIndex++)
+  updateState('zIndices', {
+    ...state.value.zIndices,
+    [attribute]: state.value.maxZIndex
   })
 }
 const onUpdateValueFilter = ({ attribute, valueFilter }) => {
-  newProps.value.valueFilter[attribute] = valueFilter
+  updateState('valueFilter', {
+    ...state.value.valueFilter,
+    [attribute]: valueFilter
+  })
 }
-const onMoveFilterBoxToTop = ({ attribute }) => {
-  newProps.value.maxZIndex += 1
-  newProps.value.zIndices[attribute] = newProps.value.maxZIndex + 1
+const onUpdateRendererName = (rendererName) => {
+  updateState('rendererName', rendererName)
 }
-const onNoFilterBox = () => this.$emit('no:filterbox')
-const onValSlice = (e, i) => newProps.value.vals.splice(i, 1, e.target.value)
-
-const pivotData = new PivotData(newProps.value)
-
-watch(
-  () => props.data,
-  value => {
-    state.value.unusedOrder = props.unusedAttrs
-    materializeInput(value)
-  },
-  {
-    immediate: false
-  }
-)
-
-const updateFilters = ({ cellType, filters }) => {
-  console.log('updated cell type', cellType)
-  console.log('updated filter items', filters)
+const onUpdateAggregatorName = (aggregatorName) => {
+  updateState('aggregatorName', aggregatorName)
 }
+const onUpdateRowOrder = (rowOrder) => {
+  updateState('rowOrder', rowOrder)
+}
+const onUpdateColOrder = (colOrder) => {
+  updateState('colOrder', colOrder)
+}
+const onUpdateVals = (vals) => {
+  updateState('vals', vals)
+}
+const onDraggedAttribute = ({ cellType, attributes }) => {
+  updateState(cellType, attributes)
+}
+const onUpdateOpenStatus = ({ attribute, status }) => {
+  updateState('openStatus', {
+    ...state.value.openStatus,
+    [attribute]: status
+  })
+}
+const pivotData = computed(() => new PivotData(state.value))
+
+watch(() => props.data, value => {
+  updateState('unusedOrder', props.unusedAttrs)
+  materializeInput(value)
+})
 </script>
 
 <style>
