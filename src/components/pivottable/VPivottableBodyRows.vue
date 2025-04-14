@@ -1,49 +1,96 @@
 <template>
-  <tr>
-    <th v-for="(text, j) in rowKey" :key="`rowKeyLabel${index}-${j}`"
-      class="pvtRowLabel"
-      :rowspan="spanSize(rowKeys, index, j)"
-      :colspan="j === rowAttrs.length - 1 && colAttrs.length !== 0 ? 2 : 1"
+  <tr v-for="(rowKey, i) in rowKeys" :key="`rowKeyRow${i}`">
+    <template v-for="(text, j) in rowKey" :key="`rowLabel${i}-${j}`">
+      <th
+        v-if="spanSize(rowKeys, i, j) !== -1"
+        class="pvtRowLabel"
+        :rowSpan="spanSize(rowKeys, i, j)"
+        :colSpan="j === rowAttrs.length - 1 && colAttrs.length !== 0 ? 2 : 1"
+      >
+        {{ text }}
+      </th>
+    </template>
+    <td
+      v-for="(colKey, j) in colKeys"
+      :key="`pvtVal${i}-${j}`"
+      class="pvVal"
+      :style="getValueCellStyle(rowKey, colKey)"
+      @click="handleCellClick(getAggregator(rowKey, colKey).value(), rowKey, colKey)"
     >
-      {{ text }}
-    </th>
-    <td v-for="(colKey, j) in colKeys" :key="`pvtVal${index}-${j}`"
-      :class="['pvVal']"
-    >
-    {{ getValue(rowKey, colKey) }}
+      {{ getAggregator(rowKey, colKey).format(getAggregator(rowKey, colKey).value()) }}
     </td>
-    <td v-if="rowTotal"
+    <td
+      v-if="rowTotal"
       class="pvtTotal"
+      :style="getRowTotalStyle(rowKey)"
+      @click="handleCellClick(getAggregator(rowKey, []).value(), rowKey, [])"
     >
-      {{ getTotalValue(rowKey, []) }}
+      {{ getAggregator(rowKey, []).format(getAggregator(rowKey, []).value()) }}
     </td>
   </tr>
 </template>
 
 <script setup>
-import { spanSize } from '../../helper'
+
+import { usePivotData } from '@/composables/usePivotData'
+
 const props = defineProps({
-  pivotData: Object,
-  index: Number,
-  rowKeys: Array,
-  rowKey: Array,
-  colKeys: Array,
-  rowAttrs: Array,
-  colAttrs: Array,
-  tableOptions: Object,
-  rowTotal: Boolean
+  rowKeys: {
+    type: Array,
+    required: true
+  },
+  colKeys: {
+    type: Array,
+    required: true
+  },
+  rowTotal: {
+    type: Boolean,
+    required: true
+  },
+  tableOptions: {
+    type: Object,
+    required: true
+  }
 })
-const getValue = (rowKey, colKey) => {
-  const aggregator = props.pivotData.getAggregator(rowKey, colKey)
-  return aggregator.format(aggregator.value())
-}
-const getTotalValue = (rowKey, colKey) => {
-  const totalAggregator = props.pivotData.getAggregator(rowKey, colKey)
-  return totalAggregator.format(totalAggregator.value())
+
+const { pivotData, spanSize, valueCellColors, colTotalColors, rowAttrs, colAttrs } = usePivotData()
+
+const getAggregator = (rowKey, colKey) => {
+  return pivotData.value?.getAggregator(rowKey, colKey) || {
+    value: () => null,
+    format: () => ''
+  }
 }
 
+const getValueCellStyle = (rowKey, colKey) => {
+  const value = getAggregator(rowKey, colKey).value()
+  return valueCellColors(rowKey, colKey, value)
+}
+
+const getRowTotalStyle = (rowKey) => {
+  const value = getAggregator(rowKey, []).value()
+  return colTotalColors(value)
+}
+
+const handleCellClick = (value, rowValues, colValues) => {
+  if (props.tableOptions?.clickCallback) {
+    const filters = {}
+
+    // Add column filters
+    colAttrs.value.forEach((attr, i) => {
+      if (colValues[i] !== undefined && colValues[i] !== null) {
+        filters[attr] = colValues[i]
+      }
+    })
+
+    // Add row filters
+    rowAttrs.value.forEach((attr, i) => {
+      if (rowValues[i] !== undefined && rowValues[i] !== null) {
+        filters[attr] = rowValues[i]
+      }
+    })
+
+    props.tableOptions.clickCallback(event, value, filters, pivotData.value)
+  }
+}
 </script>
-
-<style lang="scss" scoped>
-
-</style>

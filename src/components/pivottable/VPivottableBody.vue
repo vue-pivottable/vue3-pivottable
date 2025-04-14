@@ -1,29 +1,57 @@
 <template>
-  <tbody>
+  <tbody v-if="pivotData">
     <VPivottableBodyRows
-      v-for="(rowKey, i) in rowKeys"
-      :key="`rowKeyRow${i}`"
-      :pivotData="pivotData"
-      :index="i"
       :rowKeys="rowKeys"
-      :rowKey="rowKey"
       :colKeys="colKeys"
+      :rowTotal="rowTotal"
+      :tableOptions="tableOptions"
+    />
+    <VPivottableBodyRowsTotalRow
+      :colTotal="colTotal"
+      :rowTotal="rowTotal"
       :rowAttrs="rowAttrs"
       :colAttrs="colAttrs"
+      :colKeys="colKeys"
+      :localeStrings="localeStrings"
       :tableOptions="tableOptions"
-      :rowTotal="rowTotal"
     />
   </tbody>
 </template>
 
 <script setup>
-import VPivottableBodyRows from './VPivottableBodyRows.vue'
 import { usePivotData } from '@/composables/usePivotData'
+import VPivottableBodyRows from './VPivottableBodyRows.vue'
+import VPivottableBodyRowsTotalRow from './VPivottableBodyRowsTotalRow.vue'
 
-const { pivotData, rowKeys, colKeys, rowAttrs, colAttrs } = usePivotData()
-const { rowTotal, tableOptions } = defineProps(['rowTotal', 'tableOptions'])
+defineProps({
+  rowTotal: {
+    type: Boolean,
+    default: true
+  },
+  colTotal: {
+    type: Boolean,
+    default: true
+  },
+  localeStrings: {
+    type: Object,
+    default: () => ({
+      totals: 'Totals'
+    })
+  },
+  tableOptions: {
+    type: Object,
+    default: () => ({
+      clickCallback: null
+    })
+  }
+})
+
+const {
+  pivotData,
+  rowKeys,
+  colKeys,
+  rowAttrs,
+  colAttrs
+} = usePivotData()
+
 </script>
-
-<style lang="scss" scoped>
-
-</style>

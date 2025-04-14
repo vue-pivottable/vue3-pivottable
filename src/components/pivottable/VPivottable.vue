@@ -2,7 +2,7 @@
   <component
     :is="rendererComponent"
     v-bind="props"
-  ></component>
+  />
 </template>
 
 <script setup>
@@ -19,7 +19,3 @@ const props = defineProps({
 const rendererComponent = computed(() => props.rendererItems[props.rendererName] || TableRenderer.Table)
 
 </script>
-
-<style lang="scss" scoped>
-
-</style>

@@ -105,7 +105,7 @@ import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '@/'
 import { computed, ref, toRefs, watch } from 'vue'
 import { usePropsState, usePivotDataProcessing } from '@/composables'
-import TableRenderer from '../pivottable/renderer/index'
+import TableRenderer from '../pivottable/renderer'
 
 const props = defineProps({
   ...defaultProps,
