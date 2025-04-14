@@ -13,13 +13,14 @@
       <VDraggableAttribute
         v-for="item in modelItems"
         :key="item"
-        :disabled="disabledFromDragDrop.includes(item)"
-        :sortOnly="restrictedFromDragDrop.includes(item)"
+        :fixed="fixedFromDragDrop.includes(item)"
+        :restricted="restrictedFromDragDrop.includes(item)"
         :open="openStatus?.[item]"
         :unSelectedFilterValues="valueFilter?.[item]"
         :attributeName="item"
+        :attributeValues="allFilters[item]"
         :zIndex="zIndices[item]"
-        :hideDropDown="hideDropDown"
+        :hideDropDownForUnused="hideDropDownForUnused"
         @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox')"
         @update:unselectedFilterValues="$emit('update:unselectedFilterValues')"
         @update:openStatusOfFilterBox="$emit('update:unselectedFilterValues')"
@@ -58,6 +59,10 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  allFilters: {
+    type: Object,
+    default: () => ({})
+  },
   valueFilter: {
     type: Object,
     default: () => ({})
@@ -67,8 +72,7 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  // 삭제 보류
-  disabledFromDragDrop: {
+  fixedFromDragDrop: {
     type: Array,
     default: () => []
   },
@@ -100,9 +104,8 @@ onMounted(() => {
   modelItems.value = [...props.attributeNames]
 })
 
-// 이름 변경해야할 것 같음 hideDropDownInUnusedCell
-const hideDropDown = computed(() => {
-  return props.cellType === 'unused' && props.hideFilterBoxOfUnusedAttrs
+const hideDropDownForUnused = computed(() => {
+  return props.cellType === 'unused' && props.hideFilterBoxOfUnusedAttributes
 })
 </script>
 

@@ -2,17 +2,14 @@
   <li>
     <span class="pvtAttr" :class="[filtered, { sortOnly, disabled }]">
       <slot name="pvtAttr" :attrName="attributeName">{{ attributeName }}</slot>
-      <span
-        v-if="!hideDropDownButton"
-        @click="toggleFilterBox"
-        class="pvtTriangle"
-      >
+      <span v-if="!hideDropDown" @click="toggleFilterBox" class="pvtTriangle">
         ▾
       </span>
       <VFilterBox
         v-if="open"
         :unselectedFilterValues="unselectedFilterValues"
         :filterBoxKey="attributeName"
+        :filterBoxValues="attributeValues"
         :zIndex="zIndex"
         @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox')"
         @update:unselectedFilterValues="$emit('update:unselectedFilterValues')"
@@ -37,11 +34,15 @@ const props = defineProps({
     type: String,
     required: true
   },
-  disabled: {
+  attributeValues: {
+    type: Object,
+    default: () => ({})
+  },
+  fixed: {
     type: Boolean,
     default: false
   },
-  sortOnly: {
+  restricted: {
     type: Boolean,
     default: false
   },
@@ -56,14 +57,9 @@ const props = defineProps({
   zIndex: {
     type: Number
   },
-  hideDropDown: {
+  hideDropDownForUnused: {
     type: Boolean,
     default: false
-  },
-  // 임시 데이터; 필터 목록은 어떻게 할 것인지?
-  attributeValues: {
-    type: Array,
-    default: () => []
   }
 })
 
@@ -71,8 +67,10 @@ const toggleFilterBox = () => {
   emit('update:openStatusOfFilterBox', props.attributeName)
 }
 
-const hideDropDownButton = computed(
-  () => props.hideDropDown || !props.attributeValues.length || props.disabled
+const hideDropDown = computed(
+  () =>
+    Object.keys(props.attributeValues).length === 0 ||
+    props.hideDropDownForUnused
 )
 
 const filtered = computed(() => {
