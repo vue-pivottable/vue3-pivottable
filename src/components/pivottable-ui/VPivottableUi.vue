@@ -15,7 +15,9 @@
           :allFilters="allFilters"
           :valueFilter="state.valueFilter"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttrs="state.hideFilterBoxOfUnusedAttrs"
+          :hideFilterBoxOfUnusedAttributes="
+            state.hideFilterBoxOfUnusedAttributes
+          "
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -50,7 +52,9 @@
           :allFilters="allFilters"
           :valueFilter="state.valueFilter"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttrs="state.hideFilterBoxOfUnusedAttrs"
+          :hideFilterBoxOfUnusedAttributes="
+            state.hideFilterBoxOfUnusedAttributes
+          "
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -69,7 +73,9 @@
           :allFilters="allFilters"
           :valueFilter="state.valueFilter"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttrs="state.hideFilterBoxOfUnusedAttrs"
+          :hideFilterBoxOfUnusedAttributes="
+            state.hideFilterBoxOfUnusedAttributes
+          "
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -139,7 +145,7 @@ const props = defineProps({
     type: Object,
     default: () => ({})
   },
-  hideFilterBoxOfUnusedAttrs: {
+  hideFilterBoxOfUnusedAttributes: {
     type: Boolean,
     default: false
   }
