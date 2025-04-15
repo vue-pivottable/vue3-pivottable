@@ -17,8 +17,8 @@
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
           :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
-          :zIndices="state.zIndices"
-          :openStatus="state.openStatus"
+          :zIndices="pivotUiState.zIndices"
+          :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -55,8 +55,8 @@
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
           :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
-          :zIndices="state.zIndices"
-          :openStatus="state.openStatus"
+          :zIndices="pivotUiState.zIndices"
+          :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -76,11 +76,9 @@
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="
-            state.hideFilterBoxOfUnusedAttributes
-          "
-          :zIndices="state.zIndices"
-          :openStatus="state.openStatus"
+          :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
+          :zIndices="pivotUiState.zIndices"
+          :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -172,7 +170,10 @@ const {
   onUpdateValueFilter,
   onUpdateRendererName,
   onUpdateAggregatorName,
-  onDraggedAttribute
+  onDraggedAttribute,
+  onUpdateRowOrder,
+  onUpdateColOrder,
+  onUpdateVals
 } = usePropsState(props)
 
 const {
