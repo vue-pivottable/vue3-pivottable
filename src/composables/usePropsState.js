@@ -1,15 +1,19 @@
 import { ref, watch } from 'vue'
 
-export function usePropsState (initialProps) {
+export function usePropsState(initialProps) {
   const state = ref({ ...initialProps })
 
-  watch(() => initialProps, (newProps) => {
-    // console.log('props 변경 감지:', newProps)
-    state.value = { ...newProps }
-  }, {
-    deep: true,
-    immediate: true
-  })
+  watch(
+    () => initialProps,
+    newProps => {
+      // console.log('props 변경 감지:', newProps)
+      state.value = { ...newProps }
+    },
+    {
+      deep: true,
+      immediate: true
+    }
+  )
 
   const logStateChange = (key, oldVal, newVal) => {
     // console.log(`상태 변경: ${key}`, { 이전: oldVal, 새값: newVal })
@@ -34,7 +38,7 @@ export function usePropsState (initialProps) {
     }
   }
 
-  const updateMultiple = (updates) => {
+  const updateMultiple = updates => {
     const oldState = { ...state.value }
     let changed = false
 

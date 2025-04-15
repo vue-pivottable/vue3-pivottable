@@ -1,6 +1,5 @@
 <template>
   <td>
-    <h3>VDragAndDropCell ({{ cellType }})</h3>
     <Draggable
       tag="ul"
       :list="modelItems"
@@ -13,13 +12,14 @@
       <VDraggableAttribute
         v-for="item in modelItems"
         :key="item"
-        :disabled="disabledFromDragDrop.includes(item)"
-        :sortOnly="restrictedFromDragDrop.includes(item)"
+        :fixed="fixedFromDragDrop.includes(item)"
+        :restricted="restrictedFromDragDrop.includes(item)"
         :open="openStatus?.[item]"
         :unSelectedFilterValues="valueFilter?.[item]"
         :attributeName="item"
+        :attributeValues="allFilters[item]"
         :zIndex="zIndices[item]"
-        :hideDropDown="hideDropDown"
+        :hideDropDownForUnused="hideDropDownForUnused"
         @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox')"
         @update:unselectedFilterValues="$emit('update:unselectedFilterValues')"
         @update:openStatusOfFilterBox="$emit('update:unselectedFilterValues')"
@@ -58,6 +58,10 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  allFilters: {
+    type: Object,
+    default: () => ({})
+  },
   valueFilter: {
     type: Object,
     default: () => ({})
@@ -67,8 +71,7 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  // 삭제 보류
-  disabledFromDragDrop: {
+  fixedFromDragDrop: {
     type: Array,
     default: () => []
   },
@@ -88,21 +91,21 @@ const props = defineProps({
 
 const modelItems = ref([])
 
-const onDrag = evt => {
-  // console.log('event', Object.keys(evt)[0])
-  emit('update:draggedAttribute', {
-    cellType: props.cellType,
-    attributes: Object.values(modelItems.value)
-  })
+const onDrag = () => {
+  if (props.cellType !== 'unused') {
+    emit('update:draggedAttribute', {
+      key: props.cellType,
+      value: modelItems.value
+    })
+  }
 }
 
 onMounted(() => {
   modelItems.value = [...props.attributeNames]
 })
 
-// 이름 변경해야할 것 같음 hideDropDownInUnusedCell
-const hideDropDown = computed(() => {
-  return props.cellType === 'unused' && props.hideFilterBoxOfUnusedAttrs
+const hideDropDownForUnused = computed(() => {
+  return props.cellType === 'unused' && props.hideFilterBoxOfUnusedAttributes
 })
 </script>
 
