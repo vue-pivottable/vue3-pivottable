@@ -51,7 +51,7 @@
           type="checkbox"
           :checked="!(x in unselectedValues)"
         >
-        <template v-html="x"></template>
+        {{ x }}
         <span>({{ filterBoxValues[x] }})</span>
         <a
           class="pvtOnly"
