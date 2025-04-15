@@ -122,7 +122,7 @@ import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '@/'
 import { computed, ref, toRefs, watch } from 'vue'
 import { usePropsState, useMaterializeInput } from '@/composables'
-import TableRenderer from '../pivottable/renderer/index'
+import TableRenderer from '../pivottable/renderer'
 
 const props = defineProps({
   ...defaultProps,
@@ -233,6 +233,13 @@ const onUpdateValueFilter = ({ key, value }) => {
 }
 const onUpdateRendererName = rendererName => {
   updateState('rendererName', rendererName)
+  if (rendererName === 'Table Heatmap') {
+    updateState('heatmapMode', 'full')
+  } else if (rendererName === 'Table Row Heatmap') {
+    updateState('heatmapMode', 'row')
+  } else if (rendererName === 'Table Col Heatmap') {
+    updateState('heatmapMode', 'col')
+  }
 }
 const onUpdateAggregatorName = aggregatorName => {
   updateState('aggregatorName', aggregatorName)

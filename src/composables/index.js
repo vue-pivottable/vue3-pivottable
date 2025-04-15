@@ -1,3 +1,3 @@
-export { usePivotData, providePivotData } from './pivotData'
+export { useProvidePivotData, providePivotData } from './useProvidePivotData'
 export { usePropsState } from './usePropsState'
 export { useMaterializeInput } from './useMaterializeInput'
