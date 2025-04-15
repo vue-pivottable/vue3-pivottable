@@ -1,3 +1,5 @@
 export { useProvidePivotData, providePivotData } from './useProvidePivotData'
-export { usePropsState } from './usePropsState'
+export { useProvideFilterBox, provideFilterBox } from './useProvideFilterbox'
 export { useMaterializeInput } from './useMaterializeInput'
+export { usePropsState } from './usePropsState'
+export { usePivotUiState } from './usePivotUiState'

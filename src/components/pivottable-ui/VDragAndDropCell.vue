@@ -1,39 +1,37 @@
 <template>
-  <td>
-    <Draggable
-      tag="ul"
-      :list="modelItems"
-      :group="{ name: 'sharted', pull: true, put: true }"
-      ghost-class=".pvtFilterBox"
-      :preventOnfFilter="false"
-      :class="classes"
-      @sort="onDrag"
+  <Draggable
+    tag="td"
+    :list="modelItems"
+    :group="{ name: 'sharted', pull: true, put: true }"
+    ghost-class=".pvtFilterBox"
+    :preventOnfFilter="false"
+    :class="classes"
+    @sort="onDrag"
+  >
+    <VDraggableAttribute
+      v-for="item in modelItems"
+      :key="item"
+      :fixed="fixedFromDragDrop.includes(item)"
+      :restricted="restrictedFromDragDrop.includes(item)"
+      :open="openStatus?.[item]"
+      :unSelectedFilterValues="valueFilter?.[item]"
+      :attributeName="item"
+      :attributeValues="allFilters?.[item]"
+      :zIndex="zIndices?.[item]"
+      :hideDropDownForUnused="hideDropDownForUnused"
+      @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox', $event)"
+      @update:unselectedFilterValues="
+        $emit('update:unselectedFilterValues', $event)
+      "
+      @update:openStatusOfFilterBox="
+        $emit('update:openStatusOfFilterBox', $event)
+      "
     >
-      <VDraggableAttribute
-        v-for="item in modelItems"
-        :key="item"
-        :fixed="fixedFromDragDrop.includes(item)"
-        :restricted="restrictedFromDragDrop.includes(item)"
-        :open="openStatus?.[item]"
-        :unSelectedFilterValues="valueFilter?.[item]"
-        :attributeName="item"
-        :attributeValues="allFilters?.[item]"
-        :zIndex="zIndices?.[item]"
-        :hideDropDownForUnused="hideDropDownForUnused"
-        @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox', $event)"
-        @update:unselectedFilterValues="
-          $emit('update:unselectedFilterValues', $event)
-        "
-        @update:openStatusOfFilterBox="
-          $emit('update:openStatusOfFilterBox', $event)
-        "
-      >
-        <template #pvtAttr="{ attrName }">
-          {{ attrName }}
-        </template>
-      </VDraggableAttribute>
-    </Draggable>
-  </td>
+      <template #pvtAttr="{ attrName }">
+        {{ attrName }}
+      </template>
+    </VDraggableAttribute>
+  </Draggable>
 </template>
 
 <script setup>
