@@ -37,7 +37,7 @@
               :key="i"
               :options="valsOptions"
               :value="vals[i]"
-              @update:value="(val, i) => updateVals(val, i)"
+              @update:value="(val) => updateVals(val, i)"
           >
           </VDropdown>
       </template>
