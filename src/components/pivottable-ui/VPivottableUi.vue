@@ -14,10 +14,13 @@
           :attributeNames="unusedAttrs"
           :allFilters="allFilters"
           :valueFilter="state.valueFilter"
+          :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
           :hideFilterBoxOfUnusedAttributes="
             state.hideFilterBoxOfUnusedAttributes
           "
+          :zIndices="state.zIndices"
+          :openStatus="state.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -51,10 +54,13 @@
           :attributeNames="colAttrs"
           :allFilters="allFilters"
           :valueFilter="state.valueFilter"
+          :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
           :hideFilterBoxOfUnusedAttributes="
             state.hideFilterBoxOfUnusedAttributes
           "
+          :zIndices="state.zIndices"
+          :openStatus="state.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -72,10 +78,13 @@
           :attributeNames="rowAttrs"
           :allFilters="allFilters"
           :valueFilter="state.valueFilter"
+          :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
           :hideFilterBoxOfUnusedAttributes="
             state.hideFilterBoxOfUnusedAttributes
           "
+          :zIndices="state.zIndices"
+          :openStatus="state.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -216,10 +225,10 @@ const onMoveFilterBoxToTop = ({ attribute }) => {
     [attribute]: state.value.maxZIndex
   })
 }
-const onUpdateValueFilter = ({ attribute, valueFilter }) => {
+const onUpdateValueFilter = ({ key, value }) => {
   updateState('valueFilter', {
     ...state.value.valueFilter,
-    [attribute]: valueFilter
+    [key]: value
   })
 }
 const onUpdateRendererName = rendererName => {
@@ -240,10 +249,10 @@ const onUpdateVals = vals => {
 const onDraggedAttribute = ({ key, value }) => {
   updateState(key, value)
 }
-const onUpdateOpenStatus = ({ attribute, status }) => {
+const onUpdateOpenStatus = ({ key, value }) => {
   updateState('openStatus', {
     ...state.value.openStatus,
-    [attribute]: status
+    [key]: value
   })
 }
 const pivotData = computed(() => new PivotData(state.value))
