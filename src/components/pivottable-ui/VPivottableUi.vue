@@ -126,7 +126,7 @@ import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '@/'
 import { computed, watch } from 'vue'
-import { usePropsState, useMaterializeInput, usePivotUiState } from '@/composables'
+import { usePropsState, useMaterializeInput, usePivotUiState, provideFilterBox } from '@/composables'
 import TableRenderer from '../pivottable/renderer/index'
 
 const props = defineProps({
@@ -235,6 +235,8 @@ const unusedAttrs = computed(() => {
 const pivotData = computed(() => new PivotData(state))
 
 onUpdateUnusedOrder(props.unusedAttrs)
+
+provideFilterBox(props)
 
 watch(
   [allFilters, materializedInput],
