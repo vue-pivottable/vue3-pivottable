@@ -52,6 +52,7 @@
           :checked="!(x in unselectedValues)"
         >
         <template v-html="x"></template>
+        <span>({{ filterBoxValues[x] }})</span>
         <a
           class="pvtOnly"
           @click="selectOnly($event, x)"
