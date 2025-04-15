@@ -1,7 +1,7 @@
 <template>
   <td>
     <Draggable
-      tag="ul"
+      tag="td"
       :list="modelItems"
       :group="{ name: 'sharted', pull: true, put: true }"
       ghost-class=".pvtFilterBox"
