@@ -13,7 +13,7 @@
 
 <script setup>
 import { defaultProps } from '@/helper'
-import { providePivotData } from '@/composables/usePivotData'
+import { providePivotData } from '@/composables/useProvidePivotData'
 import VPivottableHeader from '../VPivottableHeader.vue'
 import VPivottableBody from '../VPivottableBody.vue'
 

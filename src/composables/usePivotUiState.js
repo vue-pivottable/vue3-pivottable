@@ -5,7 +5,6 @@ export function usePivotUiState () {
     unusedOrder: [],
     zIndices: {},
     maxZIndex: 1000,
-    openDropdown: false,
     openStatus: {}
   })
 

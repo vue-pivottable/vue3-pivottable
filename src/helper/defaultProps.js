@@ -1,4 +1,5 @@
 import { aggregators, locales } from './utilities'
+import { redColorScaleGenerator } from './redColorScaleGenerator'
 export default {
   data: {
     type: [Array, Object, Function],
@@ -14,7 +15,8 @@ export default {
   },
   heatmapMode: String,
   tableColorScaleGenerator: {
-    type: Function
+    type: Function,
+    default: redColorScaleGenerator
   },
   tableOptions: {
     type: Object,
