@@ -11,8 +11,10 @@
         :filterBoxKey="attributeName"
         :filterBoxValues="attributeValues"
         :zIndex="zIndex"
-        @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox')"
-        @update:unselectedFilterValues="$emit('update:unselectedFilterValues')"
+        @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox', $event)"
+        @update:unselectedFilterValues="
+          $emit('update:unselectedFilterValues', $event)
+        "
       >
       </VFilterBox>
     </span>
@@ -64,7 +66,10 @@ const props = defineProps({
 })
 
 const toggleFilterBox = () => {
-  emit('update:openStatusOfFilterBox', props.attributeName)
+  emit('update:openStatusOfFilterBox', {
+    key: props.attributeName,
+    value: !props.open
+  })
 }
 
 const hideDropDown = computed(

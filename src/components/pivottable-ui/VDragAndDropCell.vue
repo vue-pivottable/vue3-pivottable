@@ -17,12 +17,16 @@
         :open="openStatus?.[item]"
         :unSelectedFilterValues="valueFilter?.[item]"
         :attributeName="item"
-        :attributeValues="allFilters[item]"
-        :zIndex="zIndices[item]"
+        :attributeValues="allFilters?.[item]"
+        :zIndex="zIndices?.[item]"
         :hideDropDownForUnused="hideDropDownForUnused"
-        @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox')"
-        @update:unselectedFilterValues="$emit('update:unselectedFilterValues')"
-        @update:openStatusOfFilterBox="$emit('update:unselectedFilterValues')"
+        @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox', $event)"
+        @update:unselectedFilterValues="
+          $emit('update:unselectedFilterValues', $event)
+        "
+        @update:openStatusOfFilterBox="
+          $emit('update:openStatusOfFilterBox', $event)
+        "
       >
         <template #pvtAttr="{ attrName }">
           {{ attrName }}
