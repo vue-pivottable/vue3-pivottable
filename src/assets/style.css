@@ -1,5 +1,5 @@
 * {
-  box-sizing: border-box
+  box-sizing: border-box;
 }
 
 .pvtUi {
@@ -108,7 +108,7 @@ table.pvtTable tbody tr td {
   width: 25%;
 }
 
-@media screen and (max-width:576px) {
+@media screen and (max-width: 576px) {
   .pvtRenderers {
     width: 100%;
   }
@@ -204,11 +204,11 @@ table.pvtTable tbody tr td {
   user-select: none;
 }
 
-.pvtAxisContainer li span.pvtAttr.sortonly {
+.pvtAxisContainer li span.pvtAttr.restricted {
   border: 1px solid #c8d4e3;
 }
 
-.pvtAxisContainer li span.pvtAttr.disabled {
+.pvtAxisContainer li span.pvtAttr.fixed {
   border: 1px solid #c8d4e3;
   color: #c5c5c5;
   cursor: not-allowed;
