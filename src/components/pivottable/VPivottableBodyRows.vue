@@ -53,14 +53,15 @@ const props = defineProps({
   }
 })
 
-const { pivotData, spanSize, valueCellColors, colTotalColors, rowAttrs, colAttrs } = usePivotData()
-
-const getAggregator = (rowKey, colKey) => {
-  return pivotData.value?.getAggregator(rowKey, colKey) || {
-    value: () => null,
-    format: () => ''
-  }
-}
+const {
+  pivotData,
+  spanSize,
+  valueCellColors,
+  colTotalColors,
+  rowAttrs,
+  colAttrs,
+  getAggregator
+} = usePivotData()
 
 const getValueCellStyle = (rowKey, colKey) => {
   const value = getAggregator(rowKey, colKey).value()

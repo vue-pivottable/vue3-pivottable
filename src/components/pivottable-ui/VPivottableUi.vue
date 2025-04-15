@@ -214,6 +214,13 @@ const onUpdateValueFilter = ({ attribute, valueFilter }) => {
 }
 const onUpdateRendererName = (rendererName) => {
   updateState('rendererName', rendererName)
+  if (rendererName === 'Table Heatmap') {
+    updateState('heatmapMode', 'full')
+  } else if (rendererName === 'Table Row Heatmap') {
+    updateState('heatmapMode', 'row')
+  } else if (rendererName === 'Table Col Heatmap') {
+    updateState('heatmapMode', 'col')
+  }
 }
 const onUpdateAggregatorName = (aggregatorName) => {
   updateState('aggregatorName', aggregatorName)
