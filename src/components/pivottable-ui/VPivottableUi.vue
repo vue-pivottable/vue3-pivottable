@@ -16,11 +16,9 @@
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="
-            state.hideFilterBoxOfUnusedAttributes
-          "
-          :zIndices="state.zIndices"
-          :openStatus="state.openStatus"
+          :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
+          :zIndices="pivotUiState.zIndices"
+          :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -56,11 +54,9 @@
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="
-            state.hideFilterBoxOfUnusedAttributes
-          "
-          :zIndices="state.zIndices"
-          :openStatus="state.openStatus"
+          :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
+          :zIndices="pivotUiState.zIndices"
+          :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -80,11 +76,9 @@
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="
-            state.hideFilterBoxOfUnusedAttributes
-          "
-          :zIndices="state.zIndices"
-          :openStatus="state.openStatus"
+          :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
+          :zIndices="pivotUiState.zIndices"
+          :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
           @update:openStatusOfFilterBox="onUpdateOpenStatus"
@@ -100,18 +94,29 @@
           </slot>
         </td>
       </tr>
-      <tr>
-        <td colspan="2">
-          <h4>State</h4>
-          rows: {{ state.rows }} <br />
-          cols: {{ state.cols }} <br />
-          aggregatorName: {{ state.aggregatorName }} <br />
-          rendererName: {{ state.rendererName }} <br />
-          vals: {{ state.vals }}
-        </td>
-      </tr>
     </tbody>
   </table>
+    <div>
+    <h4>State</h4>
+    rows: {{ state.rows }} <br>
+    cols: {{ state.cols }} <br>
+    aggregatorName: {{ state.aggregatorName }} <br>
+    rendererName: {{ state.rendererName }} <br>
+    vals: {{ state.vals }} <br>
+    attributeNames: {{ attributeNames }}
+    <h4>UI State</h4>
+    unusedOrder: {{ pivotUiState.unusedOrder }} <br>
+    zIndices: {{ pivotUiState.zIndices }} <br>
+    maxZIndex: {{ pivotUiState.maxZIndex }} <br>
+    openDropdown: {{ pivotUiState.openDropdown }} <br>
+    openStatus: {{ pivotUiState.openStatus }} <br>
+    allFilters:
+    <textarea
+      style="height: 500px; margin: 10px; width: 100%;"
+      readonly
+      :value="JSON.stringify(allFilters, undefined, 2)"
+    />
+  </div>
 </template>
 
 <script setup>
@@ -120,8 +125,8 @@ import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '@/'
-import { computed, ref, toRefs, watch } from 'vue'
-import { usePropsState, useMaterializeInput } from '@/composables'
+import { computed, watch } from 'vue'
+import { usePropsState, useMaterializeInput, usePivotUiState, provideFilterBox } from '@/composables'
 import TableRenderer from '../pivottable/renderer'
 
 const props = defineProps({
@@ -159,20 +164,29 @@ const props = defineProps({
     default: false
   }
 })
-// TODO
-const pivotUiState = ref({
-  unusedOrder: props.unusedAttrs,
-  zIndices: {},
-  maxZIndex: 1000,
-  openDropdown: false,
-  openStatus: {},
-  attrValues: {},
-  materializedInput: []
-})
-const propsRefs = toRefs(props)
+const {
+  state,
+  updateMultiple,
+  onUpdateValueFilter,
+  onUpdateRendererName,
+  onUpdateAggregatorName,
+  onDraggedAttribute,
+  onUpdateRowOrder,
+  onUpdateColOrder,
+  onUpdateVals
+} = usePropsState(props)
 
-const { state, updateState } = usePropsState(propsRefs)
-const { allFilters } = useMaterializeInput(
+const {
+  state: pivotUiState,
+  onMoveFilterBoxToTop,
+  onUpdateOpenStatus,
+  onUpdateUnusedOrder
+} = usePivotUiState()
+
+const {
+  allFilters,
+  materializedInput
+} = useMaterializeInput(
   computed(() => props.data),
   {
     derivedAttributes: computed(() => props.derivedAttributes)
@@ -180,96 +194,61 @@ const { allFilters } = useMaterializeInput(
 )
 
 const rendererItems = computed(() =>
-  Object.keys(state.value.renderers).length
-    ? state.value.renderers
+  Object.keys(state.renderers).length
+    ? state.renderers
     : TableRenderer
 )
-const aggregatorItems = computed(() => state.value.aggregators)
+const aggregatorItems = computed(() => state.aggregators)
 const rowAttrs = computed(() => {
-  return state.value.rows.filter(
+  return state.rows.filter(
     e =>
-      !state.value.hiddenAttributes.includes(e) &&
-      !state.value.hiddenFromDragDrop.includes(e)
+      !state.hiddenAttributes.includes(e) &&
+      !state.hiddenFromDragDrop.includes(e)
   )
 })
 const colAttrs = computed(() => {
-  return state.value.cols.filter(
+  return state.cols.filter(
     e =>
-      !state.value.hiddenAttributes.includes(e) &&
-      !state.value.hiddenFromDragDrop.includes(e)
+      !state.hiddenAttributes.includes(e) &&
+      !state.hiddenFromDragDrop.includes(e)
   )
 })
 const attributeNames = computed(() => {
   return Object.keys(allFilters.value).filter(
     e =>
-      !state.value.hiddenAttributes.includes(e) &&
-      !state.value.hiddenFromAggregators.includes(e)
+      !state.hiddenAttributes.includes(e) &&
+      !state.hiddenFromAggregators.includes(e)
   )
 })
 const unusedAttrs = computed(() => {
   return attributeNames.value
     .filter(
       e =>
-        !state.value.rows.includes(e) &&
-        !state.value.cols.includes(e) &&
-        !state.value.hiddenAttributes.includes(e) &&
-        !state.value.hiddenFromDragDrop.includes(e)
+        !state.rows.includes(e) &&
+        !state.cols.includes(e) &&
+        !state.hiddenAttributes.includes(e) &&
+        !state.hiddenFromDragDrop.includes(e)
     )
-    .sort(sortAs(state.value.unusedOrder))
+    .sort(sortAs(state.unusedOrder))
 })
 
-const onMoveFilterBoxToTop = ({ attribute }) => {
-  updateState('maxZIndex', state.value.maxZIndex++)
-  updateState('zIndices', {
-    ...state.value.zIndices,
-    [attribute]: state.value.maxZIndex
-  })
-}
-const onUpdateValueFilter = ({ key, value }) => {
-  updateState('valueFilter', {
-    ...state.value.valueFilter,
-    [key]: value
-  })
-}
-const onUpdateRendererName = rendererName => {
-  updateState('rendererName', rendererName)
-  if (rendererName === 'Table Heatmap') {
-    updateState('heatmapMode', 'full')
-  } else if (rendererName === 'Table Row Heatmap') {
-    updateState('heatmapMode', 'row')
-  } else if (rendererName === 'Table Col Heatmap') {
-    updateState('heatmapMode', 'col')
-  }
-}
-const onUpdateAggregatorName = aggregatorName => {
-  updateState('aggregatorName', aggregatorName)
-}
-const onUpdateRowOrder = rowOrder => {
-  updateState('rowOrder', rowOrder)
-}
-const onUpdateColOrder = colOrder => {
-  updateState('colOrder', colOrder)
-}
-const onUpdateVals = vals => {
-  updateState('vals', vals)
-}
-const onDraggedAttribute = ({ key, value }) => {
-  updateState(key, value)
-}
-const onUpdateOpenStatus = ({ key, value }) => {
-  updateState('openStatus', {
-    ...state.value.openStatus,
-    [key]: value
-  })
-}
-const pivotData = computed(() => new PivotData(state.value))
+const pivotData = computed(() => new PivotData(state))
+
+onUpdateUnusedOrder(props.unusedAttrs)
+
+provideFilterBox(props)
 
 watch(
-  () => props.data,
-  value => {
-    updateState('unusedOrder', props.unusedAttrs)
-  }
-)
+  [allFilters, materializedInput],
+  () => {
+    updateMultiple({
+      ...state,
+      allFilters: allFilters.value,
+      materializedInput: materializedInput.value
+    })
+  }, {
+    deep: true
+  })
 </script>
 
 <style>
@@ -278,9 +257,4 @@ watch(
   width: 100%;
 }
 
-.pvtUi td,
-.pvtUi th {
-  border: 1px solid black;
-  padding: 8px;
-}
 </style>

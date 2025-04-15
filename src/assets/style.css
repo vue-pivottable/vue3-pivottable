@@ -166,11 +166,6 @@ table.pvtTable tbody tr td {
   height: 35px;
 }
 
-/* 수민 추가 */
-.pvtAxisContainer {
-  border: 0;
-}
-
 .pvtAxisContainer li {
   padding: 8px 6px;
   list-style-type: none;
