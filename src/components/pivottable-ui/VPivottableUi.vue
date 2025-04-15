@@ -108,7 +108,6 @@
     unusedOrder: {{ pivotUiState.unusedOrder }} <br>
     zIndices: {{ pivotUiState.zIndices }} <br>
     maxZIndex: {{ pivotUiState.maxZIndex }} <br>
-    openDropdown: {{ pivotUiState.openDropdown }} <br>
     openStatus: {{ pivotUiState.openStatus }} <br>
     allFilters:
     <textarea

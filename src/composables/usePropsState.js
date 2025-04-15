@@ -33,6 +33,8 @@ export function usePropsState (initialProps) {
       updateState('heatmapMode', 'row')
     } else if (rendererName === 'Table Col Heatmap') {
       updateState('heatmapMode', 'col')
+    } else {
+      updateState('heatmapMode', '')
     }
   }
 
