@@ -1,7 +1,7 @@
 <template>
   <div
     class="pvtFilterBox"
-    :style="{ display: block, cursor: initial, zIndex: props.zIndex}"
+    :style="{ display: 'block', cursor: 'initial', zIndex: props.zIndex}"
     @click="moveFilterBoxToTop"
   >
     <div
@@ -69,10 +69,8 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from 'vue'
-const sorters = inject('sorters')
-const menuLimit = inject('menuLimit')
-const localeStrings = inject('localeStrings')
+import { ref, computed } from 'vue'
+import { useProvideFilterBox } from '../../composables'
 const props = defineProps({
   unselectedFilterValues: {
     type: Object,
@@ -91,10 +89,12 @@ const props = defineProps({
     default: () => ({})
   }
 })
+const { localeStrings, sorter, menuLimit } = useProvideFilterBox()
+console.log(localeStrings)
 const filterBoxValuesList = Object.keys(props.filterBoxValues)
 const filterText = ref('')
 const showMenu = ref(filterBoxValuesList.length < menuLimit)
-const sortedList = [...filterBoxValuesList].sort(sorters(props.filterBoxKey))
+const sortedList = [...filterBoxValuesList].sort(sorter(props.filterBoxKey))
 const filteredList = computed(() => sortedList.filter(matchesFilter))
 const unselectedValues = ref(props.unselectedFilterValues)
 const emit = defineEmits([
