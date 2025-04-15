@@ -27,7 +27,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { usePivotData } from '@/composables/usePivotData'
+import { useProvidePivotData } from '@/composables/useProvidePivotData'
 
 const props = defineProps({
   colTotal: {
@@ -55,7 +55,7 @@ const {
   rowAttrs,
   colKeys,
   pivotData
-} = usePivotData()
+} = useProvidePivotData()
 
 const grandTotalValue = computed(() => {
   return getAggregator([], []).value()

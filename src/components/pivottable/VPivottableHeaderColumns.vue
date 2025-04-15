@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { usePivotData } from '@/composables/usePivotData'
+import { useProvidePivotData } from '@/composables/useProvidePivotData'
 
 defineProps({
   colKeys: {
@@ -33,5 +33,5 @@ defineProps({
   }
 })
 
-const { spanSize } = usePivotData()
+const { spanSize } = useProvidePivotData()
 </script>

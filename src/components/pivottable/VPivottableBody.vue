@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { usePivotData } from '@/composables/usePivotData'
+import { useProvidePivotData } from '@/composables/useProvidePivotData'
 import VPivottableBodyRows from './VPivottableBodyRows.vue'
 import VPivottableBodyRowsTotalRow from './VPivottableBodyRowsTotalRow.vue'
 
@@ -52,6 +52,6 @@ const {
   colKeys,
   rowAttrs,
   colAttrs
-} = usePivotData()
+} = useProvidePivotData()
 
 </script>

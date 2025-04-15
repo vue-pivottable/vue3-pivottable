@@ -134,6 +134,6 @@ export function providePivotData (props) {
   return pivotDataContext
 }
 
-export function usePivotData () {
+export function useProvidePivotData () {
   return inject(PIVOT_DATA_KEY)
 }

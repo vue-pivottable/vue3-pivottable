@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { usePivotData } from '@/composables/usePivotData'
+import { useProvidePivotData } from '@/composables/useProvidePivotData'
 import VPivottableHeaderColumns from './VPivottableHeaderColumns.vue'
 import VPivottableHeaderRows from './VPivottableHeaderRows.vue'
 import VPivottableHeaderRowsTotal from './VPivottableHeaderRowsTotal.vue'
@@ -47,6 +47,6 @@ defineProps({
   }
 })
 
-const { pivotData, colAttrs, rowAttrs, colKeys } = usePivotData()
+const { pivotData, colAttrs, rowAttrs, colKeys } = useProvidePivotData()
 
 </script>

@@ -32,7 +32,7 @@
 
 <script setup>
 
-import { usePivotData } from '@/composables/usePivotData'
+import { useProvidePivotData } from '@/composables/useProvidePivotData'
 
 const props = defineProps({
   rowKeys: {
@@ -61,7 +61,7 @@ const {
   rowAttrs,
   colAttrs,
   getAggregator
-} = usePivotData()
+} = useProvidePivotData()
 
 const getValueCellStyle = (rowKey, colKey) => {
   const value = getAggregator(rowKey, colKey).value()
