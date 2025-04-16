@@ -13,11 +13,11 @@
       :key="item"
       :fixed="fixedFromDragDrop.includes(item)"
       :restricted="restrictedFromDragDrop.includes(item)"
-      :open="openStatus?.[item]"
-      :unSelectedFilterValues="valueFilter?.[item]"
+      :open="openStatus[item]"
+      :unselectedFilterValues="valueFilter[item]"
       :attributeName="item"
-      :attributeValues="allFilters?.[item]"
-      :zIndex="zIndices?.[item]"
+      :attributeValues="allFilters[item]"
+      :zIndex="zIndices[item] || maxZIndex"
       :hideDropDownForUnused="hideDropDownForUnused"
       @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox', $event)"
       @update:unselectedFilterValues="
@@ -84,6 +84,10 @@ const props = defineProps({
   zIndices: {
     type: Object,
     default: () => ({})
+  },
+  maxZIndex: {
+    type: Number,
+    default: 1000
   },
   openStatus: {
     type: Object,
