@@ -90,7 +90,7 @@ const filterText = ref('')
 const showMenu = ref(filterBoxValuesList.length < menuLimit)
 const sortedList = [...filterBoxValuesList].sort(sorter(props.filterBoxKey))
 const filteredList = computed(() => sortedList.filter(matchesFilter))
-const unselectedValues = ref(props.unselectedFilterValues)
+const unselectedValues = computed(() => props.unselectedFilterValues)
 const emit = defineEmits([
   'update:zIndexOfFilterBox',
   'update:unselectedFilterValues'
