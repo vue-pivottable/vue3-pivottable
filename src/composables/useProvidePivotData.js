@@ -36,51 +36,49 @@ export function providePivotData(props) {
         }
   })
 
-  const allValues = computed(() => {
-    const values = []
-    rowKeys.value.forEach((r) =>
-      colKeys.value.forEach((c) => values.push(getAggregator(r, c).value()))
-    )
-    return values
+  const allColorScales = computed(() => {
+    const values = rowKeys.value.reduce((acc, r) => {
+      return acc.concat(colKeys.value.map((c) => getAggregator(r, c).value()))
+    }, [])
+    return colorScaleGenerator(values)
   })
+  const rowColorScales = computed(() =>
+    rowKeys.value.reduce((scales, r) => {
+      scales[r] = colorScaleGenerator(
+        colKeys.value.map((x) => getAggregator(r, x).value())
+      )
+      return scales
+    }, {})
+  )
+  const colColorScales = computed(() =>
+    colKeys.value.reduce((scales, c) => {
+      scales[c] = colorScaleGenerator(
+        rowKeys.value.map((x) => getAggregator(x, c).value())
+      )
+      return scales
+    }, {})
+  )
 
-  // Colors for heatmap
   const valueCellColors = (rowKey, colKey, value) => {
     if (props.heatmapMode === 'full') {
-      const colorScale = colorScaleGenerator(allValues.value)
-      return colorScale(value)
+      return allColorScales.value(value)
     } else if (props.heatmapMode === 'row') {
-      const rowColorScales = rowKeys.value.reduce((scales, r) => {
-        scales[r] = colorScaleGenerator(
-          colKeys.value.map((x) => getAggregator(r, x).value())
-        )
-        return scales
-      }, {})
-      return rowColorScales[rowKey](value)
+      return rowColorScales.value[rowKey](value)
     } else if (props.heatmapMode === 'col') {
-      const colColorScales = colKeys.value.reduce((scales, c) => {
-        scales[c] = colorScaleGenerator(
-          rowKeys.value.map((x) => getAggregator(x, c).value())
-        )
-        return scales
-      }, {})
-      return colColorScales[colKey](value)
+      return colColorScales.value[colKey](value)
     }
     return {}
   }
+  const rowTotalValues = colKeys.value.map((x) => getAggregator([], x).value())
   const rowTotalColors = (value) => {
     if (!props.heatmapMode) return {}
-    const rowTotalValues = colKeys.value.map((x) =>
-      getAggregator([], x).value()
-    )
+
     return colorScaleGenerator(rowTotalValues)(value)
   }
-
+  const colTotalValues = rowKeys.value.map((x) => getAggregator(x, []).value())
   const colTotalColors = (value) => {
     if (!props.heatmapMode) return {}
-    const colTotalValues = rowKeys.value.map((x) =>
-      getAggregator(x, []).value()
-    )
+
     return colorScaleGenerator(colTotalValues)(value)
   }
 
