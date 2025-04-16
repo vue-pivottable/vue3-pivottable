@@ -22,7 +22,11 @@
       class="pvVal"
       :style="getValueCellStyle(rowKey, colKey)"
       @click="
-        handleCellClick(getAggregator(rowKey, colKey).value(), rowKey, colKey)
+        handleCellClick(
+          getAggregator(rowKey, colKey).value(),
+          rowKey,
+          colKey
+        )($event)
       "
     >
       {{
@@ -35,7 +39,9 @@
       v-if="rowTotal"
       class="pvtTotal"
       :style="getRowTotalStyle(rowKey)"
-      @click="handleCellClick(getAggregator(rowKey, []).value(), rowKey, [])"
+      @click="
+        handleCellClick(getAggregator(rowKey, []).value(), rowKey, [])($event)
+      "
     >
       {{ getAggregator(rowKey, []).format(getAggregator(rowKey, []).value()) }}
     </td>
@@ -79,7 +85,7 @@ const getValueCellStyle = (rowKey, colKey) => {
   return valueCellColors(rowKey, colKey, value)
 }
 
-const getRowTotalStyle = rowKey => {
+const getRowTotalStyle = (rowKey) => {
   const value = getAggregator(rowKey, []).value()
   return colTotalColors(value)
 }
@@ -88,21 +94,21 @@ const handleCellClick = (value, rowValues, colValues) => {
   if (props.tableOptions?.clickCallback) {
     const filters = {}
 
-    // Add column filters
     colAttrs.value.forEach((attr, i) => {
       if (colValues[i] !== undefined && colValues[i] !== null) {
         filters[attr] = colValues[i]
       }
     })
 
-    // Add row filters
     rowAttrs.value.forEach((attr, i) => {
       if (rowValues[i] !== undefined && rowValues[i] !== null) {
         filters[attr] = rowValues[i]
       }
     })
 
-    props.tableOptions.clickCallback(event, value, filters, pivotData.value)
+    return (event) =>
+      props.tableOptions.clickCallback(event, value, filters, pivotData.value)
   }
+  return () => ({})
 }
 </script>
