@@ -16,8 +16,11 @@
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
+          :hideFilterBoxOfUnusedAttributes="
+            state.hideFilterBoxOfUnusedAttributes
+          "
           :zIndices="pivotUiState.zIndices"
+          :maxZIndex="pivotUiState.maxZIndex"
           :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
@@ -54,8 +57,11 @@
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
+          :hideFilterBoxOfUnusedAttributes="
+            state.hideFilterBoxOfUnusedAttributes
+          "
           :zIndices="pivotUiState.zIndices"
+          :maxZIndex="pivotUiState.maxZIndex"
           :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
@@ -76,8 +82,11 @@
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
+          :hideFilterBoxOfUnusedAttributes="
+            state.hideFilterBoxOfUnusedAttributes
+          "
           :zIndices="pivotUiState.zIndices"
+          :maxZIndex="pivotUiState.maxZIndex"
           :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
@@ -105,7 +114,12 @@ import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '@/'
 import { computed, watch } from 'vue'
-import { usePropsState, useMaterializeInput, usePivotUiState, provideFilterBox } from '@/composables'
+import {
+  usePropsState,
+  useMaterializeInput,
+  usePivotUiState,
+  provideFilterBox
+} from '@/composables'
 import TableRenderer from '../pivottable/renderer'
 
 const props = defineProps({
@@ -162,10 +176,7 @@ const {
   onUpdateUnusedOrder
 } = usePivotUiState()
 
-const {
-  allFilters,
-  materializedInput
-} = useMaterializeInput(
+const { allFilters, materializedInput } = useMaterializeInput(
   computed(() => props.data),
   {
     derivedAttributes: computed(() => props.derivedAttributes)
@@ -173,9 +184,7 @@ const {
 )
 
 const rendererItems = computed(() =>
-  Object.keys(state.renderers).length
-    ? state.renderers
-    : TableRenderer
+  Object.keys(state.renderers).length ? state.renderers : TableRenderer
 )
 const aggregatorItems = computed(() => state.aggregators)
 const rowAttrs = computed(() => {
@@ -225,9 +234,11 @@ watch(
       allFilters: allFilters.value,
       materializedInput: materializedInput.value
     })
-  }, {
+  },
+  {
     deep: true
-  })
+  }
+)
 </script>
 
 <style>
@@ -235,5 +246,4 @@ watch(
   border-collapse: collapse;
   width: 100%;
 }
-
 </style>
