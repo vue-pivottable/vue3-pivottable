@@ -105,26 +105,6 @@
       </tr>
     </tbody>
   </table>
-  <div>
-    <h4>State</h4>
-    rows: {{ state.rows }} <br />
-    cols: {{ state.cols }} <br />
-    aggregatorName: {{ state.aggregatorName }} <br />
-    rendererName: {{ state.rendererName }} <br />
-    vals: {{ state.vals }} <br />
-    attributeNames: {{ attributeNames }}
-    <h4>UI State</h4>
-    unusedOrder: {{ pivotUiState.unusedOrder }} <br />
-    zIndices: {{ pivotUiState.zIndices }} <br />
-    maxZIndex: {{ pivotUiState.maxZIndex }} <br />
-    openStatus: {{ pivotUiState.openStatus }} <br />
-    allFilters:
-    <textarea
-      style="height: 500px; margin: 10px; width: 100%"
-      readonly
-      :value="JSON.stringify(allFilters, undefined, 2)"
-    />
-  </div>
 </template>
 
 <script setup>

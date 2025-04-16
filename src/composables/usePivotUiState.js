@@ -8,9 +8,9 @@ export function usePivotUiState () {
     openStatus: {}
   })
 
-  const onMoveFilterBoxToTop = ({ key }) => {
+  const onMoveFilterBoxToTop = (attributeName) => {
     pivotUiState.maxZIndex++
-    pivotUiState.zIndices[key] = pivotUiState.maxZIndex
+    pivotUiState.zIndices[attributeName] = pivotUiState.maxZIndex
   }
 
   const onUpdateOpenStatus = ({ key, value }) => {
