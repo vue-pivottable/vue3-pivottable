@@ -90,7 +90,6 @@ const props = defineProps({
   }
 })
 const { localeStrings, sorter, menuLimit } = useProvideFilterBox()
-console.log(localeStrings)
 const filterBoxValuesList = Object.keys(props.filterBoxValues)
 const filterText = ref('')
 const showMenu = ref(filterBoxValuesList.length < menuLimit)
@@ -117,6 +116,7 @@ const addValuesToFilter = (values) => {
   emit('update:unselectedFilterValues', { key: props.filterBoxKey, value: filterValues })
 }
 const removeValuesFromFilter = (values) => {
+  console.log(values)
   const filterValues = values.reduce((r, v) => {
     if (r[v]) {
       delete r[v]
