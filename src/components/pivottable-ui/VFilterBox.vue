@@ -116,6 +116,7 @@ const addValuesToFilter = (values) => {
   emit('update:unselectedFilterValues', { key: props.filterBoxKey, value: filterValues })
 }
 const removeValuesFromFilter = (values) => {
+  console.log(values)
   const filterValues = values.reduce((r, v) => {
     if (r[v]) {
       delete r[v]
