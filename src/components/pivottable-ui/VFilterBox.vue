@@ -118,7 +118,6 @@ const addValuesToFilter = (values) => {
   })
 }
 const removeValuesFromFilter = (values) => {
-  console.log(values)
   const filterValues = values.reduce(
     (r, v) => {
       if (r[v]) {
