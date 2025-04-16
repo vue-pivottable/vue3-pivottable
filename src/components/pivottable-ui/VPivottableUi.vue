@@ -20,6 +20,7 @@
             state.hideFilterBoxOfUnusedAttributes
           "
           :zIndices="pivotUiState.zIndices"
+          :maxZIndex="pivotUiState.maxZIndex"
           :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
@@ -63,6 +64,7 @@
             state.hideFilterBoxOfUnusedAttributes
           "
           :zIndices="pivotUiState.zIndices"
+          :maxZIndex="pivotUiState.maxZIndex"
           :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
@@ -90,6 +92,7 @@
             state.hideFilterBoxOfUnusedAttributes
           "
           :zIndices="pivotUiState.zIndices"
+          :maxZIndex="pivotUiState.maxZIndex"
           :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
