@@ -3,9 +3,9 @@ import TableRenderer from './TableRenderer.vue'
 import { defaultProps } from '@/helper'
 
 export default {
-  Table: defineComponent({
+  'Table': defineComponent({
     name: 'vue-table',
-    setup (props) {
+    setup(props) {
       return () => h(TableRenderer, {
         ...defaultProps,
         ...props
@@ -14,7 +14,7 @@ export default {
   }),
   'Table Heatmap': defineComponent({
     name: 'vue-table-heatmap',
-    setup (props) {
+    setup(props) {
       return () => h(TableRenderer, {
         ...defaultProps,
         ...props,
@@ -24,7 +24,7 @@ export default {
   }),
   'Table Col Heatmap': defineComponent({
     name: 'vue-table-col-heatmap',
-    setup (props) {
+    setup(props) {
       return () => h(TableRenderer, {
         ...defaultProps,
         ...props,
@@ -34,7 +34,7 @@ export default {
   }),
   'Table Row Heatmap': defineComponent({
     name: 'vue-table-row-heatmap',
-    setup (props) {
+    setup(props) {
       return () => h(TableRenderer, {
         ...defaultProps,
         ...props,

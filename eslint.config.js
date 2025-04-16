@@ -4,18 +4,19 @@ import pluginVue from 'eslint-plugin-vue'
 import pluginImport from 'eslint-plugin-import'
 import { standard } from './eslint.standard.mjs'
 
-/** @type {import('eslint').Linter.Config[]} */
 export default [
   {
-    ignores: [
-      'node_modules/**',
-      'dist/**',
-      'build/**',
-      '.history/**'
-    ]
+    ignores: ['node_modules/**', 'dist/**', 'build/**', '.history/**']
   },
   { files: ['**/*.{js,mjs,cjs,vue}'] },
-  { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node
+      }
+    }
+  },
   pluginJs.configs.recommended,
   ...pluginVue.configs['flat/essential'],
   {
@@ -26,7 +27,16 @@ export default [
   {
     rules: {
       ...standard.rules,
-      '@typescript-eslint/no-explicit-any': 'off'
+      '@typescript-eslint/no-explicit-any': 'off',
+      'space-before-function-paren': [
+        'error',
+        {
+          anonymous: 'always',
+          named: 'never',
+          asyncArrow: 'always'
+        }
+      ],
+      'quote-props': ['error', 'consistent']
     }
   }
 ]

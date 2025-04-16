@@ -61,7 +61,7 @@ const grandTotalValue = computed(() => {
   return getAggregator([], []).value()
 })
 
-const getColTotalStyle = (colKey) => {
+const getColTotalStyle = colKey => {
   const value = getAggregator([], colKey).value()
   return rowTotalColors(value)
 }

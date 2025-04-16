@@ -1,12 +1,12 @@
 import { ref, watch } from 'vue'
 import { PivotData } from '@/helper/utilities.js'
 
-export function useMaterializeInput (dataSource, options) {
+export function useMaterializeInput(dataSource, options) {
   const rawData = ref(null)
   const allFilters = ref({})
   const materializedInput = ref([])
 
-  function processData (data) {
+  function processData(data) {
     if (!data || rawData.value === data) return
 
     rawData.value = data
@@ -53,9 +53,12 @@ export function useMaterializeInput (dataSource, options) {
 
   watch(() => dataSource.value, processData, { immediate: true })
 
-  watch(() => options.derivedAttributes.value, () => {
-    processData(dataSource.value)
-  })
+  watch(
+    () => options.derivedAttributes.value,
+    () => {
+      processData(dataSource.value)
+    }
+  )
 
   return {
     rawData,

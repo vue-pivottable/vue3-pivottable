@@ -39,7 +39,4 @@ const install = (app) => {
 
 export default install
 export * from './components/index'
-export {
-  PivotUtilities,
-  Renderer
-}
+export { PivotUtilities, Renderer }

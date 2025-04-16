@@ -1,6 +1,12 @@
 <template>
-  <tr v-for="(rowKey, i) in rowKeys" :key="`rowKeyRow${i}`">
-    <template v-for="(text, j) in rowKey" :key="`rowLabel${i}-${j}`">
+  <tr
+    v-for="(rowKey, i) in rowKeys"
+    :key="`rowKeyRow${i}`"
+  >
+    <template
+      v-for="(text, j) in rowKey"
+      :key="`rowLabel${i}-${j}`"
+    >
       <th
         v-if="spanSize(rowKeys, i, j) !== -1"
         class="pvtRowLabel"
@@ -15,9 +21,15 @@
       :key="`pvtVal${i}-${j}`"
       class="pvVal"
       :style="getValueCellStyle(rowKey, colKey)"
-      @click="handleCellClick(getAggregator(rowKey, colKey).value(), rowKey, colKey)"
+      @click="
+        handleCellClick(getAggregator(rowKey, colKey).value(), rowKey, colKey)
+      "
     >
-      {{ getAggregator(rowKey, colKey).format(getAggregator(rowKey, colKey).value()) }}
+      {{
+        getAggregator(rowKey, colKey).format(
+          getAggregator(rowKey, colKey).value()
+        )
+      }}
     </td>
     <td
       v-if="rowTotal"
@@ -31,7 +43,6 @@
 </template>
 
 <script setup>
-
 import { useProvidePivotData } from '@/composables/useProvidePivotData'
 
 const props = defineProps({
@@ -68,7 +79,7 @@ const getValueCellStyle = (rowKey, colKey) => {
   return valueCellColors(rowKey, colKey, value)
 }
 
-const getRowTotalStyle = (rowKey) => {
+const getRowTotalStyle = rowKey => {
   const value = getAggregator(rowKey, []).value()
   return colTotalColors(value)
 }

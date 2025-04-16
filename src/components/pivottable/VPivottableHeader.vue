@@ -1,8 +1,15 @@
 <template>
   <thead>
     <template v-if="pivotData">
-      <tr v-for="(c, j) in colAttrs" :key="`colAttrs${j}`">
-        <th v-if="j === 0 && rowAttrs.length !== 0" :colSpan="rowAttrs.length" :rowSpan="colAttrs.length"></th>
+      <tr
+        v-for="(c, j) in colAttrs"
+        :key="`colAttrs${j}`"
+      >
+        <th
+          v-if="j === 0 && rowAttrs.length !== 0"
+          :colSpan="rowAttrs.length"
+          :rowSpan="colAttrs.length"
+        ></th>
         <th class="pvtAxisLabel">{{ c }}</th>
         <VPivottableHeaderColumns
           :colKeys="colKeys"
@@ -48,5 +55,4 @@ defineProps({
 })
 
 const { pivotData, colAttrs, rowAttrs, colKeys } = useProvidePivotData()
-
 </script>

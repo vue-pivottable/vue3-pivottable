@@ -16,6 +16,7 @@ const props = defineProps({
     default: () => TableRenderer
   }
 })
-const rendererComponent = computed(() => props.rendererItems[props.rendererName] || TableRenderer.Table)
-
+const rendererComponent = computed(
+  () => props.rendererItems[props.rendererName] || TableRenderer.Table
+)
 </script>

@@ -77,16 +77,18 @@ export default {
   rowOrder: {
     type: String,
     default: 'key_a_to_z',
-    validator: (value) => ['key_a_to_z', 'value_a_to_z', 'value_z_to_a'].indexOf(value) !== -1
+    validator: (value) =>
+      ['key_a_to_z', 'value_a_to_z', 'value_z_to_a'].indexOf(value) !== -1
   },
   colOrder: {
     type: String,
     default: 'key_a_to_z',
-    validator: value => ['key_a_to_z', 'value_a_to_z', 'value_z_to_a'].indexOf(value) !== -1
+    validator: (value) =>
+      ['key_a_to_z', 'value_a_to_z', 'value_z_to_a'].indexOf(value) !== -1
   },
   tableMaxWidth: {
     type: Number,
     default: 0,
-    validator: value => value >= 0
+    validator: (value) => value >= 0
   }
 }

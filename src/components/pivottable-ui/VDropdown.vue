@@ -28,7 +28,11 @@ const props = defineProps({
 })
 const valueModel = ref(props.value || props.options[0])
 const emit = defineEmits(['update:value'])
-watch(valueModel, (newVal) => {
-  emit('update:value', newVal)
-}, { immediate: true })
+watch(
+  valueModel,
+  (newVal) => {
+    emit('update:value', newVal)
+  },
+  { immediate: true }
+)
 </script>
