@@ -14,7 +14,7 @@
       :fixed="fixedFromDragDrop.includes(item)"
       :restricted="restrictedFromDragDrop.includes(item)"
       :open="openStatus?.[item]"
-      :unSelectedFilterValues="valueFilter?.[item]"
+      :unselectedFilterValues="valueFilter?.[item]"
       :attributeName="item"
       :attributeValues="allFilters?.[item]"
       :zIndex="zIndices?.[item]"
