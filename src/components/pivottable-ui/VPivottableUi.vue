@@ -16,8 +16,11 @@
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
+          :hideFilterBoxOfUnusedAttributes="
+            state.hideFilterBoxOfUnusedAttributes
+          "
           :zIndices="pivotUiState.zIndices"
+          :maxZIndex="pivotUiState.maxZIndex"
           :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
@@ -54,8 +57,11 @@
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
+          :hideFilterBoxOfUnusedAttributes="
+            state.hideFilterBoxOfUnusedAttributes
+          "
           :zIndices="pivotUiState.zIndices"
+          :maxZIndex="pivotUiState.maxZIndex"
           :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
@@ -76,8 +82,11 @@
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
           :fixedFromDragDrop="state.fixedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="state.hideFilterBoxOfUnusedAttributes"
+          :hideFilterBoxOfUnusedAttributes="
+            state.hideFilterBoxOfUnusedAttributes
+          "
           :zIndices="pivotUiState.zIndices"
+          :maxZIndex="pivotUiState.maxZIndex"
           :openStatus="pivotUiState.openStatus"
           @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
           @update:unselectedFilterValues="onUpdateValueFilter"
@@ -96,22 +105,22 @@
       </tr>
     </tbody>
   </table>
-    <div>
+  <div>
     <h4>State</h4>
-    rows: {{ state.rows }} <br>
-    cols: {{ state.cols }} <br>
-    aggregatorName: {{ state.aggregatorName }} <br>
-    rendererName: {{ state.rendererName }} <br>
-    vals: {{ state.vals }} <br>
+    rows: {{ state.rows }} <br />
+    cols: {{ state.cols }} <br />
+    aggregatorName: {{ state.aggregatorName }} <br />
+    rendererName: {{ state.rendererName }} <br />
+    vals: {{ state.vals }} <br />
     attributeNames: {{ attributeNames }}
     <h4>UI State</h4>
-    unusedOrder: {{ pivotUiState.unusedOrder }} <br>
-    zIndices: {{ pivotUiState.zIndices }} <br>
-    maxZIndex: {{ pivotUiState.maxZIndex }} <br>
-    openStatus: {{ pivotUiState.openStatus }} <br>
+    unusedOrder: {{ pivotUiState.unusedOrder }} <br />
+    zIndices: {{ pivotUiState.zIndices }} <br />
+    maxZIndex: {{ pivotUiState.maxZIndex }} <br />
+    openStatus: {{ pivotUiState.openStatus }} <br />
     allFilters:
     <textarea
-      style="height: 500px; margin: 10px; width: 100%;"
+      style="height: 500px; margin: 10px; width: 100%"
       readonly
       :value="JSON.stringify(allFilters, undefined, 2)"
     />
@@ -125,7 +134,12 @@ import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
 import { VPivottable } from '@/'
 import { computed, watch } from 'vue'
-import { usePropsState, useMaterializeInput, usePivotUiState, provideFilterBox } from '@/composables'
+import {
+  usePropsState,
+  useMaterializeInput,
+  usePivotUiState,
+  provideFilterBox
+} from '@/composables'
 import TableRenderer from '../pivottable/renderer'
 
 const props = defineProps({
@@ -182,10 +196,7 @@ const {
   onUpdateUnusedOrder
 } = usePivotUiState()
 
-const {
-  allFilters,
-  materializedInput
-} = useMaterializeInput(
+const { allFilters, materializedInput } = useMaterializeInput(
   computed(() => props.data),
   {
     derivedAttributes: computed(() => props.derivedAttributes)
@@ -193,9 +204,7 @@ const {
 )
 
 const rendererItems = computed(() =>
-  Object.keys(state.renderers).length
-    ? state.renderers
-    : TableRenderer
+  Object.keys(state.renderers).length ? state.renderers : TableRenderer
 )
 const aggregatorItems = computed(() => state.aggregators)
 const rowAttrs = computed(() => {
@@ -245,9 +254,11 @@ watch(
       allFilters: allFilters.value,
       materializedInput: materializedInput.value
     })
-  }, {
+  },
+  {
     deep: true
-  })
+  }
+)
 </script>
 
 <style>
@@ -255,5 +266,4 @@ watch(
   border-collapse: collapse;
   width: 100%;
 }
-
 </style>
