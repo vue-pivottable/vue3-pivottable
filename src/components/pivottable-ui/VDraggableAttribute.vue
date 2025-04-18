@@ -1,5 +1,5 @@
 <template>
-  <li>
+  <li @mousedown="handleMouseDown">
     <span
       class="pvtAttr"
       :class="[filtered, { restricted }]"
@@ -11,7 +11,8 @@
       >
       <span
         v-if="!hideDropDown"
-        @click="toggleFilterBox"
+        @mousedown.stop
+        @click.stop="toggleFilterBox"
         class="pvtTriangle"
       >
         ▾
@@ -39,7 +40,8 @@ import { computed } from 'vue'
 const emit = defineEmits([
   'update:zIndexOfFilterBox',
   'update:unselectedFilterValues',
-  'update:openStatusOfFilterBox'
+  'update:openStatusOfFilterBox',
+  'mouse-down'
 ])
 
 const props = defineProps({
@@ -73,9 +75,18 @@ const props = defineProps({
 })
 
 const toggleFilterBox = () => {
+  console.log('toggle filter box')
   emit('update:openStatusOfFilterBox', {
     key: props.attributeName,
     value: !props.open
+  })
+}
+
+const handleMouseDown = () => {
+  console.log('handle mouse down')
+  emit('update:openStatusOfFilterBox', {
+    key: props.attributeName,
+    value: false
   })
 }
 
