@@ -7,7 +7,7 @@
       @data-parsed="onDataParsed"
     >
       <template #default="{ data }">
-        <VPivottableUi
+        <VuePivottableUi
           v-if="data.length > 0"
           :data="data"
           :rows="rows"
@@ -27,7 +27,7 @@
           <!-- <template v-slot:outputSlot="outputSlot">
           {{ outputSlot }}
         </template> -->
-        </VPivottableUi>
+        </VuePivottableUi>
       </template>
     </CsvUploader>
   </div>
@@ -36,7 +36,7 @@
 import { ref } from 'vue'
 import tips from './tips.js'
 import CsvUploader from './CsvUploader.vue'
-import { PivotUtilities } from '@/'
+import { PivotUtilities, VuePivottableUi } from '../dist/vue-pivottable.es.js'
 const initialData = ref(tips)
 const initialFilename = ref('샘플 데이터셋: Tips')
 // const tableOptions = {
@@ -73,4 +73,4 @@ const onDataParsed = (data) => {
 }
 </script>
 
-<style scoped></style>
+<style></style>
