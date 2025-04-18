@@ -1,5 +1,8 @@
 <template>
-  <template v-for="(colKey, i) in colKeys" :key="`colKey${i}`">
+  <template
+    v-for="(colKey, i) in colKeys"
+    :key="`colKey${i}`"
+  >
     <th
       v-if="spanSize(colKeys, i, colIndex) !== -1"
       class="pvtColLabel"

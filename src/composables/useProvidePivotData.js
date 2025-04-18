@@ -3,7 +3,7 @@ import { PivotData } from '@/helper'
 
 const PIVOT_DATA_KEY = Symbol('pivotData')
 
-export function providePivotData (props) {
+export function providePivotData(props) {
   const error = ref(null)
 
   const pivotData = computed(() => {
@@ -21,10 +21,11 @@ export function providePivotData (props) {
   const colAttrs = computed(() => pivotData.value?.props.cols || [])
   const rowAttrs = computed(() => pivotData.value?.props.rows || [])
   const colorScaleGenerator = props.tableColorScaleGenerator
-  const getAggregator = (rowKey, colKey) => pivotData.value?.getAggregator(rowKey, colKey) || {
-    value: () => null,
-    format: () => ''
-  }
+  const getAggregator = (rowKey, colKey) =>
+    pivotData.value?.getAggregator(rowKey, colKey) || {
+      value: () => null,
+      format: () => ''
+    }
 
   const grandTotalAggregator = computed(() => {
     return pivotData.value
@@ -35,53 +36,49 @@ export function providePivotData (props) {
         }
   })
 
-  const allValues = computed(() => {
-    const values = []
-    rowKeys.value.forEach(r =>
-      colKeys.value.forEach(c =>
-        values.push(getAggregator(r, c).value())
-      )
-    )
-    return values
+  const allColorScales = computed(() => {
+    const values = rowKeys.value.reduce((acc, r) => {
+      return acc.concat(colKeys.value.map((c) => getAggregator(r, c).value()))
+    }, [])
+    return colorScaleGenerator(values)
   })
+  const rowColorScales = computed(() =>
+    rowKeys.value.reduce((scales, r) => {
+      scales[r] = colorScaleGenerator(
+        colKeys.value.map((x) => getAggregator(r, x).value())
+      )
+      return scales
+    }, {})
+  )
+  const colColorScales = computed(() =>
+    colKeys.value.reduce((scales, c) => {
+      scales[c] = colorScaleGenerator(
+        rowKeys.value.map((x) => getAggregator(x, c).value())
+      )
+      return scales
+    }, {})
+  )
 
-  // Colors for heatmap
   const valueCellColors = (rowKey, colKey, value) => {
     if (props.heatmapMode === 'full') {
-      const colorScale = colorScaleGenerator(allValues.value)
-      return colorScale(value)
+      return allColorScales.value(value)
     } else if (props.heatmapMode === 'row') {
-      const rowColorScales = rowKeys.value.reduce((scales, r) => {
-        scales[r] = colorScaleGenerator(colKeys.value.map(x =>
-          getAggregator(r, x).value()
-        ))
-        return scales
-      }, {})
-      return rowColorScales[rowKey](value)
+      return rowColorScales.value[rowKey](value)
     } else if (props.heatmapMode === 'col') {
-      const colColorScales = colKeys.value.reduce((scales, c) => {
-        scales[c] = colorScaleGenerator(rowKeys.value.map(x =>
-          getAggregator(x, c).value()
-        ))
-        return scales
-      }, {})
-      return colColorScales[colKey](value)
+      return colColorScales.value[colKey](value)
     }
     return {}
   }
+  const rowTotalValues = colKeys.value.map((x) => getAggregator([], x).value())
   const rowTotalColors = (value) => {
     if (!props.heatmapMode) return {}
-    const rowTotalValues = colKeys.value.map(x =>
-      getAggregator([], x).value()
-    )
+
     return colorScaleGenerator(rowTotalValues)(value)
   }
-
+  const colTotalValues = rowKeys.value.map((x) => getAggregator(x, []).value())
   const colTotalColors = (value) => {
     if (!props.heatmapMode) return {}
-    const colTotalValues = rowKeys.value.map(x =>
-      getAggregator(x, []).value()
-    )
+
     return colorScaleGenerator(colTotalValues)(value)
   }
 
@@ -134,6 +131,6 @@ export function providePivotData (props) {
   return pivotDataContext
 }
 
-export function useProvidePivotData () {
+export function useProvidePivotData() {
   return inject(PIVOT_DATA_KEY)
 }

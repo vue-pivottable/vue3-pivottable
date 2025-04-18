@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 
-export function usePivotUiState () {
+export function usePivotUiState() {
   const pivotUiState = reactive({
     unusedOrder: [],
     zIndices: {},

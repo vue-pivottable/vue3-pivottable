@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 
-export function usePropsState (initialProps) {
+export function usePropsState(initialProps) {
   const state = reactive({
     ...initialProps
   })
@@ -11,7 +11,7 @@ export function usePropsState (initialProps) {
     }
   }
 
-  const updateMultiple = updates => {
+  const updateMultiple = (updates) => {
     Object.entries(updates).forEach(([key, value]) => {
       if (key in state) {
         state[key] = value
@@ -25,7 +25,7 @@ export function usePropsState (initialProps) {
     })
   }
 
-  const onUpdateRendererName = rendererName => {
+  const onUpdateRendererName = (rendererName) => {
     updateState('rendererName', rendererName)
     if (rendererName === 'Table Heatmap') {
       updateState('heatmapMode', 'full')
@@ -38,16 +38,16 @@ export function usePropsState (initialProps) {
     }
   }
 
-  const onUpdateAggregatorName = aggregatorName => {
+  const onUpdateAggregatorName = (aggregatorName) => {
     updateState('aggregatorName', aggregatorName)
   }
-  const onUpdateRowOrder = rowOrder => {
+  const onUpdateRowOrder = (rowOrder) => {
     updateState('rowOrder', rowOrder)
   }
-  const onUpdateColOrder = colOrder => {
+  const onUpdateColOrder = (colOrder) => {
     updateState('colOrder', colOrder)
   }
-  const onUpdateVals = vals => {
+  const onUpdateVals = (vals) => {
     updateState('vals', vals)
   }
   const onDraggedAttribute = ({ key, value }) => {

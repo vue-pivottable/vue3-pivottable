@@ -21,7 +21,7 @@ export const standard = {
     'arrow-spacing': ['error', { before: true, after: true }],
     'block-spacing': ['error', 'always'],
     'brace-style': ['error', '1tbs', { allowSingleLine: true }],
-    camelcase: [
+    'camelcase': [
       'error',
       {
         allow: ['^UNSAFE_'],
@@ -47,15 +47,15 @@ export const standard = {
       { enforceForClassMembers: true }
     ],
     'constructor-super': 'error',
-    curly: ['error', 'multi-line'],
+    'curly': ['error', 'multi-line'],
     'default-case-last': 'error',
     'dot-location': ['error', 'property'],
     'dot-notation': ['error', { allowKeywords: true }],
     'eol-last': 'error',
-    eqeqeq: ['error', 'always', { null: 'ignore' }],
+    'eqeqeq': ['error', 'always', { null: 'ignore' }],
     'func-call-spacing': ['error', 'never'],
     'generator-star-spacing': ['error', { before: true, after: true }],
-    indent: [
+    'indent': [
       'error',
       2,
       {
@@ -101,10 +101,7 @@ export const standard = {
       { exceptAfterSingleLine: true }
     ],
     'multiline-ternary': ['error', 'always-multiline'],
-    'new-cap': [
-      'error',
-      { newIsCap: true, capIsNew: false, properties: true }
-    ],
+    'new-cap': ['error', { newIsCap: true, capIsNew: false, properties: true }],
     'new-parens': 'error',
     'no-array-constructor': 'error',
     'no-async-promise-executor': 'error',
@@ -161,10 +158,7 @@ export const standard = {
     'no-mixed-spaces-and-tabs': 'error',
     'no-multi-spaces': 'error',
     'no-multi-str': 'error',
-    'no-multiple-empty-lines': [
-      'error',
-      { max: 1, maxBOF: 0, maxEOF: 0 }
-    ],
+    'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 0, maxEOF: 0 }],
     'no-new': 'error',
     'no-new-func': 'error',
     'no-new-object': 'error',
@@ -226,10 +220,7 @@ export const standard = {
     'no-void': 'error',
     'no-whitespace-before-property': 'error',
     'no-with': 'error',
-    'object-curly-newline': [
-      'error',
-      { multiline: true, consistent: true }
-    ],
+    'object-curly-newline': ['error', { multiline: true, consistent: true }],
     'object-curly-spacing': ['error', 'always'],
     'object-property-newline': [
       'error',
@@ -249,13 +240,13 @@ export const standard = {
     'prefer-promise-reject-errors': 'error',
     'prefer-regex-literals': ['error', { disallowRedundantWrapping: true }],
     'quote-props': ['error', 'as-needed'],
-    quotes: [
+    'quotes': [
       'error',
       'single',
       { avoidEscape: true, allowTemplateLiterals: false }
     ],
     'rest-spread-spacing': ['error', 'never'],
-    semi: ['error', 'never'],
+    'semi': ['error', 'never'],
     'semi-spacing': ['error', { before: false, after: true }],
     'space-before-blocks': ['error', 'always'],
     'space-before-function-paren': ['error', 'always'],
@@ -288,7 +279,7 @@ export const standard = {
     'valid-typeof': ['error', { requireStringLiterals: true }],
     'wrap-iife': ['error', 'any', { functionPrototypeMethods: true }],
     'yield-star-spacing': ['error', 'both'],
-    yoda: ['error', 'never'],
+    'yoda': ['error', 'never'],
 
     'import/export': 'error',
     'import/first': 'error',

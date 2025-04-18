@@ -28,7 +28,10 @@
           @update:draggedAttribute="onDraggedAttribute"
         >
           <template v-slot:pvtAttr="props">
-            <slot name="pvtAttr" v-bind="props" />
+            <slot
+              name="pvtAttr"
+              v-bind="props"
+            />
           </template>
         </VDragAndDropCell>
       </tr>
@@ -69,7 +72,10 @@
           @update:draggedAttribute="onDraggedAttribute"
         >
           <template v-slot:pvtAttr="props">
-            <slot name="pvtAttr" v-bind="props" />
+            <slot
+              name="pvtAttr"
+              v-bind="props"
+            />
           </template>
         </VDragAndDropCell>
       </tr>
@@ -94,11 +100,17 @@
           @update:draggedAttribute="onDraggedAttribute"
         >
           <template v-slot:pvtAttr="props">
-            <slot v-bind="props" name="pvtAttr" />
+            <slot
+              v-bind="props"
+              name="pvtAttr"
+            />
           </template>
         </VDragAndDropCell>
         <td class="pvtOutput">
-          <slot name="outputSlot" :outputSlot="{ pivotData }">
+          <slot
+            name="outputSlot"
+            :outputSlot="{ pivotData }"
+          >
             <VPivottable v-bind="state" />
           </slot>
         </td>
@@ -189,21 +201,21 @@ const rendererItems = computed(() =>
 const aggregatorItems = computed(() => state.aggregators)
 const rowAttrs = computed(() => {
   return state.rows.filter(
-    e =>
+    (e) =>
       !state.hiddenAttributes.includes(e) &&
       !state.hiddenFromDragDrop.includes(e)
   )
 })
 const colAttrs = computed(() => {
   return state.cols.filter(
-    e =>
+    (e) =>
       !state.hiddenAttributes.includes(e) &&
       !state.hiddenFromDragDrop.includes(e)
   )
 })
 const attributeNames = computed(() => {
   return Object.keys(allFilters.value).filter(
-    e =>
+    (e) =>
       !state.hiddenAttributes.includes(e) &&
       !state.hiddenFromAggregators.includes(e)
   )
@@ -211,7 +223,7 @@ const attributeNames = computed(() => {
 const unusedAttrs = computed(() => {
   return attributeNames.value
     .filter(
-      e =>
+      (e) =>
         !state.rows.includes(e) &&
         !state.cols.includes(e) &&
         !state.hiddenAttributes.includes(e) &&

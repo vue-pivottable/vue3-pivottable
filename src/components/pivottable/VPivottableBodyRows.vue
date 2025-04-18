@@ -1,6 +1,12 @@
 <template>
-  <tr v-for="(rowKey, i) in rowKeys" :key="`rowKeyRow${i}`">
-    <template v-for="(text, j) in rowKey" :key="`rowLabel${i}-${j}`">
+  <tr
+    v-for="(rowKey, i) in rowKeys"
+    :key="`rowKeyRow${i}`"
+  >
+    <template
+      v-for="(text, j) in rowKey"
+      :key="`rowLabel${i}-${j}`"
+    >
       <th
         v-if="spanSize(rowKeys, i, j) !== -1"
         class="pvtRowLabel"
@@ -15,15 +21,27 @@
       :key="`pvtVal${i}-${j}`"
       class="pvVal"
       :style="getValueCellStyle(rowKey, colKey)"
-      @click="handleCellClick(getAggregator(rowKey, colKey).value(), rowKey, colKey)"
+      @click="
+        handleCellClick(
+          getAggregator(rowKey, colKey).value(),
+          rowKey,
+          colKey
+        )($event)
+      "
     >
-      {{ getAggregator(rowKey, colKey).format(getAggregator(rowKey, colKey).value()) }}
+      {{
+        getAggregator(rowKey, colKey).format(
+          getAggregator(rowKey, colKey).value()
+        )
+      }}
     </td>
     <td
       v-if="rowTotal"
       class="pvtTotal"
       :style="getRowTotalStyle(rowKey)"
-      @click="handleCellClick(getAggregator(rowKey, []).value(), rowKey, [])"
+      @click="
+        handleCellClick(getAggregator(rowKey, []).value(), rowKey, [])($event)
+      "
     >
       {{ getAggregator(rowKey, []).format(getAggregator(rowKey, []).value()) }}
     </td>
@@ -31,7 +49,6 @@
 </template>
 
 <script setup>
-
 import { useProvidePivotData } from '@/composables/useProvidePivotData'
 
 const props = defineProps({
@@ -77,21 +94,21 @@ const handleCellClick = (value, rowValues, colValues) => {
   if (props.tableOptions?.clickCallback) {
     const filters = {}
 
-    // Add column filters
     colAttrs.value.forEach((attr, i) => {
       if (colValues[i] !== undefined && colValues[i] !== null) {
         filters[attr] = colValues[i]
       }
     })
 
-    // Add row filters
     rowAttrs.value.forEach((attr, i) => {
       if (rowValues[i] !== undefined && rowValues[i] !== null) {
         filters[attr] = rowValues[i]
       }
     })
 
-    props.tableOptions.clickCallback(event, value, filters, pivotData.value)
+    return (event) =>
+      props.tableOptions.clickCallback(event, value, filters, pivotData.value)
   }
+  return () => ({})
 }
 </script>

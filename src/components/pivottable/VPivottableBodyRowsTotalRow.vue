@@ -11,14 +11,16 @@
       :key="`total${i}`"
       class="pvtTotal"
       :style="getColTotalStyle(colKey)"
-      @click="handleCellClick(getAggregator([], colKey).value(), [], colKey)"
+      @click="
+        handleCellClick(getAggregator([], colKey).value(), [], colKey)($event)
+      "
     >
       {{ getAggregator([], colKey).format(getAggregator([], colKey).value()) }}
     </td>
     <td
       v-if="rowTotal"
       class="pvtGrandTotal"
-      @click="handleCellClick(grandTotalValue, [], [])"
+      @click="handleCellClick(grandTotalValue, [], [])($event)"
     >
       {{ getAggregator([], []).format(grandTotalValue) }}
     </td>
@@ -70,21 +72,21 @@ const handleCellClick = (value, rowValues, colValues) => {
   if (props.tableOptions?.clickCallback) {
     const filters = {}
 
-    // Add column filters
     colAttrs.value.forEach((attr, i) => {
       if (colValues[i] !== undefined && colValues[i] !== null) {
         filters[attr] = colValues[i]
       }
     })
 
-    // Add row filters
     rowAttrs.value.forEach((attr, i) => {
       if (rowValues[i] !== undefined && rowValues[i] !== null) {
         filters[attr] = rowValues[i]
       }
     })
 
-    props.tableOptions.clickCallback(event, value, filters, pivotData.value)
+    return (event) =>
+      props.tableOptions.clickCallback(event, value, filters, pivotData.value)
   }
+  return () => ({})
 }
 </script>

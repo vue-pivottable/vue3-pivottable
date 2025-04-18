@@ -46,12 +46,6 @@ defineProps({
   }
 })
 
-const {
-  pivotData,
-  rowKeys,
-  colKeys,
-  rowAttrs,
-  colAttrs
-} = useProvidePivotData()
-
+const { pivotData, rowKeys, colKeys, rowAttrs, colAttrs } =
+  useProvidePivotData()
 </script>
