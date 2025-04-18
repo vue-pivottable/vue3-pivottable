@@ -2,7 +2,7 @@
   <li>
     <span
       class="pvtAttr"
-      :class="[filtered, { restricted, fixed }]"
+      :class="[filtered, { restricted }]"
     >
       <slot
         name="pvtAttr"
@@ -50,10 +50,6 @@ const props = defineProps({
   attributeValues: {
     type: Object,
     default: () => ({})
-  },
-  fixed: {
-    type: Boolean,
-    default: false
   },
   restricted: {
     type: Boolean,

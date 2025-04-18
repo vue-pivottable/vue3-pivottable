@@ -203,12 +203,6 @@ table.pvtTable tbody tr td {
   border: 1px solid #c8d4e3;
 }
 
-.pvtAxisContainer li span.pvtAttr.fixed {
-  border: 1px solid #c8d4e3;
-  color: #c5c5c5;
-  cursor: not-allowed;
-}
-
 .pvtTriangle {
   cursor: pointer;
   color: #506784;

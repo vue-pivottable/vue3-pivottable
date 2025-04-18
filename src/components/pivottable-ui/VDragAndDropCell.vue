@@ -12,7 +12,6 @@
     <VDraggableAttribute
       v-for="item in modelItems"
       :key="item"
-      :fixed="fixedFromDragDrop.includes(item)"
       :restricted="restrictedFromDragDrop.includes(item)"
       :open="openStatus[item]"
       :unselectedFilterValues="valueFilter[item]"
@@ -69,10 +68,6 @@ const props = defineProps({
     default: () => ({})
   },
   restrictedFromDragDrop: {
-    type: Array,
-    default: () => []
-  },
-  fixedFromDragDrop: {
     type: Array,
     default: () => []
   },

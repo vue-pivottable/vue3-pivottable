@@ -15,7 +15,6 @@
           :allFilters="allFilters"
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
-          :fixedFromDragDrop="state.fixedFromDragDrop"
           :hideFilterBoxOfUnusedAttributes="
             state.hideFilterBoxOfUnusedAttributes
           "
@@ -59,7 +58,6 @@
           :allFilters="allFilters"
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
-          :fixedFromDragDrop="state.fixedFromDragDrop"
           :hideFilterBoxOfUnusedAttributes="
             state.hideFilterBoxOfUnusedAttributes
           "
@@ -87,7 +85,6 @@
           :allFilters="allFilters"
           :valueFilter="state.valueFilter"
           :restrictedFromDragDrop="state.restrictedFromDragDrop"
-          :fixedFromDragDrop="state.fixedFromDragDrop"
           :hideFilterBoxOfUnusedAttributes="
             state.hideFilterBoxOfUnusedAttributes
           "
@@ -149,10 +146,6 @@ const props = defineProps({
     default: () => []
   },
   restrictedFromDragDrop: {
-    type: Array,
-    default: () => []
-  },
-  fixedFromDragDrop: {
     type: Array,
     default: () => []
   },
