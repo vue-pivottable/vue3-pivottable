@@ -41,8 +41,7 @@ import { computed } from 'vue'
 const emit = defineEmits([
   'update:zIndexOfFilterBox',
   'update:unselectedFilterValues',
-  'update:openStatusOfFilterBox',
-  'mouse-down'
+  'update:openStatusOfFilterBox'
 ])
 
 const props = defineProps({
