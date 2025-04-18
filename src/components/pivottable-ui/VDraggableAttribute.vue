@@ -95,7 +95,3 @@ const filtered = computed(() => {
     : null
 })
 </script>
-
-<style scoped>
-/* css sortonly를 sortOnly로 변경해야함 */
-</style>

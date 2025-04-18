@@ -3,10 +3,11 @@
     tag="td"
     :list="modelItems"
     :group="{ name: 'sharted', pull: true, put: true }"
-    ghost-class=".pvtFilterBox"
-    :preventOnfFilter="false"
+    :ghost-class="'pvtPlaceholder'"
+    :preventOnFilter="false"
     :class="classes"
-    @sort="onDrag"
+    @change="onDragEnd"
+    :move="onDragMove"
   >
     <VDraggableAttribute
       v-for="item in modelItems"
@@ -51,7 +52,6 @@ const props = defineProps({
     type: String,
     required: true
   },
-  // 삭제할 수 있으면 삭제
   classes: {
     type: String,
     default: ''
@@ -68,7 +68,6 @@ const props = defineProps({
     type: Object,
     default: () => ({})
   },
-  // 같은 셀 내 이동만 가능(정렬)
   restrictedFromDragDrop: {
     type: Array,
     default: () => []
@@ -97,7 +96,18 @@ const props = defineProps({
 
 const modelItems = ref([])
 
-const onDrag = () => {
+const onDragMove = (event) => {
+  const draggedItem = event.draggedContext.element
+  const isCrossCellMove = event.from !== event.to
+
+  if (isCrossCellMove && props.restrictedFromDragDrop.includes(draggedItem)) {
+    return false
+  }
+
+  return true
+}
+
+const onDragEnd = () => {
   if (props.cellType !== 'unused') {
     emit('update:draggedAttribute', {
       key: props.cellType,
