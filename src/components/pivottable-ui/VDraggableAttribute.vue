@@ -23,6 +23,7 @@
         :filterBoxKey="attributeName"
         :filterBoxValues="attributeValues"
         :zIndex="zIndex"
+        @mousedown.stop
         @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox', $event)"
         @update:unselectedFilterValues="
           $emit('update:unselectedFilterValues', $event)
@@ -75,7 +76,6 @@ const props = defineProps({
 })
 
 const toggleFilterBox = () => {
-  console.log('toggle filter box')
   emit('update:openStatusOfFilterBox', {
     key: props.attributeName,
     value: !props.open
@@ -83,11 +83,12 @@ const toggleFilterBox = () => {
 }
 
 const handleMouseDown = () => {
-  console.log('handle mouse down')
-  emit('update:openStatusOfFilterBox', {
-    key: props.attributeName,
-    value: false
-  })
+  if (props.open) {
+    emit('update:openStatusOfFilterBox', {
+      key: props.attributeName,
+      value: false
+    })
+  }
 }
 
 const hideDropDown = computed(
