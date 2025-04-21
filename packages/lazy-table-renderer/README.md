@@ -9,10 +9,9 @@ Renders only the visible part of a pivot table in chunks based on the scroll pos
 ## Features
 
 - Lazy rendering using IntersectionObserver
-- Based on **window scroll** (no internal scroll container)
 - Fixed average row height (30px)
 - Automatic top/bottom padding height adjustment
-- Fully compatible with `vue-pivottable`
+- Fully compatible with the **Vue 3** version of `vue-pivottable`
 
 ---
 
