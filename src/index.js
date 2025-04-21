@@ -1,31 +1,11 @@
 import { VuePivottable, VuePivottableUi } from './components'
 import TableRenderer from './components/pivottable/renderer'
-import {
-  aggregatorTemplates,
-  aggregators,
-  derivers,
-  locales,
-  naturalSort,
-  numberFormat,
-  getSort,
-  sortAs,
-  PivotData
-} from './helper/utilities'
-
-const PivotUtilities = {
-  aggregatorTemplates,
-  aggregators,
-  derivers,
-  locales,
-  naturalSort,
-  numberFormat,
-  getSort,
-  sortAs,
-  PivotData
-}
+import * as PivotUtilities from './helper'
+export * from './composables/index.js'
 
 const Renderer = {
-  TableRenderer
+  ...TableRenderer
 }
 
 export { VuePivottable, VuePivottableUi, PivotUtilities, Renderer }
+export default { VuePivottable, VuePivottableUi, PivotUtilities, Renderer }

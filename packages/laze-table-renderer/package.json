@@ -1,0 +1,38 @@
+{
+  "name": "@vue-pivottable/lazy-table-renderer",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/lazy-table-renderer.es.js",
+      "require": "./dist/lazy-table-renderer.umd.js"
+    },
+    "./dist/lazy-table-renderer.css": "./dist/lazy-table-renderer.css"
+  },
+  "main": "./dist/lazy-table-renderer.umd.js",
+  "module": "./dist/lazy-table-renderer.es.js",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vue-pivottable/vue3-pivottable.git",
+    "directory": "packages/lazy-table-renderer"
+  },
+  "homepage": "https://github.com/vue-pivottable/vue3-pivottable",
+  "author": "Seungwoo, Lee <seungwoo321@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue-pivottable": "workspace:*",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^6.1.0"
+  }
+}

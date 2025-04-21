@@ -1,6 +1,6 @@
 {
   "name": "vue-pivottable",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "type": "module",
   "exports": {
     ".": {
@@ -26,16 +26,12 @@
     "vue-pivottable",
     "vue3-pivottable"
   ],
-  "authors": [
-    {
-      "name": "Seungwoo, Lee",
-      "email": "seungwoo321@gmail.com",
-      "url": "https://github.com/seungwoo321"
-    },
+  "author": "Seungwoo, Lee <seungwoo321@gmail.com>",
+  "contributors": [
     {
       "name": "Sumin, Lee",
       "email": "lsumin1127@gmail.com",
-      "url": "https://github.com/seungwoo321"
+      "url": "https://github.com/gingerbeerlime"
     },
     {
       "name": "Hyemin, Lee",
@@ -55,6 +51,7 @@
     "dev:all": "pnpm -r --parallel run dev"
   },
   "dependencies": {
+    "@vue-pivottable/virtual-table-renderer": "workspace:*",
     "papaparse": "^5.5.2",
     "vue": "^3.5.13",
     "vue-draggable-next": "^2.2.1"

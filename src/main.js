@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 
 import App from './App.vue'
-// import { VuePivottableUi } from '../dist/vue-pivottable.es.js'
+// import VuePivottable from '@/'
 
 const app = createApp(App)
 

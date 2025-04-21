@@ -11,12 +11,13 @@ import { defaultProps } from '@/helper'
 import TableRenderer from './renderer'
 const props = defineProps({
   ...defaultProps,
-  rendererItems: {
+  renderers: {
     type: Object,
     default: () => TableRenderer
   }
 })
+
 const rendererComponent = computed(
-  () => props.rendererItems[props.rendererName] || TableRenderer.Table
+  () => props.renderers[props.rendererName] || TableRenderer.Table
 )
 </script>

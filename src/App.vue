@@ -13,6 +13,7 @@
           :rows="rows"
           :cols="cols"
           :vals="vals"
+          :renderers="renderers"
           :aggregatorName="aggregatorName"
           :rendererName="rendererName"
           :sorters="sorters"
@@ -33,10 +34,13 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { markRaw, ref } from 'vue'
 import tips from './tips.js'
 import CsvUploader from './CsvUploader.vue'
-import { PivotUtilities, VuePivottableUi } from '../dist/vue-pivottable.es.js'
+import { PivotUtilities, VuePivottableUi, Renderer } from '@/'
+import LazePivottableRenderer from '../packages/laze-table-renderer'
+
+const renderers = markRaw({ ...Renderer, ...LazePivottableRenderer })
 const initialData = ref(tips)
 const initialFilename = ref('샘플 데이터셋: Tips')
 // const tableOptions = {
@@ -62,13 +66,12 @@ const sorters = ref({
   ])
 })
 const vals = ref(['Tip'])
-const rendererName = ref('Table Heatmap')
+const rendererName = ref('Table')
 const onDataParsed = (data) => {
   rows.value = []
   cols.value = []
   vals.value = []
   sorters.value = []
-  rendererName.value = 'Table'
   aggregatorName.value = 'Count'
 }
 </script>

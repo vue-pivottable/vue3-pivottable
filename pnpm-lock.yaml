@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@vue-pivottable/virtual-table-renderer':
+        specifier: workspace:*
+        version: link:packages/virtual-table-renderer
       papaparse:
         specifier: ^5.5.2
         version: 5.5.2
@@ -45,6 +48,22 @@ importers:
       vite-plugin-static-copy:
         specifier: ^2.3.1
         version: 2.3.1(vite@6.1.0)
+
+  packages/virtual-table-renderer:
+    dependencies:
+      vue:
+        specifier: ^3.5.13
+        version: 3.5.13(typescript@5.8.2)
+      vue-pivottable:
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^5.2.1
+        version: 5.2.1(vite@6.1.0)(vue@3.5.13(typescript@5.8.2))
+      vite:
+        specifier: ^6.1.0
+        version: 6.1.0
 
 packages:
 
