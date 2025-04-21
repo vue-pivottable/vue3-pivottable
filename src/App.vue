@@ -38,9 +38,9 @@ import { markRaw, ref } from 'vue'
 import tips from './tips.js'
 import CsvUploader from './CsvUploader.vue'
 import { PivotUtilities, VuePivottableUi, Renderer } from '@/'
-import LazePivottableRenderer from '../packages/laze-table-renderer'
+import LazyPivottableRenderer from '../packages/lazy-table-renderer'
 
-const renderers = markRaw({ ...Renderer, ...LazePivottableRenderer })
+const renderers = markRaw({ ...Renderer, ...LazyPivottableRenderer })
 const initialData = ref(tips)
 const initialFilename = ref('샘플 데이터셋: Tips')
 // const tableOptions = {

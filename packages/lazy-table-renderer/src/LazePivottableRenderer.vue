@@ -18,7 +18,7 @@
 <script setup>
 import { providePivotData, PivotUtilities } from 'vue-pivottable'
 import VPivottableHeader from './VPivottableHeader.vue'
-import IntersectionChunkPivottableBody from './LazePivottableBody.vue'
+import IntersectionChunkPivottableBody from './LazyPivottableBody.vue'
 
 const props = defineProps({
   ...PivotUtilities.defaultProps,

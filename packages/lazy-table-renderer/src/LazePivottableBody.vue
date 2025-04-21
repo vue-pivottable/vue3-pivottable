@@ -93,7 +93,7 @@
         :colspan="totalColumns"
         :style="`height: ${bottomPaddingHeight}px; position:relative`"
       >
-        <slot name="laze-loader">
+        <slot name="lazy-loader">
           <div style="position: absolute; top: 2rem; left: 2rem">
             Loading...
           </div>

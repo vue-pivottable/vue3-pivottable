@@ -1,13 +1,13 @@
 import { defineComponent, h, markRaw } from 'vue'
-import LazePivottableRenderer from './LazePivottableRenderer.vue'
+import LazyPivottableRenderer from './LazyPivottableRenderer.vue'
 import { PivotUtilities } from 'vue-pivottable'
 
 export default markRaw({
   'Lazy Table': defineComponent({
-    name: 'vue-laze-table',
+    name: 'vue-lazy-table',
     setup(props) {
       return () =>
-        h(LazePivottableRenderer, {
+        h(LazyPivottableRenderer, {
           ...PivotUtilities.defaultProps,
           ...props,
           chunkSize: 50,
