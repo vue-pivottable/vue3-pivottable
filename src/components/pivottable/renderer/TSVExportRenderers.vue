@@ -1,8 +1,8 @@
 <template>
   <textarea
     :style="styles"
-    readonly
     :value="textareaValue"
+    readonly
   ></textarea>
 </template>
 
