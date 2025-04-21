@@ -19,6 +19,15 @@
     "url": "git+https://github.com/vue-pivottable/vue3-pivottable.git",
     "directory": "packages/lazy-table-renderer"
   },
+  "keywords": [
+    "vue",
+    "vue3",
+    "pivot",
+    "pivottable",
+    "vue-pivottable",
+    "vue3-pivottable",
+    "@vue-pivottable/lazy-table-renderer"
+  ],
   "homepage": "https://github.com/vue-pivottable/vue3-pivottable",
   "author": "Seungwoo, Lee <seungwoo321@gmail.com>",
   "license": "MIT",
