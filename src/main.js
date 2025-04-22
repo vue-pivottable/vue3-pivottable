@@ -1,10 +1,10 @@
 import { createApp } from 'vue'
-import './assets/style.css'
+
 import App from './App.vue'
-import VuePivottable from './index.js'
+// import VuePivottable from '@/'
 
 const app = createApp(App)
 
-app.use(VuePivottable)
+// app.component('VuePivottableUi', VuePivottableUi)
 
 app.mount('#app')

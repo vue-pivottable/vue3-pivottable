@@ -1,9 +1,9 @@
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, markRaw } from 'vue'
 import TableRenderer from './TableRenderer.vue'
 import TSVExportRenderers from './TSVExportRenderers.vue'
 import { defaultProps } from '@/helper'
 
-export default {
+export default markRaw({
   'Table': defineComponent({
     name: 'vue-table',
     setup(props) {
@@ -57,4 +57,4 @@ export default {
         })
     }
   })
-}
+})

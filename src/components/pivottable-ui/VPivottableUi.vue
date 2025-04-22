@@ -121,7 +121,8 @@ import { defaultProps, PivotData, sortAs } from '@/helper'
 import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
-import { VPivottable } from '@/'
+import VPivottable from '../pivottable/VPivottable.vue'
+import TableRenderer from '../pivottable/renderer'
 import { computed, watch } from 'vue'
 import {
   usePropsState,
@@ -129,7 +130,6 @@ import {
   usePivotUiState,
   provideFilterBox
 } from '@/composables'
-import TableRenderer from '../pivottable/renderer'
 
 const props = defineProps({
   ...defaultProps,
@@ -246,9 +246,4 @@ watch(
 )
 </script>
 
-<style>
-.pvtUi {
-  border-collapse: collapse;
-  width: 100%;
-}
-</style>
+<style></style>
