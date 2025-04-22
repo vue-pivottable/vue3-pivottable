@@ -7,12 +7,13 @@
       @data-parsed="onDataParsed"
     >
       <template #default="{ data }">
-        <VPivottableUi
+        <VuePivottableUi
           v-if="data.length > 0"
           :data="data"
           :rows="rows"
           :cols="cols"
           :vals="vals"
+          :renderers="renderers"
           :aggregatorName="aggregatorName"
           :rendererName="rendererName"
           :sorters="sorters"
@@ -27,16 +28,19 @@
           <!-- <template v-slot:outputSlot="outputSlot">
           {{ outputSlot }}
         </template> -->
-        </VPivottableUi>
+        </VuePivottableUi>
       </template>
     </CsvUploader>
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { markRaw, ref } from 'vue'
 import tips from './tips.js'
 import CsvUploader from './CsvUploader.vue'
-import { PivotUtilities } from '@/'
+import { PivotUtilities, VuePivottableUi, Renderer } from '@/'
+import LazyPivottableRenderer from '../packages/lazy-table-renderer'
+
+const renderers = markRaw({ ...Renderer, ...LazyPivottableRenderer })
 const initialData = ref(tips)
 const initialFilename = ref('샘플 데이터셋: Tips')
 // const tableOptions = {
@@ -62,15 +66,14 @@ const sorters = ref({
   ])
 })
 const vals = ref(['Tip'])
-const rendererName = ref('Table Heatmap')
+const rendererName = ref('Table')
 const onDataParsed = (data) => {
   rows.value = []
   cols.value = []
   vals.value = []
   sorters.value = []
-  rendererName.value = 'Table'
   aggregatorName.value = 'Count'
 }
 </script>
 
-<style scoped></style>
+<style></style>
