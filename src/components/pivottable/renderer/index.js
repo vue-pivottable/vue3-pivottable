@@ -1,5 +1,6 @@
 import { defineComponent, h, markRaw } from 'vue'
 import TableRenderer from './TableRenderer.vue'
+import TSVExportRenderers from './TSVExportRenderers.vue'
 import { defaultProps } from '@/helper'
 
 export default markRaw({
@@ -43,6 +44,16 @@ export default markRaw({
           ...defaultProps,
           ...props,
           heatmapMode: 'row'
+        })
+    }
+  }),
+  'Export Table TSV': defineComponent({
+    name: 'tsv-export-renderers',
+    setup(props) {
+      return () =>
+        h(TSVExportRenderers, {
+          ...defaultProps,
+          ...props
         })
     }
   })
