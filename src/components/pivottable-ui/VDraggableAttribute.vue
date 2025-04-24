@@ -1,8 +1,8 @@
 <template>
-  <li>
+  <li @mousedown="handleMouseDown">
     <span
       class="pvtAttr"
-      :class="[filtered, { restricted, fixed }]"
+      :class="[filtered, { restricted }]"
     >
       <slot
         name="pvtAttr"
@@ -11,7 +11,8 @@
       >
       <span
         v-if="!hideDropDown"
-        @click="toggleFilterBox"
+        @mousedown.stop
+        @click.stop="toggleFilterBox"
         class="pvtTriangle"
       >
         ▾
@@ -22,6 +23,7 @@
         :filterBoxKey="attributeName"
         :filterBoxValues="attributeValues"
         :zIndex="zIndex"
+        @mousedown.stop
         @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox', $event)"
         @update:unselectedFilterValues="
           $emit('update:unselectedFilterValues', $event)
@@ -51,10 +53,6 @@ const props = defineProps({
     type: Object,
     default: () => ({})
   },
-  fixed: {
-    type: Boolean,
-    default: false
-  },
   restricted: {
     type: Boolean,
     default: false
@@ -83,6 +81,15 @@ const toggleFilterBox = () => {
   })
 }
 
+const handleMouseDown = () => {
+  if (props.open) {
+    emit('update:openStatusOfFilterBox', {
+      key: props.attributeName,
+      value: false
+    })
+  }
+}
+
 const hideDropDown = computed(
   () =>
     Object.keys(props.attributeValues).length === 0 ||
@@ -95,7 +102,3 @@ const filtered = computed(() => {
     : null
 })
 </script>
-
-<style scoped>
-/* css sortonly를 sortOnly로 변경해야함 */
-</style>

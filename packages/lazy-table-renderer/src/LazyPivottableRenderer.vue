@@ -4,21 +4,24 @@
       :rowTotal="props.showRowTotal"
       :localeStrings="props.localeStrings"
     />
-    <VPivottableBody
+    <IntersectionChunkPivottableBody
       :rowTotal="props.showRowTotal"
+      :colTotal="props.showColTotal"
       :tableOptions="props.tableOptions"
+      :chunkSize="props.chunkSize"
+      :bufferSize="props.bufferSize"
+      :localeStrings="props.localeStrings"
     />
   </table>
 </template>
 
 <script setup>
-import { defaultProps } from '@/helper'
-import { providePivotData } from '@/composables/useProvidePivotData'
-import VPivottableHeader from '../VPivottableHeader.vue'
-import VPivottableBody from '../VPivottableBody.vue'
+import { providePivotData, PivotUtilities } from 'vue-pivottable'
+import VPivottableHeader from './VPivottableHeader.vue'
+import IntersectionChunkPivottableBody from './LazyPivottableBody.vue'
 
 const props = defineProps({
-  ...defaultProps,
+  ...PivotUtilities.defaultProps,
   localeStrings: {
     type: Object,
     default: () => ({
@@ -30,9 +33,16 @@ const props = defineProps({
     default: () => ({
       clickCallback: null
     })
+  },
+  chunkSize: {
+    type: Number,
+    default: 20
+  },
+  bufferSize: {
+    type: Number,
+    default: 1
   }
 })
+
 providePivotData(props)
 </script>
-
-<style lang="scss" scoped></style>
