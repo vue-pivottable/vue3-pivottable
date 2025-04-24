@@ -12,7 +12,9 @@
   "main": "./dist/lazy-table-renderer.umd.js",
   "module": "./dist/lazy-table-renderer.es.js",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "repository": {
     "type": "git",

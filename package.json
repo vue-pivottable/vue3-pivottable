@@ -12,7 +12,9 @@
   "main": "./dist/vue-pivottable.umd.js",
   "module": "./dist/vue-pivottable.es.js",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "repository": {
     "type": "git",
