@@ -53,16 +53,105 @@ npm run serve
 
 ## Quick Start
 
+### 1. Simple Usage without CSV Uploader
+
 ```vue
 <script setup>
-import { Pivot } from 'vue3-pivottable'
-import 'vue3-pivottable/style.css'
+import { ref, markRaw } from 'vue'
+import { VuePivottableUi, Renderer } from 'vue3-pivottable'
+import LazyPivottableRenderer from '@vue-pivottable/lazy-table-renderer'
+import tips from './data/tips.js'
 
-import sampleData from './data/sample-data.json'
+const renderers = markRaw({ ...Renderer, ...LazyPivottableRenderer })
+const data = ref(tips)
+const rows = ref(['Payer Gender'])
+const cols = ref(['Day of Week'])
+const vals = ref(['Tip'])
+const aggregatorName = ref('Sum')
+const rendererName = ref('Table')
+const sorters = ref({
+  'Day of Week': [
+    'Monday',
+    'Thursday',
+    'Wednesday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ]
+})
 </script>
 
 <template>
-  <Pivot :data="sampleData" />
+  <VuePivottableUi
+    :data="data"
+    :rows="rows"
+    :cols="cols"
+    :vals="vals"
+    :renderers="renderers"
+    :aggregatorName="aggregatorName"
+    :rendererName="rendererName"
+    :sorters="sorters"
+  />
+</template>
+```
+
+### 2. Using with CSV Uploader
+
+```vue
+<script setup>
+import { ref, markRaw } from 'vue'
+import { PivotUtilities, VuePivottableUi, Renderer } from 'vue3-pivottable'
+import LazyPivottableRenderer from '@vue-pivottable/lazy-table-renderer'
+import CsvUploader from './CsvUploader.vue'
+import tips from './data/tips.js'
+
+const renderers = markRaw({ ...Renderer, ...LazyPivottableRenderer })
+
+const initialData = ref(tips)
+const rows = ref(['Payer Gender'])
+const cols = ref(['Day of Week'])
+const vals = ref(['Tip'])
+const aggregatorName = ref('Sum')
+const rendererName = ref('Table')
+const sorters = ref({
+  'Day of Week': PivotUtilities.sortAs([
+    'Monday',
+    'Thursday',
+    'Wednesday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ])
+})
+
+const onDataParsed = (data) => {
+  rows.value = []
+  cols.value = []
+  vals.value = []
+  aggregatorName.value = 'Count'
+}
+</script>
+
+<template>
+  <CsvUploader
+    :initial-data="initialData"
+    :initial-filename="'Sample Dataset: Tips'"
+    @data-parsed="onDataParsed"
+  >
+    <template #default="{ data }">
+      <VuePivottableUi
+        v-if="data.length > 0"
+        :data="data"
+        :rows="rows"
+        :cols="cols"
+        :vals="vals"
+        :renderers="renderers"
+        :aggregatorName="aggregatorName"
+        :rendererName="rendererName"
+        :sorters="sorters"
+      />
+    </template>
+  </CsvUploader>
 </template>
 ```
 
@@ -70,17 +159,32 @@ import sampleData from './data/sample-data.json'
 
 ## Documentation
 
-Coming soon...
+For detailed API and props usage, visit the [Wiki](https://github.com/your-username/vue3-pivottable/wiki) or see the [API Reference](https://your-docs-site.com/api).
+
+### Main Component Props
+
+| Prop             | Type     | Description                                             | Default   |
+| ---------------- | -------- | ------------------------------------------------------- | --------- |
+| `data`           | `Array`  | The dataset array to display in the pivot table         | `[]`      |
+| `rows`           | `Array`  | Fields to use as rows in the pivot table                | `[]`      |
+| `cols`           | `Array`  | Fields to use as columns                                | `[]`      |
+| `vals`           | `Array`  | Fields to aggregate                                     | `[]`      |
+| `aggregatorName` | `String` | Aggregation function name (e.g., "Sum", "Count")        | `"Count"` |
+| `rendererName`   | `String` | Renderer to display the data ("Table", "Heatmap", etc.) | `"Table"` |
 
 <!-- 데모 사이트 링크 (없으면 임시로 로컬에서 돌릴 수 있는 설명)-->
 
 ## Live Demo
 
-Coming soon...
+Try out the live demo of `vue3-pivottable` here:
+
+- [Demo on GitHub Pages](https://your-username.github.io/vue3-pivottable/)
 
 <!-- 직접 개발하거나 기여하고 싶은 사람들용 (Contribution Guide)-->
 
 ## Development
+
+To run the project locally:
 
 ```bash
 # Clone the repo
@@ -94,6 +198,8 @@ pnpm install
 pnpm dev
 
 ```
+
+Then open http://localhost:3000 in your browser.
 
 <!-- end -->
 
