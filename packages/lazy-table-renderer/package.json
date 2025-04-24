@@ -28,19 +28,22 @@
     "vue3-pivottable",
     "@vue-pivottable/lazy-table-renderer"
   ],
+  "sideEffects": [
+    "*.css",
+    "*.vue"
+  ],
   "homepage": "https://github.com/vue-pivottable/vue3-pivottable",
   "author": "Seungwoo, Lee <seungwoo321@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "vite build"
   },
-  "dependencies": {
-    "vue-pivottable": "workspace:*",
-    "vue": "^3.5.13"
+  "peerDependencies": {
+    "vue": "^3.2.0",
+    "vue-pivottable": "^1.0.0-alpha.0"
   },
   "devDependencies": {
+    "vue-pivottable": "workspace:*",
     "@vitejs/plugin-vue": "^5.2.1",
     "vite": "^6.1.0"
   }
