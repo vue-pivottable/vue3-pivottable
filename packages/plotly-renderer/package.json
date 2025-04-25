@@ -28,7 +28,7 @@
     "vue3-pivottable",
     "@vue-pivottable/plotly-renderer"
   ],
-  "homepage": "https://github.com/vue-pivottable/vue3-pivottable",
+  "homepage": "https://github.com/vue-pivottable/vue3-pivottable/tree/main/packages/plotly-renderer",
   "author": "Sumin, Lee <lsumin1127@gmail.com>",
   "license": "MIT",
   "scripts": {
@@ -38,11 +38,14 @@
   },
   "dependencies": {
     "@clalarco/vue3-plotly": "^0.1.5",
-    "plotly.js-basic-dist": "^3.0.1",
-    "vue": "^3.5.13",
-    "vue-pivottable": "workspace:*"
+    "plotly.js-basic-dist": "^3.0.1"
+  },
+  "peerDependencies": {
+    "vue": "^3.2.0",
+    "vue-pivottable": "^1.0.0-alpha.0"
   },
   "devDependencies": {
+    "vue-pivottable": "workspace:*",
     "@vitejs/plugin-vue": "^5.2.1",
     "vite": "^6.1.0"
   }
