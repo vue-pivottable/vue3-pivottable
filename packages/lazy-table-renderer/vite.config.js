@@ -27,7 +27,8 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
         output: {
           exports: 'named',
           globals: {
-            vue: 'Vue'
+            'vue': 'Vue',
+            'vue-pivottable': 'VuePivottable'
           }
         }
       },
