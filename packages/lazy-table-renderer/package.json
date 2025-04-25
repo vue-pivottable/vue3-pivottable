@@ -34,7 +34,7 @@
     "*.css",
     "*.vue"
   ],
-  "homepage": "https://github.com/vue-pivottable/vue3-pivottable/tree/main/packages/lazy-table-renderer",
+  "homepage": "https://github.com/vue-pivottable/vue3-pivottable/tree/main/packages/lazy-table-renderer/README.md",
   "author": "Seungwoo, Lee <seungwoo321@gmail.com>",
   "license": "MIT",
   "scripts": {

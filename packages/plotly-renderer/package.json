@@ -30,7 +30,7 @@
     "vue3-pivottable",
     "@vue-pivottable/plotly-renderer"
   ],
-  "homepage": "https://github.com/vue-pivottable/vue3-pivottable/tree/main/packages/plotly-renderer",
+  "homepage": "https://github.com/vue-pivottable/vue3-pivottable/tree/main/packages/plotly-renderer/README.md",
   "author": "Sumin, Lee <lsumin1127@gmail.com>",
   "license": "MIT",
   "scripts": {
