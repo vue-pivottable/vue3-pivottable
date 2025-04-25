@@ -12,7 +12,9 @@
   "main": "./dist/plotly-renderer.umd.js",
   "module": "./dist/plotly-renderer.es.js",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "repository": {
     "type": "git",
@@ -28,13 +30,11 @@
     "vue3-pivottable",
     "@vue-pivottable/plotly-renderer"
   ],
-  "homepage": "https://github.com/vue-pivottable/vue3-pivottable/tree/main/packages/plotly-renderer",
+  "homepage": "https://github.com/vue-pivottable/vue3-pivottable/tree/main/packages/plotly-renderer/README.md",
   "author": "Sumin, Lee <lsumin1127@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "vite build"
   },
   "dependencies": {
     "@clalarco/vue3-plotly": "^0.1.5",
