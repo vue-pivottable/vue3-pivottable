@@ -39,8 +39,13 @@ import tips from './tips.js'
 import CsvUploader from './CsvUploader.vue'
 import { PivotUtilities, VuePivottableUi, Renderer } from '@/'
 import LazyPivottableRenderer from '@vue-pivottable/lazy-table-renderer'
+import PlotlyRenderer from '@vue-pivottable/plotly-renderer'
 
-const renderers = markRaw({ ...Renderer, ...LazyPivottableRenderer })
+const renderers = markRaw({
+  ...Renderer,
+  ...LazyPivottableRenderer,
+  ...PlotlyRenderer
+})
 const initialData = ref(tips)
 const initialFilename = ref('샘플 데이터셋: Tips')
 // const tableOptions = {
