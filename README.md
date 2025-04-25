@@ -159,18 +159,19 @@ const onDataParsed = (data) => {
 
 ## Documentation
 
-For detailed API and props usage, visit the [Wiki](https://github.com/your-username/vue3-pivottable/wiki) or see the [API Reference](https://your-docs-site.com/api).
-
-### Main Component Props
+### VuePivottableUi
 
 | Prop             | Type     | Description                                             | Default   |
 | ---------------- | -------- | ------------------------------------------------------- | --------- |
 | `data`           | `Array`  | The dataset array to display in the pivot table         | `[]`      |
 | `rows`           | `Array`  | Fields to use as rows in the pivot table                | `[]`      |
-| `cols`           | `Array`  | Fields to use as columns                                | `[]`      |
+| `cols`           | `Array`  | Fields to use as columns in the pivot table             | `[]`      |
 | `vals`           | `Array`  | Fields to aggregate                                     | `[]`      |
 | `aggregatorName` | `String` | Aggregation function name (e.g., "Sum", "Count")        | `"Count"` |
 | `rendererName`   | `String` | Renderer to display the data ("Table", "Heatmap", etc.) | `"Table"` |
+
+You can also pass custom renderers, aggregators, and sorters.
+For detailed API and props usage, visit the [Wiki](https://github.com/your-username/vue3-pivottable/wiki) or see the [API Reference](https://your-docs-site.com/api).
 
 <!-- 데모 사이트 링크 (없으면 임시로 로컬에서 돌릴 수 있는 설명)-->
 
