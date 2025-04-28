@@ -108,7 +108,7 @@
             name="outputSlot"
             :outputSlot="{ pivotData }"
           >
-            <VPivottable v-bind="state" />
+            <VPivottable v-bind="pivotProps" />
           </slot>
         </td>
       </tr>
@@ -226,7 +226,29 @@ const unusedAttrs = computed(() => {
 })
 
 const pivotData = computed(() => new PivotData(state))
-
+const pivotProps = computed(() => ({
+  data: state.data,
+  aggregators: state.aggregators,
+  aggregatorName: state.aggregatorName,
+  heatmapMode: state.heatmapMode,
+  tableOptions: state.tableOptions,
+  renderers: state.renderers,
+  rendererName: state.rendererName,
+  locale: state.locale,
+  languagePack: state.languagePack,
+  showRowTotal: state.showRowTotal,
+  showColTotal: state.showColTotal,
+  cols: state.cols,
+  rows: state.rows,
+  vals: state.vals,
+  attributes: state.attributes,
+  valueFilter: state.valueFilter,
+  sorters: state.sorters,
+  derivedAttributes: state.derivedAttributes,
+  rowOrder: state.rowOrder,
+  colOrder: state.colOrder,
+  tableMaxWidth: state.tableMaxWidth
+}))
 onUpdateUnusedOrder(props.unusedAttrs)
 
 provideFilterBox(props)

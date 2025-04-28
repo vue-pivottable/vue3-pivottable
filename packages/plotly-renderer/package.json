@@ -1,16 +1,16 @@
 {
-  "name": "@vue-pivottable/lazy-table-renderer",
+  "name": "@vue-pivottable/plotly-renderer",
   "version": "1.0.0",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/lazy-table-renderer.es.js",
-      "require": "./dist/lazy-table-renderer.umd.js"
+      "import": "./dist/plotly-renderer.es.js",
+      "require": "./dist/plotly-renderer.umd.js"
     },
-    "./dist/lazy-table-renderer.css": "./dist/lazy-table-renderer.css"
+    "./dist/plotly-renderer.css": "./dist/plotly-renderer.css"
   },
-  "main": "./dist/lazy-table-renderer.umd.js",
-  "module": "./dist/lazy-table-renderer.es.js",
+  "main": "./dist/plotly-renderer.umd.js",
+  "module": "./dist/plotly-renderer.es.js",
   "files": [
     "dist",
     "LICENSE",
@@ -19,7 +19,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vue-pivottable/vue3-pivottable.git",
-    "directory": "packages/lazy-table-renderer"
+    "directory": "packages/plotly-renderer"
   },
   "keywords": [
     "vue",
@@ -28,17 +28,17 @@
     "pivottable",
     "vue-pivottable",
     "vue3-pivottable",
-    "@vue-pivottable/lazy-table-renderer"
+    "@vue-pivottable/plotly-renderer"
   ],
-  "sideEffects": [
-    "*.css",
-    "*.vue"
-  ],
-  "homepage": "https://github.com/vue-pivottable/vue3-pivottable/tree/main/packages/lazy-table-renderer/README.md",
-  "author": "Seungwoo, Lee <seungwoo321@gmail.com>",
+  "homepage": "https://github.com/vue-pivottable/vue3-pivottable/tree/main/packages/plotly-renderer/README.md",
+  "author": "Sumin, Lee <lsumin1127@gmail.com>",
   "license": "MIT",
   "scripts": {
     "build": "vite build"
+  },
+  "dependencies": {
+    "@clalarco/vue3-plotly": "^0.1.5",
+    "plotly.js-basic-dist": "^3.0.1"
   },
   "peerDependencies": {
     "vue": "^3.2.0",

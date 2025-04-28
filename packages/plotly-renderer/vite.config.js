@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import { resolve } from 'path'
+import path, { resolve } from 'path'
 import dts from 'vite-plugin-dts'
 import vue from '@vitejs/plugin-vue'
 
@@ -19,8 +19,8 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
     build: {
       lib: {
         entry: resolve(__dirname, 'src/index.js'),
-        name: 'LazyTableRenderer',
-        fileName: (format) => `lazy-table-renderer.${format}.js`
+        name: 'PlotlyRenderer',
+        fileName: (format) => `plotly-renderer.${format}.js`
       },
       rollupOptions: {
         external: ['vue'],
@@ -34,6 +34,11 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       },
       sourcemap: true,
       target: 'es2015'
+    },
+    resolve: {
+      alias: {
+        'vue-plotly': path.resolve(__dirname, 'node_modules/vue-plotly')
+      }
     }
   }
 })
