@@ -74,7 +74,7 @@ import { VuePivottableUi } from 'vue-pivottable'
 | `rendererName`   | `String` | Renderer to display the data ("Table", "Heatmap", etc.) | `"Table"` |
 
 You can also pass custom renderers, aggregators, and sorters.
-For detailed API and props usage, visit the [Wiki](https://github.com/your-username/vue3-pivottable/wiki) or see the [API Reference](https://your-docs-site.com/api).
+For detailed API and props usage, visit the [Wiki](https://vue-pivottable.vercel.app/).
 
 <!-- 데모 사이트 링크 (없으면 임시로 로컬에서 돌릴 수 있는 설명)-->
 
