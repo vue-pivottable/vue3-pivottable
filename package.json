@@ -1,13 +1,13 @@
 {
   "name": "vue-pivottable",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "type": "module",
   "exports": {
     ".": {
       "import": "./dist/vue-pivottable.es.js",
       "require": "./dist/vue-pivottable.umd.js"
     },
-    "./dist/vue-pivottable.css": "./dist/vue-pivottable.css"
+    "./dist": "./dist"
   },
   "main": "./dist/vue-pivottable.umd.js",
   "module": "./dist/vue-pivottable.es.js",
