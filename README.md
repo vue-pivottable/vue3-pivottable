@@ -42,43 +42,20 @@ npm run serve
 ## Quick Start
 
 ```vue
-<script setup>
-import { ref, markRaw } from 'vue'
-import { VuePivottableUi, Renderer } from 'vue3-pivottable'
-import LazyPivottableRenderer from '@vue-pivottable/lazy-table-renderer'
-import tips from './data/tips.js'
-
-const renderers = markRaw({ ...Renderer, ...LazyPivottableRenderer })
-const data = ref(tips)
-const rows = ref(['Payer Gender'])
-const cols = ref(['Day of Week'])
-const vals = ref(['Tip'])
-const aggregatorName = ref('Sum')
-const rendererName = ref('Table')
-const sorters = ref({
-  'Day of Week': [
-    'Monday',
-    'Thursday',
-    'Wednesday',
-    'Friday',
-    'Saturday',
-    'Sunday'
-  ]
-})
-</script>
-
 <template>
   <VuePivottableUi
-    :data="data"
-    :rows="rows"
-    :cols="cols"
-    :vals="vals"
-    :renderers="renderers"
-    :aggregatorName="aggregatorName"
-    :rendererName="rendererName"
-    :sorters="sorters"
+    :data="[
+      { color: 'blue', shape: 'circle' },
+      { color: 'red', shape: 'triangle' }
+    ]"
+    :rows="['color']"
+    :cols="['shape']"
   />
 </template>
+
+<script setup>
+import { VuePivottableUi } from 'vue-pivottable'
+</script>
 ```
 
 <!-- 링크나 세부 API 설명 -->
