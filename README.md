@@ -1,18 +1,6 @@
-# Vue 3 + Vite
-
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
-
-<!-- start -->
-
 # Vue3 Pivottable
+
+<!-- [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-) -->
 
 **Pivot Table Component for Vue 3**
 
@@ -43,7 +31,7 @@ Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://
 
 ```bash
 # npm install
-npm install vue3-pivottable
+npm install vue-pivottable
 
 # npm run serve
 npm run serve
@@ -52,8 +40,6 @@ npm run serve
 <!-- 사용법 (Quick Start)-->
 
 ## Quick Start
-
-### 1. Simple Usage without CSV Uploader
 
 ```vue
 <script setup>
@@ -95,66 +81,6 @@ const sorters = ref({
 </template>
 ```
 
-### 2. Using with CSV Uploader
-
-```vue
-<script setup>
-import { ref, markRaw } from 'vue'
-import { PivotUtilities, VuePivottableUi, Renderer } from 'vue3-pivottable'
-import LazyPivottableRenderer from '@vue-pivottable/lazy-table-renderer'
-import CsvUploader from './CsvUploader.vue'
-import tips from './data/tips.js'
-
-const renderers = markRaw({ ...Renderer, ...LazyPivottableRenderer })
-
-const initialData = ref(tips)
-const rows = ref(['Payer Gender'])
-const cols = ref(['Day of Week'])
-const vals = ref(['Tip'])
-const aggregatorName = ref('Sum')
-const rendererName = ref('Table')
-const sorters = ref({
-  'Day of Week': PivotUtilities.sortAs([
-    'Monday',
-    'Thursday',
-    'Wednesday',
-    'Friday',
-    'Saturday',
-    'Sunday'
-  ])
-})
-
-const onDataParsed = (data) => {
-  rows.value = []
-  cols.value = []
-  vals.value = []
-  aggregatorName.value = 'Count'
-}
-</script>
-
-<template>
-  <CsvUploader
-    :initial-data="initialData"
-    :initial-filename="'Sample Dataset: Tips'"
-    @data-parsed="onDataParsed"
-  >
-    <template #default="{ data }">
-      <VuePivottableUi
-        v-if="data.length > 0"
-        :data="data"
-        :rows="rows"
-        :cols="cols"
-        :vals="vals"
-        :renderers="renderers"
-        :aggregatorName="aggregatorName"
-        :rendererName="rendererName"
-        :sorters="sorters"
-      />
-    </template>
-  </CsvUploader>
-</template>
-```
-
 <!-- 링크나 세부 API 설명 -->
 
 ## Documentation
@@ -177,11 +103,9 @@ For detailed API and props usage, visit the [Wiki](https://github.com/your-usern
 
 ## Live Demo
 
-Try out the live demo of `vue3-pivottable` here:
+Try out the live demo of `vue-pivottable` here:
 
 - [Demo on GitHub Pages](https://your-username.github.io/vue3-pivottable/)
-
-<!-- 직접 개발하거나 기여하고 싶은 사람들용 (Contribution Guide)-->
 
 ## Development
 
@@ -189,8 +113,8 @@ To run the project locally:
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/vue3-pivottable.git
-cd vue3-pivottable
+git clone https://github.com/your-username/vue-pivottable.git
+cd vue-pivottable
 
 # Install dependencies
 pnpm install
@@ -200,7 +124,7 @@ pnpm dev
 
 ```
 
-Then open http://localhost:3000 in your browser.
+Then open http://localhost:8080 in your browser.
 
 <!-- end -->
 
