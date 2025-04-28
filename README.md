@@ -4,7 +4,7 @@
 
 **Pivot Table Component for Vue 3**
 
-`vue3-pivottable` is a Vue 3-compatible pivot table component inspired by [vue-pivottable](https://github.com/Seungwoo321/vue-pivottable), which itself is a Vue wrapper of the popular [react-pivottable](https://github.com/plotly/react-pivottable). This library allows you to easily summarize, transform, and visualize large datasets in a pivot table UI.
+`vue-pivottable` is a Vue 3-compatible pivot table component, which is a Vue wrapper of the popular [react-pivottable](https://github.com/plotly/react-pivottable). This library allows you to easily summarize, transform, and visualize large datasets in a pivot table UI.
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
@@ -105,7 +105,7 @@ For detailed API and props usage, visit the [Wiki](https://github.com/your-usern
 
 Try out the live demo of `vue-pivottable` here:
 
-- [Demo on GitHub Pages](https://your-username.github.io/vue3-pivottable/)
+- [Demo on GitHub Pages](https://github.com/vue-pivottable/vue3-pivottable)
 
 ## Development
 
@@ -113,7 +113,7 @@ To run the project locally:
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/vue-pivottable.git
+git clone https://github.com/vue-pivottable/vue3-pivottable.git
 cd vue-pivottable
 
 # Install dependencies
