@@ -1,4 +1,4 @@
-# Vue3 Pivottable
+# Vue Pivottable
 
 <!-- [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-) -->
 
@@ -33,8 +33,8 @@ Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://
 # npm install
 npm install vue-pivottable
 
-# npm run serve
-npm run serve
+# npm run dev
+npm run dev
 ```
 
 <!-- 사용법 (Quick Start)-->
