@@ -10,11 +10,7 @@ import { computed } from 'vue'
 import { defaultProps } from '@/helper'
 import TableRenderer from './renderer'
 const props = defineProps({
-  ...defaultProps,
-  renderers: {
-    type: Object,
-    default: () => TableRenderer
-  }
+  ...defaultProps
 })
 
 const rendererComponent = computed(

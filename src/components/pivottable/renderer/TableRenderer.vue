@@ -34,5 +34,3 @@ const props = defineProps({
 })
 providePivotData(props)
 </script>
-
-<style lang="scss" scoped></style>

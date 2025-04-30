@@ -58,5 +58,3 @@ const textareaValue = computed(() =>
   result.value.map((r) => r.join('\t')).join('\n')
 )
 </script>
-
-<style lang="scss" scoped></style>
