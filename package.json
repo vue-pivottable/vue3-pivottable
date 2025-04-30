@@ -7,7 +7,7 @@
       "import": "./dist/vue-pivottable.es.js",
       "require": "./dist/vue-pivottable.umd.js"
     },
-    "./dist": "./dist"
+    "./dist/": "./dist/"
   },
   "main": "./dist/vue-pivottable.umd.js",
   "module": "./dist/vue-pivottable.es.js",
