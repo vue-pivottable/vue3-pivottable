@@ -80,9 +80,9 @@ For detailed API and props usage, visit the [Wiki](https://vue-pivottable.vercel
 
 ## Live Demo
 
-Try out the live demo of `vue-pivottable` here:
+Try out the live demo of `vue-pivottable-ui` here:
 
-- [Demo on GitHub Pages](https://github.com/vue-pivottable/vue3-pivottable)
+- [Demo on Stackblitz](https://stackblitz.com/edit/vitejs-vite-dviwcxsq?file=src%2FApp.vue)
 
 ## Development
 
