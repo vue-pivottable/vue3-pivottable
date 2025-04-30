@@ -29,12 +29,16 @@ Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://
 
 ## Installation
 
-```bash
-# npm install
-npm install vue-pivottable
+### NPM
 
-# npm run dev
-npm run dev
+```bash
+npm install vue-pivottable
+```
+
+### PNPM
+
+```bash
+pnpm add vue-pivottable
 ```
 
 <!-- 사용법 (Quick Start)-->
@@ -62,27 +66,13 @@ import { VuePivottableUi } from 'vue-pivottable'
 
 ## Documentation
 
-### VuePivottableUi
-
-| Prop             | Type     | Description                                             | Default   |
-| ---------------- | -------- | ------------------------------------------------------- | --------- |
-| `data`           | `Array`  | The dataset array to display in the pivot table         | `[]`      |
-| `rows`           | `Array`  | Fields to use as rows in the pivot table                | `[]`      |
-| `cols`           | `Array`  | Fields to use as columns in the pivot table             | `[]`      |
-| `vals`           | `Array`  | Fields to aggregate                                     | `[]`      |
-| `aggregatorName` | `String` | Aggregation function name (e.g., "Sum", "Count")        | `"Count"` |
-| `rendererName`   | `String` | Renderer to display the data ("Table", "Heatmap", etc.) | `"Table"` |
-
-You can also pass custom renderers, aggregators, and sorters.
-For detailed API and props usage, visit the [Wiki](https://vue-pivottable.vercel.app/).
+For detailed API and props usage, please visit the [Wiki](https://vue-pivottable.vercel.app/).
 
 <!-- 데모 사이트 링크 (없으면 임시로 로컬에서 돌릴 수 있는 설명)-->
 
 ## Live Demo
 
-Try out the live demo of `vue-pivottable-ui` here:
-
-- [Demo on Stackblitz](https://stackblitz.com/edit/vitejs-vite-dviwcxsq?file=src%2FApp.vue)
+Try out the live demo of `vue-pivottable-ui` in [Stackblitz](https://stackblitz.com/edit/vitejs-vite-dviwcxsq?file=src%2FApp.vue)
 
 ## Development
 
