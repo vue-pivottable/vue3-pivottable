@@ -122,7 +122,7 @@ import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
 import VPivottable from '../pivottable/VPivottable.vue'
-import TableRenderer from '../pivottable/renderer'
+import TableRenderer from '../pivottable/renderer/index'
 import { computed, watch } from 'vue'
 import {
   usePropsState,
@@ -164,6 +164,7 @@ const props = defineProps({
 })
 const {
   state,
+  localeStrings,
   updateMultiple,
   onUpdateValueFilter,
   onUpdateRendererName,
@@ -232,7 +233,7 @@ const pivotProps = computed(() => ({
   aggregatorName: state.aggregatorName,
   heatmapMode: state.heatmapMode,
   tableOptions: state.tableOptions,
-  renderers: state.renderers,
+  renderers: rendererItems.value,
   rendererName: state.rendererName,
   locale: state.locale,
   languagePack: state.languagePack,
@@ -247,8 +248,10 @@ const pivotProps = computed(() => ({
   derivedAttributes: state.derivedAttributes,
   rowOrder: state.rowOrder,
   colOrder: state.colOrder,
-  tableMaxWidth: state.tableMaxWidth
+  tableMaxWidth: state.tableMaxWidth,
+  localeStrings: localeStrings.value
 }))
+
 onUpdateUnusedOrder(props.unusedAttrs)
 
 provideFilterBox(props)
@@ -267,5 +270,3 @@ watch(
   }
 )
 </script>
-
-<style></style>

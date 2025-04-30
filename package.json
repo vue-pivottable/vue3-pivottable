@@ -1,13 +1,13 @@
 {
   "name": "vue-pivottable",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.5",
   "type": "module",
   "exports": {
     ".": {
       "import": "./dist/vue-pivottable.es.js",
       "require": "./dist/vue-pivottable.umd.js"
     },
-    "./dist/vue-pivottable.css": "./dist/vue-pivottable.css"
+    "./dist/": "./dist/"
   },
   "main": "./dist/vue-pivottable.umd.js",
   "module": "./dist/vue-pivottable.es.js",
@@ -53,11 +53,14 @@
     "build:all": "pnpm clean && pnpm build && pnpm -r --filter './packages/*' build",
     "dev:all": "concurrently \"pnpm dev\" \"pnpm -r --parallel run dev\""
   },
+  "peerDependencies": {
+    "vue": "^3.2.0"
+  },
   "dependencies": {
-    "vue": "^3.5.13",
     "vue-draggable-next": "^2.2.1"
   },
   "devDependencies": {
+    "vue": "^3.2.0",
     "@vue-pivottable/lazy-table-renderer": "workspace:*",
     "@vue-pivottable/plotly-renderer": "workspace:*",
     "@eslint/js": "^9.21.0",

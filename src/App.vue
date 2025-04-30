@@ -6,6 +6,15 @@
       :initial-filename="initialFilename"
       @data-parsed="onDataParsed"
     >
+      <!-- <VuePivottableUi
+        :data="[
+          { color: 'blue', shape: 'circle' },
+          { color: 'red', shape: 'triangle' }
+        ]"
+        :rows="['color']"
+        :cols="['shape']"
+        rendererName="Export Table TSV"
+      /> -->
       <template #default="{ data }">
         <VuePivottableUi
           v-if="data.length > 0"
