@@ -1,23 +1,17 @@
 # Vue Pivottable
 
-<!-- [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-) -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+[![npm](https://flat.badgen.net/npm/v/vue-pivottable)](https://npmjs.com/package/vue-pivottable)
+[![npm](https://flat.badgen.net/npm/dt/vue-pivottable)](https://npmjs.com/package/vue-pivottable)
+[![npm](https://flat.badgen.net/npm/license/vue-pivottable)](https://flat.badgen.net/npm/license/vue-pivottable)
+[![jsdelivr](https://data.jsdelivr.com/v1/package/npm/vue-pivottable/badge)](https://www.jsdelivr.com/package/npm/vue-pivottable)
 
 **Pivot Table Component for Vue 3**
 
 `vue-pivottable` is a Vue 3-compatible pivot table component, which is a Vue wrapper of the popular [react-pivottable](https://github.com/plotly/react-pivottable). This library allows you to easily summarize, transform, and visualize large datasets in a pivot table UI.
 
 Looking for the Vue 2 compatible version?
-👉 [v0.4.67 on github](https://github.com/seungwoo321/vue-pivottable)
-
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-<!-- [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-) -->
-
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-
-<!-- This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support). -->
+👉 [v0.4.68 on github](https://github.com/seungwoo321/vue-pivottable)
 
 <!-- 주요 기능 -->
 
@@ -62,6 +56,7 @@ pnpm add vue-pivottable
 
 <script setup>
 import { VuePivottableUi } from 'vue-pivottable'
+import 'vue-pivottable/dist/vue-pivottable.css'
 </script>
 ```
 
@@ -69,7 +64,7 @@ import { VuePivottableUi } from 'vue-pivottable'
 
 ## Documentation
 
-For detailed API and props usage, please visit the [Wiki](https://vue-pivottable.vercel.app/).
+For detailed API and props usage, please visit the [docs](https://vue-pivottable.vercel.app/).
 
 <!-- 데모 사이트 링크 (없으면 임시로 로컬에서 돌릴 수 있는 설명)-->
 
