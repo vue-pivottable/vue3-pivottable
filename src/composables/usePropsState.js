@@ -1,10 +1,12 @@
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 
 export function usePropsState(initialProps) {
   const state = reactive({
     ...initialProps
   })
-
+  const localeStrings = computed(
+    () => initialProps.languagePack[initialProps.locale].localeStrings
+  )
   const updateState = (key, value) => {
     if (key in state) {
       state[key] = value
@@ -56,6 +58,7 @@ export function usePropsState(initialProps) {
 
   return {
     state,
+    localeStrings,
     updateState,
     updateMultiple,
     onUpdateValueFilter,

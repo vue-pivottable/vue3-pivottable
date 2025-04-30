@@ -87,7 +87,7 @@ const props = defineProps({
 const { localeStrings, sorter, menuLimit } = useProvideFilterBox()
 const filterBoxValuesList = Object.keys(props.filterBoxValues)
 const filterText = ref('')
-const showMenu = ref(filterBoxValuesList.length < menuLimit)
+const showMenu = ref(filterBoxValuesList.length < menuLimit.value)
 const sortedList = [...filterBoxValuesList].sort(sorter(props.filterBoxKey))
 const filteredList = computed(() => sortedList.filter(matchesFilter))
 const unselectedValues = computed(() => props.unselectedFilterValues)
@@ -105,28 +105,22 @@ const handleFilterTextClear = () => {
 const matchesFilter = (x) =>
   x.toLowerCase().trim().includes(filterText.value.toLowerCase().trim())
 const addValuesToFilter = (values) => {
-  const filterValues = values.reduce(
-    (r, v) => {
-      r[v] = true
-      return r
-    },
-    Object.assign({}, unselectedValues.value)
-  )
+  const filterValues = values.reduce((r, v) => {
+    r[v] = true
+    return r
+  }, Object.assign({}, unselectedValues.value))
   emit('update:unselectedFilterValues', {
     key: props.filterBoxKey,
     value: filterValues
   })
 }
 const removeValuesFromFilter = (values) => {
-  const filterValues = values.reduce(
-    (r, v) => {
-      if (r[v]) {
-        delete r[v]
-      }
-      return r
-    },
-    Object.assign({}, unselectedValues.value)
-  )
+  const filterValues = values.reduce((r, v) => {
+    if (r[v]) {
+      delete r[v]
+    }
+    return r
+  }, Object.assign({}, unselectedValues.value))
   emit('update:unselectedFilterValues', {
     key: props.filterBoxKey,
     value: filterValues

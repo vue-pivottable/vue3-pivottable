@@ -1,7 +1,7 @@
 <template>
   <component
-    :is="rendererComponent"
     v-bind="props"
+    :is="rendererComponent"
   />
 </template>
 

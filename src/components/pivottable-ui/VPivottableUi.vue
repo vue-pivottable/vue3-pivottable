@@ -164,6 +164,7 @@ const props = defineProps({
 })
 const {
   state,
+  localeStrings,
   updateMultiple,
   onUpdateValueFilter,
   onUpdateRendererName,
@@ -247,8 +248,10 @@ const pivotProps = computed(() => ({
   derivedAttributes: state.derivedAttributes,
   rowOrder: state.rowOrder,
   colOrder: state.colOrder,
-  tableMaxWidth: state.tableMaxWidth
+  tableMaxWidth: state.tableMaxWidth,
+  localeStrings: localeStrings.value
 }))
+
 onUpdateUnusedOrder(props.unusedAttrs)
 
 provideFilterBox(props)
