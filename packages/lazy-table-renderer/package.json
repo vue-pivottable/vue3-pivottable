@@ -42,7 +42,7 @@
   },
   "peerDependencies": {
     "vue": "^3.2.0",
-    "vue-pivottable": "alpha"
+    "vue-pivottable": "1.0.0"
   },
   "devDependencies": {
     "vue-pivottable": "workspace:*",
