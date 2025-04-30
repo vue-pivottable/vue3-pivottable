@@ -6,6 +6,9 @@
 
 `vue-pivottable` is a Vue 3-compatible pivot table component, which is a Vue wrapper of the popular [react-pivottable](https://github.com/plotly/react-pivottable). This library allows you to easily summarize, transform, and visualize large datasets in a pivot table UI.
 
+Looking for the Vue 2 compatible version?
+👉 [v0.4.67 on github](https://github.com/seungwoo321/vue-pivottable)
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
 <!-- [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-) -->
@@ -92,6 +95,10 @@ pnpm dev
 ```
 
 Then open http://localhost:8080 in your browser.
+
+## Inspired
+
+Inspired by plotly/react-pivottable - React-based pivot table library
 
 <!-- end -->
 
