@@ -68,6 +68,7 @@
     "@vue-pivottable/plotly-renderer": "workspace:*",
     "concurrently": "^9.1.2",
     "conventional-changelog": "^6.0.0",
+    "conventional-changelog-cli": "^5.0.0",
     "eslint": "^9.21.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-vue": "^9.32.0",
