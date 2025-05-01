@@ -28,7 +28,12 @@
       "
     >
       <template #pvtAttr="{ attrName }">
-        {{ attrName }}
+        <slot
+          name="pvtAttr"
+          :attrName="attrName"
+        >
+          {{ attrName }}
+        </slot>
       </template>
     </VDraggableAttribute>
   </Draggable>
