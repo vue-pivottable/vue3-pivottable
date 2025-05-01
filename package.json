@@ -1,13 +1,14 @@
 {
   "name": "vue-pivottable",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "exports": {
     ".": {
       "import": "./dist/vue-pivottable.es.js",
       "require": "./dist/vue-pivottable.umd.js"
     },
-    "./dist/": "./dist/"
+    "./dist/": "./dist/",
+    "./package.json": "./package.json"
   },
   "main": "./dist/vue-pivottable.umd.js",
   "module": "./dist/vue-pivottable.es.js",
@@ -45,6 +46,7 @@
     "url": "https://github.com/vue-pivottable/vue3-pivottable/issues"
   },
   "scripts": {
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "clean": "rimraf dist packages/*/dist",
     "dev": "vite",
     "build": "vite build",
@@ -60,12 +62,12 @@
     "vue-draggable-next": "^2.2.1"
   },
   "devDependencies": {
-    "vue": "^3.2.0",
-    "@vue-pivottable/lazy-table-renderer": "workspace:*",
-    "@vue-pivottable/plotly-renderer": "workspace:*",
     "@eslint/js": "^9.21.0",
     "@vitejs/plugin-vue": "^5.2.1",
+    "@vue-pivottable/lazy-table-renderer": "workspace:*",
+    "@vue-pivottable/plotly-renderer": "workspace:*",
     "concurrently": "^9.1.2",
+    "conventional-changelog": "^6.0.0",
     "eslint": "^9.21.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-vue": "^9.32.0",
@@ -74,6 +76,7 @@
     "rimraf": "^6.0.1",
     "vite": "^6.1.0",
     "vite-plugin-dts": "^4.5.3",
-    "vite-plugin-static-copy": "^2.3.1"
+    "vite-plugin-static-copy": "^2.3.1",
+    "vue": "^3.2.0"
   }
 }

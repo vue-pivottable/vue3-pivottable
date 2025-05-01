@@ -7,7 +7,8 @@
       "import": "./dist/plotly-renderer.es.js",
       "require": "./dist/plotly-renderer.umd.js"
     },
-    "./dist/plotly-renderer.css": "./dist/plotly-renderer.css"
+    "./dist/": "./dist/",
+    "./package.json": "./package.json"
   },
   "main": "./dist/plotly-renderer.umd.js",
   "module": "./dist/plotly-renderer.es.js",

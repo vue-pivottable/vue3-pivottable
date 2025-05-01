@@ -7,7 +7,8 @@
       "import": "./dist/lazy-table-renderer.es.js",
       "require": "./dist/lazy-table-renderer.umd.js"
     },
-    "./dist/lazy-table-renderer.css": "./dist/lazy-table-renderer.css"
+    "./dist/": "./dist/",
+    "./package.json": "./package.json"
   },
   "main": "./dist/lazy-table-renderer.umd.js",
   "module": "./dist/lazy-table-renderer.es.js",
