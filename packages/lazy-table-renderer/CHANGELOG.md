@@ -1,3 +1,5 @@
+## [1.0.11](https://github.com/vue-pivottable/vue3-pivottable/compare/@vue-pivottable/lazy-table-renderer@1.0.10...@vue-pivottable/lazy-table-renderer@1.0.11) (2025-05-07)
+
 ## [1.0.10](https://github.com/vue-pivottable/vue3-pivottable/compare/@vue-pivottable/lazy-table-renderer@1.0.9...@vue-pivottable/lazy-table-renderer@1.0.10) (2025-05-07)
 
 ## [1.0.9](https://github.com/vue-pivottable/vue3-pivottable/compare/@vue-pivottable/lazy-table-renderer@1.0.8...@vue-pivottable/lazy-table-renderer@1.0.9) (2025-05-07)
