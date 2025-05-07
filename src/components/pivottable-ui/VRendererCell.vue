@@ -6,15 +6,13 @@
     <slot
       v-if="slots.rendererCell"
       name="rendererCell"
-    >
-    </slot>
+    />
     <VDropdown
       v-else
       :options="rendererOptions"
       :value="rendererName"
       @update:value="updateRendererName"
-    >
-    </VDropdown>
+    />
   </td>
 </template>
 

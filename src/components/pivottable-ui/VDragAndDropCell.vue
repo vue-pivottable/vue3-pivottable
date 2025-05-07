@@ -4,7 +4,7 @@
     :list="modelItems"
     :group="{ name: 'sharted', pull: true, put: true }"
     :ghost-class="'pvtPlaceholder'"
-    :preventOnFilter="false"
+    :prevent-on-filter="false"
     :class="classes"
     @change="onDragEnd"
     :move="onDragMove"
@@ -14,23 +14,23 @@
       :key="item"
       :restricted="restrictedFromDragDrop.includes(item)"
       :open="openStatus[item]"
-      :unselectedFilterValues="valueFilter[item]"
+      :unselected-filter-values="valueFilter[item]"
       :attributeName="item"
-      :attributeValues="allFilters[item]"
-      :zIndex="zIndices[item] || maxZIndex"
-      :hideDropDownForUnused="hideDropDownForUnused"
-      @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox', $event)"
-      @update:unselectedFilterValues="
+      :attribute-values="allFilters[item]"
+      :z-index="zIndices[item] || maxZIndex"
+      :hide-drop-down-for-unused="hideDropDownForUnused"
+      @update:z-index-of-filter-box="$emit('update:zIndexOfFilterBox', $event)"
+      @update:unselected-filter-values="
         $emit('update:unselectedFilterValues', $event)
       "
-      @update:openStatusOfFilterBox="
+      @update:open-status-of-filter-box="
         $emit('update:openStatusOfFilterBox', $event)
       "
     >
       <template #pvtAttr="{ attrName }">
         <slot
           name="pvtAttr"
-          :attrName="attrName"
+          :attr-name="attrName"
         >
           {{ attrName }}
         </slot>

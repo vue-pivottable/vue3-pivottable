@@ -19,8 +19,8 @@
             CSV 파일을 여기에 드롭하거나 클릭하여 컴퓨터에서 파일을 선택하세요.
           </p>
           <input
-            type="file"
             ref="fileInput"
+            type="file"
             accept=".csv"
             class="hidden-input"
             @change="onFileSelected"
@@ -31,9 +31,9 @@
         <p>...또는 데이터를 붙여넣으세요:</p>
         <textarea
           v-model="csvText"
-          @input="parseTextarea"
           placeholder="스프레드시트나 CSV와 같은 파일에서 붙여넣기"
-        ></textarea>
+          @input="parseTextarea"
+        />
       </div>
     </div>
 
@@ -48,7 +48,7 @@
       <h2>{{ filename }}</h2>
 
       <!-- 여기에는 피벗 테이블 컴포넌트가 들어갑니다 -->
-      <slot :data="parsedData"></slot>
+      <slot :data="parsedData" />
     </div>
   </div>
 </template>

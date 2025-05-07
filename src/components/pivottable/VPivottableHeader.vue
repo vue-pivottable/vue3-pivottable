@@ -9,27 +9,29 @@
           v-if="j === 0 && rowAttrs.length !== 0"
           :colSpan="rowAttrs.length"
           :rowSpan="colAttrs.length"
-        ></th>
-        <th class="pvtAxisLabel">{{ c }}</th>
+        />
+        <th class="pvtAxisLabel">
+          {{ c }}
+        </th>
         <VPivottableHeaderColumns
-          :colKeys="colKeys"
-          :colIndex="j"
-          :colAttrsLength="colAttrs.length"
-          :rowAttrsLength="rowAttrs.length"
+          :col-keys="colKeys"
+          :col-index="j"
+          :col-attrs-length="colAttrs.length"
+          :row-attrs-length="rowAttrs.length"
         />
         <VPivottableHeaderRowsTotal
           v-if="j === 0 && rowTotal"
-          :colAttrsLength="colAttrs.length"
-          :rowAttrsLength="rowAttrs.length"
-          :localeStrings="localeStrings"
+          :col-attrs-length="colAttrs.length"
+          :row-attrs-length="rowAttrs.length"
+          :locale-strings="localeStrings"
         />
       </tr>
       <VPivottableHeaderRows
         v-if="rowAttrs.length !== 0"
-        :rowAttrs="rowAttrs"
-        :rowTotal="rowTotal"
-        :colAttrsLength="colAttrs.length"
-        :localeStrings="localeStrings"
+        :row-attrs="rowAttrs"
+        :row-total="rowTotal"
+        :col-attrs-length="colAttrs.length"
+        :locale-strings="localeStrings"
       />
     </template>
   </thead>

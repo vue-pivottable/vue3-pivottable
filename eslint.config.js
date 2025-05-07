@@ -1,34 +1,26 @@
-import globals from 'globals'
-import pluginJs from '@eslint/js'
+import { defineConfig } from 'eslint/config'
+import standardjs from '@seungwoo321/eslint-plugin-standard-js'
 import pluginVue from 'eslint-plugin-vue'
-import pluginImport from 'eslint-plugin-import'
-import { standard } from './eslint.standard.mjs'
 
-export default [
+export default defineConfig([
   {
-    ignores: ['node_modules/**', 'dist/**', 'build/**', '.history/**']
-  },
-  { files: ['**/*.{js,mjs,cjs,vue}'] },
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node
-      }
-    }
-  },
-  pluginJs.configs.recommended,
-  ...pluginVue.configs['flat/essential'],
-  {
-    plugins: {
-      import: pluginImport
-    }
+    ignores: [
+      'packages/plotly-renderer/**',
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      '.history/**',
+      '**/dist/**'
+    ]
   },
   {
+    files: ['**/*.{js,mjs,cjs,vue}', 'eslint.config.js'],
+    extends: [
+      ...standardjs.configs.recommended,
+      ...pluginVue.configs['flat/strongly-recommended']
+    ],
     rules: {
-      ...standard.rules,
-      '@typescript-eslint/no-explicit-any': 'off',
-      'space-before-function-paren': [
+      '@stylistic/space-before-function-paren': [
         'error',
         {
           anonymous: 'always',
@@ -36,7 +28,28 @@ export default [
           asyncArrow: 'always'
         }
       ],
-      'quote-props': ['error', 'consistent']
+      '@stylistic/quote-props': ['error', 'consistent'],
+      'vue/html-self-closing': [
+        'error',
+        {
+          html: {
+            void: 'always',
+            normal: 'always',
+            component: 'always'
+          },
+          svg: 'always',
+          math: 'always'
+        }
+      ],
+      'vue/singleline-html-element-content-newline': [
+        'error',
+        {
+          ignoreWhenNoAttributes: true,
+          ignoreWhenEmpty: true,
+          ignores: ['pre', 'textarea', 'div'],
+          externalIgnores: []
+        }
+      ]
     }
   }
-]
+])

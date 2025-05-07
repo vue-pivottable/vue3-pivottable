@@ -3,7 +3,7 @@
     v-if="slots.aggregatorCell"
     class="pvtVals pvtText"
   >
-    <slot name="aggregatorCell"></slot>
+    <slot name="aggregatorCell" />
   </td>
   <td
     v-else
@@ -14,8 +14,7 @@
         :options="aggregatorOptions"
         :value="aggregatorName"
         @update:value="updateAggregatorName"
-      >
-      </VDropdown>
+      />
       <a
         class="pvtRowOrder"
         role="button"
@@ -38,8 +37,7 @@
         :options="valsOptions"
         :value="vals[i]"
         @update:value="(val) => updateVals(val, i)"
-      >
-      </VDropdown>
+      />
     </template>
   </td>
 </template>

@@ -1,19 +1,19 @@
 <template>
   <tbody v-if="pivotData">
     <VPivottableBodyRows
-      :rowKeys="rowKeys"
-      :colKeys="colKeys"
-      :rowTotal="rowTotal"
-      :tableOptions="tableOptions"
+      :row-keys="rowKeys"
+      :col-keys="colKeys"
+      :row-total="rowTotal"
+      :table-options="tableOptions"
     />
     <VPivottableBodyRowsTotalRow
-      :colTotal="colTotal"
-      :rowTotal="rowTotal"
-      :rowAttrs="rowAttrs"
-      :colAttrs="colAttrs"
-      :colKeys="colKeys"
-      :localeStrings="localeStrings"
-      :tableOptions="tableOptions"
+      :col-total="colTotal"
+      :row-total="rowTotal"
+      :row-attrs="rowAttrs"
+      :col-attrs="colAttrs"
+      :col-keys="colKeys"
+      :locale-strings="localeStrings"
+      :table-options="tableOptions"
     />
   </tbody>
 </template>
