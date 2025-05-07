@@ -37,7 +37,7 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm -F @seungwoo321/lazy-table-renderer build
+        run: pnpm -F @vue-pivottable/lazy-table-renderer build
 
       - name: Release
         env:
