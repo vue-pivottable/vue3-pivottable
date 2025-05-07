@@ -4,32 +4,32 @@
     <tbody>
       <tr>
         <VRendererCell
-          :rendererItems="rendererItems"
-          :rendererName="state.rendererName"
-          @update:rendererName="onUpdateRendererName"
+          :renderer-items="rendererItems"
+          :renderer-name="state.rendererName"
+          @update:renderer-name="onUpdateRendererName"
         />
         <VDragAndDropCell
           classes="pvtAxisContainer pvtUnused pvtHorizList"
-          cellType="unused"
+          cell-type="unused"
           :attributeNames="unusedAttrs"
-          :allFilters="allFilters"
-          :valueFilter="state.valueFilter"
-          :restrictedFromDragDrop="state.restrictedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="
+          :all-filters="allFilters"
+          :value-filter="state.valueFilter"
+          :restricted-from-drag-drop="state.restrictedFromDragDrop"
+          :hide-filter-box-of-unused-attributes="
             state.hideFilterBoxOfUnusedAttributes
           "
-          :zIndices="pivotUiState.zIndices"
-          :maxZIndex="pivotUiState.maxZIndex"
-          :openStatus="pivotUiState.openStatus"
-          @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
-          @update:unselectedFilterValues="onUpdateValueFilter"
-          @update:openStatusOfFilterBox="onUpdateOpenStatus"
-          @update:draggedAttribute="onDraggedAttribute"
+          :z-indices="pivotUiState.zIndices"
+          :max-z-index="pivotUiState.maxZIndex"
+          :open-status="pivotUiState.openStatus"
+          @update:z-index-of-filter-box="onMoveFilterBoxToTop"
+          @update:unselected-filter-values="onUpdateValueFilter"
+          @update:open-status-of-filter-box="onUpdateOpenStatus"
+          @update:dragged-attribute="onDraggedAttribute"
         >
-          <template v-slot:pvtAttr="props">
+          <template #pvtAttr="propsValue">
             <slot
               name="pvtAttr"
-              v-bind="props"
+              v-bind="propsValue"
             />
           </template>
         </VDragAndDropCell>
@@ -37,42 +37,42 @@
       <tr>
         <slot name="aggregatorCell">
           <VAggregatorCell
-            :aggregatorItems="aggregatorItems"
-            :aggregatorName="state.aggregatorName"
-            :rowOrder="state.rowOrder"
-            :colOrder="state.colOrder"
+            :aggregator-items="aggregatorItems"
+            :aggregator-name="state.aggregatorName"
+            :row-order="state.rowOrder"
+            :col-order="state.colOrder"
             :attributeNames="attributeNames"
-            :hiddenFromAggregators="state.hiddenFromAggregators"
+            :hidden-from-aggregators="state.hiddenFromAggregators"
             :vals="state.vals"
-            @update:aggregatorName="onUpdateAggregatorName"
-            @update:rowOrder="onUpdateRowOrder"
-            @update:colOrder="onUpdateColOrder"
+            @update:aggregator-name="onUpdateAggregatorName"
+            @update:row-order="onUpdateRowOrder"
+            @update:col-order="onUpdateColOrder"
             @update:vals="onUpdateVals"
           />
         </slot>
 
         <VDragAndDropCell
           classes="pvtAxisContainer pvtHorizList pvtCols"
-          cellType="cols"
+          cell-type="cols"
           :attributeNames="colAttrs"
-          :allFilters="allFilters"
-          :valueFilter="state.valueFilter"
-          :restrictedFromDragDrop="state.restrictedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="
+          :all-filters="allFilters"
+          :value-filter="state.valueFilter"
+          :restricted-from-drag-drop="state.restrictedFromDragDrop"
+          :hide-filter-box-of-unused-attributes="
             state.hideFilterBoxOfUnusedAttributes
           "
-          :zIndices="pivotUiState.zIndices"
-          :maxZIndex="pivotUiState.maxZIndex"
-          :openStatus="pivotUiState.openStatus"
-          @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
-          @update:unselectedFilterValues="onUpdateValueFilter"
-          @update:openStatusOfFilterBox="onUpdateOpenStatus"
-          @update:draggedAttribute="onDraggedAttribute"
+          :z-indices="pivotUiState.zIndices"
+          :max-z-index="pivotUiState.maxZIndex"
+          :open-status="pivotUiState.openStatus"
+          @update:z-index-of-filter-box="onMoveFilterBoxToTop"
+          @update:unselected-filter-values="onUpdateValueFilter"
+          @update:open-status-of-filter-box="onUpdateOpenStatus"
+          @update:dragged-attribute="onDraggedAttribute"
         >
-          <template v-slot:pvtAttr="props">
+          <template #pvtAttr="propsValue">
             <slot
               name="pvtAttr"
-              v-bind="props"
+              v-bind="propsValue"
             />
           </template>
         </VDragAndDropCell>
@@ -80,25 +80,25 @@
       <tr>
         <VDragAndDropCell
           classes="pvtAxisContainer pvtVertList pvtRows"
-          cellType="rows"
+          cell-type="rows"
           :attributeNames="rowAttrs"
-          :allFilters="allFilters"
-          :valueFilter="state.valueFilter"
-          :restrictedFromDragDrop="state.restrictedFromDragDrop"
-          :hideFilterBoxOfUnusedAttributes="
+          :all-filters="allFilters"
+          :value-filter="state.valueFilter"
+          :restricted-from-drag-drop="state.restrictedFromDragDrop"
+          :hide-filter-box-of-unused-attributes="
             state.hideFilterBoxOfUnusedAttributes
           "
-          :zIndices="pivotUiState.zIndices"
-          :maxZIndex="pivotUiState.maxZIndex"
-          :openStatus="pivotUiState.openStatus"
-          @update:zIndexOfFilterBox="onMoveFilterBoxToTop"
-          @update:unselectedFilterValues="onUpdateValueFilter"
-          @update:openStatusOfFilterBox="onUpdateOpenStatus"
-          @update:draggedAttribute="onDraggedAttribute"
+          :z-indices="pivotUiState.zIndices"
+          :max-z-index="pivotUiState.maxZIndex"
+          :open-status="pivotUiState.openStatus"
+          @update:z-index-of-filter-box="onMoveFilterBoxToTop"
+          @update:unselected-filter-values="onUpdateValueFilter"
+          @update:open-status-of-filter-box="onUpdateOpenStatus"
+          @update:dragged-attribute="onDraggedAttribute"
         >
-          <template v-slot:pvtAttr="props">
+          <template #pvtAttr="propsValue">
             <slot
-              v-bind="props"
+              v-bind="propsValue"
               name="pvtAttr"
             />
           </template>
@@ -106,7 +106,7 @@
         <td class="pvtOutput">
           <slot
             name="outputSlot"
-            :outputSlot="{ pivotData }"
+            :output-slot="{ pivotData }"
           >
             <VPivottable v-bind="pivotProps" />
           </slot>

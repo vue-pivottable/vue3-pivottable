@@ -18,8 +18,7 @@
       <a
         class="pvtFilterTextClear"
         @click="handleFilterTextClear"
-      >
-      </a>
+      />
       <a
         class="pvtButton"
         role="button"
@@ -57,7 +56,7 @@
         >
           {{ localeStrings.only }}
         </a>
-        <a class="pvtOnlySpacer"> </a>
+        <a class="pvtOnlySpacer" />
       </p>
     </div>
   </div>

@@ -24,17 +24,13 @@ export function useMaterializeInput(dataSource, options) {
         for (const attr of Object.keys(record)) {
           if (!(attr in newAllFilters)) {
             newAllFilters[attr] = {}
-            if (recordsProcessed > 0) {
-              newAllFilters[attr].null = recordsProcessed
-            }
+            if (recordsProcessed > 0) { newAllFilters[attr].null = recordsProcessed }
           }
         }
 
         for (const attr in newAllFilters) {
           const value = attr in record ? record[attr] : 'null'
-          if (!(value in newAllFilters[attr])) {
-            newAllFilters[attr][value] = 0
-          }
+          if (!(value in newAllFilters[attr])) { newAllFilters[attr][value] = 0 }
           newAllFilters[attr][value]++
         }
 
@@ -55,9 +51,7 @@ export function useMaterializeInput(dataSource, options) {
 
   watch(
     () => options.derivedAttributes.value,
-    () => {
-      processData(dataSource.value)
-    }
+    () => { processData(dataSource.value) }
   )
 
   return {

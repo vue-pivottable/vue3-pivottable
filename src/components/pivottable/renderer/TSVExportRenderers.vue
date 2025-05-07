@@ -3,7 +3,7 @@
     :style="styles"
     :value="textareaValue"
     readonly
-  ></textarea>
+  />
 </template>
 
 <script setup>

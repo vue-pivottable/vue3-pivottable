@@ -6,9 +6,8 @@
     >
       <slot
         name="pvtAttr"
-        :attrName="attributeName"
-        >{{ attributeName }}</slot
-      >
+        :attr-name="attributeName"
+      >{{ attributeName }}</slot>
       <span
         v-if="!hideDropDown"
         @mousedown.stop
@@ -19,17 +18,16 @@
       </span>
       <VFilterBox
         v-if="open"
-        :unselectedFilterValues="unselectedFilterValues"
-        :filterBoxKey="attributeName"
-        :filterBoxValues="attributeValues"
-        :zIndex="zIndex"
+        :unselected-filter-values="unselectedFilterValues"
+        :filter-box-key="attributeName"
+        :filter-box-values="attributeValues"
+        :z-index="zIndex"
         @mousedown.stop
-        @update:zIndexOfFilterBox="$emit('update:zIndexOfFilterBox', $event)"
-        @update:unselectedFilterValues="
+        @update:z-index-of-filter-box="$emit('update:zIndexOfFilterBox', $event)"
+        @update:unselected-filter-values="
           $emit('update:unselectedFilterValues', $event)
         "
-      >
-      </VFilterBox>
+      />
     </span>
   </li>
 </template>
@@ -66,6 +64,7 @@ const props = defineProps({
     default: () => ({})
   },
   zIndex: {
+    default: 1000,
     type: Number
   },
   hideDropDownForUnused: {

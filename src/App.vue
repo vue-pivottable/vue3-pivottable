@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h1 style="text-align: center">Vue3 Pivottable</h1>
+    <h1 style="text-align: center">
+      Vue3 Pivottable
+    </h1>
     <CsvUploader
       :initial-data="initialData"
       :initial-filename="initialFilename"
@@ -23,8 +25,8 @@
           :cols="cols"
           :vals="vals"
           :renderers="renderers"
-          :aggregatorName="aggregatorName"
-          :rendererName="rendererName"
+          :aggregator-name="aggregatorName"
+          :renderer-name="rendererName"
           :sorters="sorters"
         >
           <!-- <template v-slot:pvtAttr="props">
