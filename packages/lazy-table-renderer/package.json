@@ -1,10 +1,8 @@
 {
   "name": "@vue-pivottable/lazy-table-renderer",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "type": "module",
-  "publishConfig": {
-    "access": "public"
-  },
+  "description": "",
   "exports": {
     ".": {
       "import": "./dist/lazy-table-renderer.es.js",
@@ -55,6 +53,5 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "vite": "^6.3.4"
-  },
-  "packageManager": "pnpm@9.12.2"
+  }
 }

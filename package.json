@@ -2,9 +2,7 @@
   "name": "vue-pivottable",
   "version": "1.0.3",
   "type": "module",
-  "publishConfig": {
-    "access": "public"
-  },
+  "description": "",
   "exports": {
     ".": {
       "import": "./dist/vue-pivottable.es.js",
@@ -88,5 +86,6 @@
     "vite-plugin-dts": "^4.5.3",
     "vite-plugin-static-copy": "^2.3.1",
     "vue": "^3.2.0"
-  }
+  },
+  "packageManager": "pnpm@9.12.2"
 }
