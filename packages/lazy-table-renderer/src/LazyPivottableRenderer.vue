@@ -1,16 +1,16 @@
 <template>
   <table class="pvtTable">
     <VPivottableHeader
-      :rowTotal="props.showRowTotal"
-      :localeStrings="props.localeStrings"
+      :row-total="props.showRowTotal"
+      :locale-strings="props.localeStrings"
     />
     <IntersectionChunkPivottableBody
-      :rowTotal="props.showRowTotal"
-      :colTotal="props.showColTotal"
-      :tableOptions="props.tableOptions"
-      :chunkSize="props.chunkSize"
-      :bufferSize="props.bufferSize"
-      :localeStrings="props.localeStrings"
+      :row-total="props.showRowTotal"
+      :col-total="props.showColTotal"
+      :table-options="props.tableOptions"
+      :chunk-size="props.chunkSize"
+      :buffer-size="props.bufferSize"
+      :locale-strings="props.localeStrings"
     />
   </table>
 </template>

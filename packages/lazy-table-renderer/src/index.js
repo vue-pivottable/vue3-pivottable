@@ -4,9 +4,9 @@ import { PivotUtilities } from 'vue-pivottable'
 
 export default markRaw({
   'Lazy Table': defineComponent({
-    name: 'vue-lazy-table',
+    name: 'VueLazyTable',
     props: { ...PivotUtilities.defaultProps },
-    setup(props) {
+    setup (props) {
       return () =>
         h(LazyPivottableRenderer, {
           ...props,

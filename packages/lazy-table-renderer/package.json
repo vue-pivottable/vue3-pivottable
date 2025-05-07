@@ -1,6 +1,6 @@
 {
   "name": "@vue-pivottable/lazy-table-renderer",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "type": "module",
   "exports": {
     ".": {
@@ -39,7 +39,10 @@
   "author": "Seungwoo, Lee <seungwoo321@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "vite build"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --scope lazy-table-renderer",
+    "clean": "rimraf lib",
+    "build": "pnpm clean && tsc",
+    "lint": "eslint ."
   },
   "peerDependencies": {
     "vue": "^3.2.0",

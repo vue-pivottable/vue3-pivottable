@@ -94,17 +94,19 @@
         :style="`height: ${bottomPaddingHeight}px; position:relative`"
       >
         <slot name="lazy-loader">
-          <div style="position: absolute; top: 0; left: 0">Loading...</div>
+          <div style="position: absolute; top: 0; left: 0">
+            Loading...
+          </div>
         </slot>
       </td>
     </tr>
 
     <VPivottableBodyRowsTotalRow
       v-if="colTotal"
-      :colTotal="colTotal"
-      :rowTotal="rowTotal"
-      :localeStrings="localeStrings"
-      :tableOptions="tableOptions"
+      :col-total="colTotal"
+      :row-total="rowTotal"
+      :locale-strings="localeStrings"
+      :table-options="tableOptions"
     />
   </tbody>
 </template>
