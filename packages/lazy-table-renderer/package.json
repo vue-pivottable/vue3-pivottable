@@ -1,6 +1,6 @@
 {
   "name": "@vue-pivottable/lazy-table-renderer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "publishConfig": {
     "access": "public"
