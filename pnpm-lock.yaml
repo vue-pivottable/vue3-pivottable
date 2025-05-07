@@ -82,8 +82,8 @@ importers:
         specifier: ^3.2.0
         version: 3.5.13(typescript@5.8.2)
       vue-pivottable:
-        specifier: 1.0.1
-        version: 1.0.1(sortablejs@1.15.6)(vue@3.5.13(typescript@5.8.2))
+        specifier: latest
+        version: 1.0.3(sortablejs@1.15.6)(vue@3.5.13(typescript@5.8.2))
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
@@ -3147,6 +3147,11 @@ packages:
 
   vue-pivottable@1.0.1:
     resolution: {integrity: sha512-khRpoXV8LthlLOA2lfFnfKmmNTHnoN2JmFxmlAsROynQBDkPgxyW+hvuQjeb8iXKDJZhXZuPEuddzm+5flnN7A==}
+    peerDependencies:
+      vue: ^3.2.0
+
+  vue-pivottable@1.0.3:
+    resolution: {integrity: sha512-0gBrxoCHEAg0wEMaw9lAi+cVA3IUl5zv7L5y3LgY49DYQeNDjTH8iINOmxJdtoQijMbzOyios+9cYn6EDZ0Nrg==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -6479,6 +6484,13 @@ snapshots:
       - supports-color
 
   vue-pivottable@1.0.1(sortablejs@1.15.6)(vue@3.5.13(typescript@5.8.2)):
+    dependencies:
+      vue: 3.5.13(typescript@5.8.2)
+      vue-draggable-next: 2.2.1(sortablejs@1.15.6)(vue@3.5.13(typescript@5.8.2))
+    transitivePeerDependencies:
+      - sortablejs
+
+  vue-pivottable@1.0.3(sortablejs@1.15.6)(vue@3.5.13(typescript@5.8.2)):
     dependencies:
       vue: 3.5.13(typescript@5.8.2)
       vue-draggable-next: 2.2.1(sortablejs@1.15.6)(vue@3.5.13(typescript@5.8.2))
