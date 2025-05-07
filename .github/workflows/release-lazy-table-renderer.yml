@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'packages/lazy-table-renderer/**'
+    # paths:
+    #   - 'packages/lazy-table-renderer/**'
 
 jobs:
   release:
