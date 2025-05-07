@@ -1,6 +1,6 @@
 {
   "name": "@vue-pivottable/lazy-table-renderer",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "type": "module",
   "exports": {
     ".": {
