@@ -94,9 +94,7 @@
         :style="`height: ${bottomPaddingHeight}px; position:relative`"
       >
         <slot name="lazy-loader">
-          <div style="position: absolute; top: 0; left: 0">
-            Loading...
-          </div>
+          <div style="position: absolute; top: 0; left: 0">Loading...</div>
         </slot>
       </td>
     </tr>
