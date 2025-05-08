@@ -1,3 +1,21 @@
+## [1.0.4](https://github.com/vue-pivottable/vue3-pivottable/compare/v1.0.3...v1.0.4) (2025-05-08)
+
+
+### Bug Fixes
+
+* fix slot and slot-scoped close [#70](https://github.com/vue-pivottable/vue3-pivottable/issues/70) [#71](https://github.com/vue-pivottable/vue3-pivottable/issues/71) ([d7369bc](https://github.com/vue-pivottable/vue3-pivottable/commit/d7369bca19f5d4c547dc57f462da4f4f4aceecff))
+* **lazy-table-renderer:** fix build script ([4b9dc1b](https://github.com/vue-pivottable/vue3-pivottable/commit/4b9dc1bbccff292d69d0152a43f5bcd7cc66b5b2))
+* **lazy-table-renderer:** fix lint ([39f597c](https://github.com/vue-pivottable/vue3-pivottable/commit/39f597c081e885b7668fdaeec4ef38f2cb43b41c))
+* pvtAttr scoped slot 버그 수정[#68](https://github.com/vue-pivottable/vue3-pivottable/issues/68) ([6383df4](https://github.com/vue-pivottable/vue3-pivottable/commit/6383df456c504a55cee560375bedeec5e7169d7a))
+* **slot:** pvtAttr scoped slot 버그 수정 ([#68](https://github.com/vue-pivottable/vue3-pivottable/issues/68)) ([e2986ac](https://github.com/vue-pivottable/vue3-pivottable/commit/e2986acaf5e247551d499de9a70b7a5e17b85087))
+
+
+### Features
+
+* update script with new functionality ([83b4db2](https://github.com/vue-pivottable/vue3-pivottable/commit/83b4db211a1b89ae6575a1f0398941406129b1ba))
+
+
+
 ## [1.0.3](https://github.com/vue-pivottable/vue3-pivottable/compare/v1.0.2...v1.0.3) (2025-05-01)
 
 ## [1.0.2](https://github.com/vue-pivottable/vue3-pivottable/compare/v1.0.0-alpha.5...v1.0.2) (2025-04-30)

@@ -1,18 +1,15 @@
 <template>
   <td
     class="pvtRenderers"
-    :class="{ 'pvtVals pvtText': slots.rendererCell }"
+    :class="{ pvtVals: slots.rendererCell, pvtText: slots.rendererCell }"
   >
-    <slot
-      v-if="slots.rendererCell"
-      name="rendererCell"
-    />
-    <VDropdown
-      v-else
-      :options="rendererOptions"
-      :value="rendererName"
-      @update:value="updateRendererName"
-    />
+    <slot name="rendererCell">
+      <VDropdown
+        :options="rendererOptions"
+        :value="rendererName"
+        @update:value="updateRendererName"
+      />
+    </slot>
   </td>
 </template>
 

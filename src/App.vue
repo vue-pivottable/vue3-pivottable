@@ -1,22 +1,22 @@
 <template>
   <div>
-    <h1 style="text-align: center">
-      Vue3 Pivottable
-    </h1>
+    <h1 style="text-align: center">Vue3 Pivottable</h1>
+    <!-- Base: VuePivottable -->
+    <!-- <VuePivottable
+      :data="[
+        { color: 'blue', shape: 'circle' },
+        { color: 'red', shape: 'triangle' }
+      ]"
+      :rows="['color']"
+      :cols="['shape']"
+      renderer-name="Table"
+      aggreagator-name="count"
+    /> -->
     <CsvUploader
       :initial-data="initialData"
       :initial-filename="initialFilename"
       @data-parsed="onDataParsed"
     >
-      <!-- <VuePivottableUi
-        :data="[
-          { color: 'blue', shape: 'circle' },
-          { color: 'red', shape: 'triangle' }
-        ]"
-        :rows="['color']"
-        :cols="['shape']"
-        rendererName="Export Table TSV"
-      /> -->
       <template #default="{ data }">
         <VuePivottableUi
           v-if="data.length > 0"
@@ -29,16 +29,42 @@
           :renderer-name="rendererName"
           :sorters="sorters"
         >
-          <!-- <template v-slot:pvtAttr="props">
-          {{ props }}
-        </template> -->
+          <!-- [test] Scoped Slot: pvtAttr -->
+          <!-- <template #pvtAttr="{ attrName }">
+            <i
+              class="fas fa-filter"
+              style="margin-right: 0.25rem"
+            />
+            {{ attrName }}
+          </template> -->
 
-          <!-- <template v-slot:outputSlot>
-          <div>slot</div>
-        </template> -->
-          <!-- <template v-slot:outputSlot="outputSlot">
-          {{ outputSlot }}
-        </template> -->
+          <!-- [test] Scoped Slot:: outputSlot -->
+          <!-- <template #outputSlot="outputSlot">
+            {{ outputSlot }}
+          </template> -->
+
+          <!-- [test] Slot: colGroup -->
+          <!-- <template #colGroup>
+            <colgroup :width="colGroupFirstWidth" />
+            <colgroup />
+          </template> -->
+
+          <!-- [test] Slot: rendererCell -->
+          <!-- <template #rendererCell>
+            <i
+              class="fas fa-table"
+              style="margin-right: 0.25rem"
+            />
+            Table
+          </template> -->
+
+          <!-- [test] Slot: aggregatorCell -->
+          <!-- <template #aggregatorCell> Sum </template> -->
+
+          <!-- [test] Slot: output -->
+          <!-- <template #output>
+            <div>loading..</div>
+          </template> -->
         </VuePivottableUi>
       </template>
     </CsvUploader>
@@ -81,6 +107,8 @@ const sorters = ref({
     'Sunday'
   ])
 })
+// const colGroupFirstWidth = ref(300)
+
 const vals = ref(['Tip'])
 const rendererName = ref('Table')
 const onDataParsed = (data) => {

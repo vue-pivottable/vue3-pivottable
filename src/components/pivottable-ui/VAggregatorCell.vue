@@ -1,51 +1,47 @@
 <template>
   <td
-    v-if="slots.aggregatorCell"
-    class="pvtVals pvtText"
-  >
-    <slot name="aggregatorCell" />
-  </td>
-  <td
-    v-else
     class="pvtVals"
+    :class="{ pvtText: $slots.aggregatorCell }"
   >
-    <div>
-      <VDropdown
-        :options="aggregatorOptions"
-        :value="aggregatorName"
-        @update:value="updateAggregatorName"
-      />
-      <a
-        class="pvtRowOrder"
-        role="button"
-        @click="updateRowOrder"
-      >
-        {{ currentRowSortIcon }}
-      </a>
-      <a
-        class="pvtColOrder"
-        role="button"
-        @click="updateColOrder"
-      >
-        {{ currentColSortIcon }}
-      </a>
-    </div>
-    <template v-if="numValsAllowed">
-      <VDropdown
-        v-for="(item, i) in new Array(numValsAllowed).fill()"
-        :key="i"
-        :options="valsOptions"
-        :value="vals[i]"
-        @update:value="(val) => updateVals(val, i)"
-      />
-    </template>
+    <slot name="aggregatorCell">
+      <div>
+        <VDropdown
+          :options="aggregatorOptions"
+          :value="aggregatorName"
+          @update:value="updateAggregatorName"
+        />
+        <a
+          class="pvtRowOrder"
+          role="button"
+          @click="updateRowOrder"
+        >
+          {{ currentRowSortIcon }}
+        </a>
+        <a
+          class="pvtColOrder"
+          role="button"
+          @click="updateColOrder"
+        >
+          {{ currentColSortIcon }}
+        </a>
+      </div>
+      <template v-if="numValsAllowed">
+        <VDropdown
+          v-for="(item, i) in new Array(numValsAllowed).fill()"
+          :key="i"
+          :options="valsOptions"
+          :value="vals[i]"
+          @update:value="(val) => updateVals(val, i)"
+        />
+      </template>
+    </slot>
   </td>
 </template>
 
 <script setup>
-import { computed, useSlots } from 'vue'
+import { computed } from 'vue'
 import VDropdown from './VDropdown.vue'
-const slots = useSlots()
+
 const emit = defineEmits([
   'update:aggregatorName',
   'update:rowOrder',

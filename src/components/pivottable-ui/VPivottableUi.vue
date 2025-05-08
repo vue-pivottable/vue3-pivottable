@@ -7,7 +7,15 @@
           :renderer-items="rendererItems"
           :renderer-name="state.rendererName"
           @update:renderer-name="onUpdateRendererName"
-        />
+        >
+          <template
+            v-if="$slots.rendererCell"
+            #rendererCell
+          >
+            <slot name="rendererCell" />
+          </template>
+        </VRendererCell>
+
         <VDragAndDropCell
           classes="pvtAxisContainer pvtUnused pvtHorizList"
           cell-type="unused"
@@ -25,31 +33,29 @@
           @update:unselected-filter-values="onUpdateValueFilter"
           @update:open-status-of-filter-box="onUpdateOpenStatus"
           @update:dragged-attribute="onDraggedAttribute"
-        >
-          <template #pvtAttr="propsValue">
-            <slot
-              name="pvtAttr"
-              v-bind="propsValue"
-            />
-          </template>
-        </VDragAndDropCell>
+        />
       </tr>
       <tr>
-        <slot name="aggregatorCell">
-          <VAggregatorCell
-            :aggregator-items="aggregatorItems"
-            :aggregator-name="state.aggregatorName"
-            :row-order="state.rowOrder"
-            :col-order="state.colOrder"
-            :attributeNames="attributeNames"
-            :hidden-from-aggregators="state.hiddenFromAggregators"
-            :vals="state.vals"
-            @update:aggregator-name="onUpdateAggregatorName"
-            @update:row-order="onUpdateRowOrder"
-            @update:col-order="onUpdateColOrder"
-            @update:vals="onUpdateVals"
-          />
-        </slot>
+        <VAggregatorCell
+          :aggregator-items="aggregatorItems"
+          :aggregator-name="state.aggregatorName"
+          :row-order="state.rowOrder"
+          :col-order="state.colOrder"
+          :attributeNames="attributeNames"
+          :hidden-from-aggregators="state.hiddenFromAggregators"
+          :vals="state.vals"
+          @update:aggregator-name="onUpdateAggregatorName"
+          @update:row-order="onUpdateRowOrder"
+          @update:col-order="onUpdateColOrder"
+          @update:vals="onUpdateVals"
+        >
+          <template
+            v-if="$slots.aggregatorCell"
+            #aggregatorCell
+          >
+            <slot name="aggregatorCell" />
+          </template>
+        </VAggregatorCell>
 
         <VDragAndDropCell
           classes="pvtAxisContainer pvtHorizList pvtCols"
@@ -69,7 +75,10 @@
           @update:open-status-of-filter-box="onUpdateOpenStatus"
           @update:dragged-attribute="onDraggedAttribute"
         >
-          <template #pvtAttr="propsValue">
+          <template
+            v-if="$slots.pvtAttr"
+            #pvtAttr="propsValue"
+          >
             <slot
               name="pvtAttr"
               v-bind="propsValue"
@@ -104,12 +113,18 @@
           </template>
         </VDragAndDropCell>
         <td class="pvtOutput">
-          <slot
-            name="outputSlot"
-            :output-slot="{ pivotData }"
-          >
+          <template v-if="$slots.outputSlot">
+            <slot
+              name="outputSlot"
+              :output-slot="{ pivotData }"
+            />
+          </template>
+          <template v-else-if="$slots.output">
+            <slot name="output" />
+          </template>
+          <template v-else>
             <VPivottable v-bind="pivotProps" />
-          </slot>
+          </template>
         </td>
       </tr>
     </tbody>
