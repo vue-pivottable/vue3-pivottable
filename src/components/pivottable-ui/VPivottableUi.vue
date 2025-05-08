@@ -168,10 +168,6 @@ const props = defineProps({
     type: Number,
     default: 500
   },
-  pivotModel: {
-    type: Object,
-    default: () => ({})
-  },
   hideFilterBoxOfUnusedAttributes: {
     type: Boolean,
     default: false
