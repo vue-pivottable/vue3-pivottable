@@ -7,8 +7,8 @@
       {
         "preset": "angular",
         "parserOpts": {
-          "headerPattern": "^(\\w*)\\(([\\w\\-]+)\\):\\s(.*)$",
-          "headerCorrespondence": ["type", "scope", "subject"]
+          "headerPattern": "^(\\w*):\\s(.*)$",
+          "headerCorrespondence": ["type", "subject"]
         },
         "releaseRules": [
           {
@@ -53,11 +53,11 @@
       {
         "preset": "angular",
         "parserOpts": {
-          "headerPattern": "^(\\w*)\\(([\\w\\-]+)\\):\\s(.*)$",
-          "headerCorrespondence": ["type", "scope", "subject"]
+          "headerPattern": "^(\\w*):\\s(.*)$",
+          "headerCorrespondence": ["type", "subject"]
         },
         "writerOpts": {
-          "commitsSort": ["scope", "subject"]
+          "commitsSort": ["type", "subject"]
         }
       }
     ],
