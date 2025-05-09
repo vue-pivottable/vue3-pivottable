@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    # paths:
-    #   - 'packages/lazy-table-renderer/**'
+    paths:
+      - 'packages/lazy-table-renderer/**'
 
 jobs:
   release:
@@ -38,10 +38,16 @@ jobs:
 
       - name: Build
         run: pnpm -F @vue-pivottable/lazy-table-renderer build
-
+      - name: Generate GitHub App Token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: ${{ secrets.APP_INSTALLATION_ID }}
       - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
