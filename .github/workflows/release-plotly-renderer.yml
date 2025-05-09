@@ -1,0 +1,49 @@
+name: Release plotly-renderer
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/plotly-renderer/**'
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.10.0'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm -F @vue-pivottable/plotly-renderer build
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_SUMIN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN_SUMIN }}
+        run: |
+          cd packages/plotly-renderer
+          pnpm dlx semantic-release
