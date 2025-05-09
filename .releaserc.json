@@ -83,7 +83,7 @@
     [
       "@semantic-release/github",
       {
-        "successComment": "🎉 이 PR은 [${nextRelease.version}](https://github.com/vue-pivottable/vue3-pivottable/releases/tag/@vue-pivottable/lazy-table-renderer@${nextRelease.version})에 포함되었습니다.",
+        "successComment": "🎉 이 PR은 [${nextRelease.version}](https://github.com/vue-pivottable/vue3-pivottable/releases/tag/vue-pivottable@@${nextRelease.version})에 포함되었습니다.",
         "failTitle": "semantic-release 실패",
         "prCreation": "always",
         "prTitle": "Release ${nextRelease.version}",
