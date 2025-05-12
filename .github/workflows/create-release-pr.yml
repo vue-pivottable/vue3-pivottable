@@ -31,8 +31,8 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          base: release
-          branch: main
+          base: main
+          branch: release
           title: 'chore: sync main to release'
           body: |
             이 PR은 메인 브랜치의 변경사항을 릴리즈 브랜치로 동기화합니다.
