@@ -27,28 +27,12 @@ jobs:
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: ${{ secrets.APP_INSTALLATION_ID }}
 
-      - name: Create branch and PR
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-          # 고유한 브랜치 이름 생성
-          BRANCH_NAME="sync-main-to-release-$(date +'%Y%m%d-%H%M%S')"
-          git checkout -b $BRANCH_NAME
-
-          # GitHub App 토큰을 사용하여 브랜치 푸시
-          git remote set-url origin https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/${{ github.repository }}
-          git push origin $BRANCH_NAME
-
       - name: Create Pull Request
-        id: create_pr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          commit-message: 'chore: sync main to release'
-          branch: sync-main-to-release-$(date +'%Y%m%d-%H%M%S')
-          delete-branch: false
           base: release
+          branch: main
           title: 'chore: sync main to release'
           body: |
             이 PR은 메인 브랜치의 변경사항을 릴리즈 브랜치로 동기화합니다.
@@ -57,9 +41,3 @@ jobs:
           labels: |
             automated-pr
             sync-to-release
-
-      - name: PR Details
-        if: steps.create_pr.outputs.pull-request-number
-        run: |
-          echo "::notice::Pull Request created: #${{ steps.create_pr.outputs.pull-request-number }}"
-          echo "::notice::View it here: ${{ steps.create_pr.outputs.pull-request-url }}"
