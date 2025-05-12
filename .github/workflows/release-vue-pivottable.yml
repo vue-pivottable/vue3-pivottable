@@ -42,6 +42,10 @@ jobs:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: ${{ secrets.APP_INSTALLATION_ID }}
+      - name: Configure Git Remote
+        run: |
+          git remote set-url origin https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/vue-pivottable/vue3-pivottable.git
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
