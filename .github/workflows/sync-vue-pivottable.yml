@@ -1,0 +1,35 @@
+name: Sync Release Branch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Update release branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+          # release 브랜치가 존재하는지 확인
+          if git ls-remote --exit-code --heads origin release; then
+            # 존재하면 업데이트
+            git fetch origin release
+            git checkout release
+            git merge --no-edit origin/main
+          else
+            # 존재하지 않으면 생성
+            git checkout -b release
+          fi
+
+          git push origin release

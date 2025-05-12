@@ -3,7 +3,7 @@ name: Release lazy-table-renderer
 on:
   push:
     branches:
-      - main
+      - release
     paths:
       - 'packages/lazy-table-renderer/**'
 
