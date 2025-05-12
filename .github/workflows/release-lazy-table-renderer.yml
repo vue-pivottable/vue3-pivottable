@@ -53,3 +53,19 @@ jobs:
         run: |
           cd packages/lazy-table-renderer
           pnpm dlx semantic-release
+
+      - name: Create Pull Request to main
+        if: success()
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release
+          base: main
+          title: 'chore: update version to latest release'
+          body: |
+            This PR updates the main branch with the latest version information from the release branch.
+
+            - Updates package.json version
+            - Updates CHANGELOG.md
+
+            This PR was automatically created by the release workflow.
