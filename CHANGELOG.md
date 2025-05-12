@@ -1,3 +1,5 @@
+## [1.0.11](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.0.10...vue-pivottable@1.0.11) (2025-05-12)
+
 ## [1.0.10](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.0.9...vue-pivottable@1.0.10) (2025-05-12)
 
 
