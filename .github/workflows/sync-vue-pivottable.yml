@@ -8,28 +8,41 @@ on:
 jobs:
   sync-release:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Update release branch
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+      - name: Generate GitHub App Token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: ${{ secrets.APP_INSTALLATION_ID }}
 
-          # release 브랜치가 존재하는지 확인
-          if git ls-remote --exit-code --heads origin release; then
-            # 존재하면 업데이트
-            git fetch origin release
+      - name: Sync release branch with main
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          git config --global user.name "GitHub App"
+          git config --global user.email "github-app@example.com"
+
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+
+          git fetch origin
+
+          if git show-ref --quiet refs/remotes/origin/release; then
             git checkout release
             git merge --no-edit origin/main
           else
-            # 존재하지 않으면 생성
-            git checkout -b release
+            git checkout -b release origin/main
           fi
 
-          git push origin release
+          if git diff --quiet origin/release; then
+            echo "No changes to push."
+          else
+            git push origin release
+          fi
