@@ -3,7 +3,7 @@ name: Release vue-pivottable
 on:
   push:
     branches:
-      - main
+      - release
 jobs:
   release:
     name: Release
@@ -42,10 +42,6 @@ jobs:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: ${{ secrets.APP_INSTALLATION_ID }}
-      - name: Configure Git Remote
-        run: |
-          git remote set-url origin https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/vue-pivottable/vue3-pivottable.git
-
       - name: Release
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
@@ -53,3 +49,19 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           pnpm dlx semantic-release
+
+      - name: Create Pull Request to main
+        if: success()
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release
+          base: main
+          title: 'chore: update version to latest release'
+          body: |
+            This PR updates the main branch with the latest version information from the release branch.
+
+            - Updates package.json version
+            - Updates CHANGELOG.md
+
+            This PR was automatically created by the release workflow.
