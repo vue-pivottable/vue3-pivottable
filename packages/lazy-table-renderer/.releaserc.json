@@ -1,5 +1,5 @@
 {
-  "branches": ["main"],
+  "branches": ["release"],
   "tagFormat": "@vue-pivottable/lazy-table-renderer@${version}",
   "plugins": [
     [
