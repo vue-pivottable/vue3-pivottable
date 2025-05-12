@@ -1,0 +1,64 @@
+name: Create Release PR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-release-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate GitHub App Token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: ${{ secrets.APP_INSTALLATION_ID }}
+
+      - name: Create Release PR Branch
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+          # 현재 날짜와 시간을 포함한 고유한 브랜치 이름 생성
+          BRANCH_NAME="sync-main-to-release-$(date +'%Y%m%d-%H%M%S')"
+          git checkout -b $BRANCH_NAME
+
+          # GitHub App 토큰을 사용하여 브랜치 푸시
+          git remote set-url origin https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/${{ github.repository }}
+          git push origin $BRANCH_NAME
+
+          # 변경 내용 요약
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          base: release
+          branch: ${{ env.BRANCH_NAME }}
+          title: 'chore: sync main to release'
+          body: |
+            이 PR은 메인 브랜치의 변경사항을 릴리즈 브랜치로 동기화합니다.
+
+            ## 주요 변경사항:
+            ${{ env.COMMIT_MESSAGE }}
+
+            이 PR이 머지되면 릴리즈 워크플로우가 자동으로 트리거됩니다.
+          labels: |
+            automated-pr
+            sync-to-release
