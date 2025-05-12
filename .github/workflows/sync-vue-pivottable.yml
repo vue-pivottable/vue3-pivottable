@@ -30,19 +30,14 @@ jobs:
           git config --global user.name "GitHub App"
           git config --global user.email "github-app@example.com"
 
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-
           git fetch origin
 
-          if git show-ref --quiet refs/remotes/origin/release; then
-            git checkout release
+          if git ls-remote --exit-code --heads origin release; then
+            git fetch origin release
+            git checkout -b release origin/release
             git merge --no-edit origin/main
           else
             git checkout -b release origin/main
           fi
 
-          if git diff --quiet origin/release; then
-            echo "No changes to push."
-          else
-            git push origin release
-          fi
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/vue-pivottable/vue3-pivottable.git" release
