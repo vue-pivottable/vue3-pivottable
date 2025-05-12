@@ -1,3 +1,10 @@
+## [1.0.10](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.0.9...vue-pivottable@1.0.10) (2025-05-12)
+
+
+### Bug Fixes
+
+* add missing @semantic-release/git ([e95c90b](https://github.com/vue-pivottable/vue3-pivottable/commit/e95c90b8cd8737048e37da4eae8740d0b116fd37))
+
 ## [1.0.4](https://github.com/vue-pivottable/vue3-pivottable/compare/v1.0.3...v1.0.4) (2025-05-08)
 
 
