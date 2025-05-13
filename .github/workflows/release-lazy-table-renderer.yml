@@ -66,7 +66,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           branch: release-to-main
-          commit-message: 'chore: update version to latest release'
+          commit-message: 'chore: update version to latest release [skip ci]'
           title: 'chore: update version to latest release'
           body: |
             이 PR은 release 브랜치의 최신 버전 정보로 main 브랜치를 업데이트합니다.
