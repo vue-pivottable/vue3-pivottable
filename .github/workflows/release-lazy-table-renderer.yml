@@ -59,8 +59,8 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: release
-          base: main
+          branch: main
+          base: release
           title: 'chore: update version to latest release'
           body: |
             This PR updates the main branch with the latest version information from the release branch.
