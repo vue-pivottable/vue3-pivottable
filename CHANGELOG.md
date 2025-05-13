@@ -1,3 +1,10 @@
+## [1.0.14](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.0.13...vue-pivottable@1.0.14) (2025-05-13)
+
+
+### Bug Fixes
+
+* update workflows ([5417459](https://github.com/vue-pivottable/vue3-pivottable/commit/541745903e33f23e2bebe3fd9e82fd4e8efa2329))
+
 ## [1.0.12](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.0.11...vue-pivottable@1.0.12) (2025-05-13)
 
 
