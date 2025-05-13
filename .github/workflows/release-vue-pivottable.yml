@@ -15,7 +15,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -50,18 +50,26 @@ jobs:
         run: |
           pnpm dlx semantic-release
 
-      - name: Create Pull Request to main
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Reset main branch
+        run: |
+          git fetch origin release:release
+          git reset --hard release
+      - name: Create Pull Request
         if: success()
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          base: release
+          branch: release-to-main
+          commit-message: 'chore: update version to latest release'
           title: 'chore: update version to latest release'
           body: |
-            This PR updates the main branch with the latest version information from the release branch.
+            이 PR은 release 브랜치의 최신 버전 정보로 main 브랜치를 업데이트합니다.
 
-            - Updates package.json version
-            - Updates CHANGELOG.md
+            - package.json 버전 업데이트
+            - CHANGELOG.md 업데이트
 
-            This PR was automatically created by the release workflow.
+            이 PR은 release 워크플로우에 의해 자동으로 생성되었습니다.
+          delete-branch: true
