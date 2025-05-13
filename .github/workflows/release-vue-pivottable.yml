@@ -54,7 +54,7 @@ jobs:
         with:
           ref: main
 
-      - name: Reset main branch
+      - name: Reset release branch
         run: |
           git fetch origin release:release
           git reset --hard release
@@ -63,7 +63,7 @@ jobs:
         with:
           branch: release-to-main
           commit-message: 'chore: update version to latest release [skip ci]'
-          title: 'chore: update version to latest release'
+          title: 'chore: update version to latest release [skip ci]'
           body: |
             이 PR은 release 브랜치의 최신 버전 정보로 main 브랜치를 업데이트합니다.
 
@@ -71,4 +71,3 @@ jobs:
             - CHANGELOG.md 업데이트
 
             이 PR은 release 워크플로우에 의해 자동으로 생성되었습니다.
-          delete-branch: true
