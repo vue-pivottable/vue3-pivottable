@@ -15,8 +15,8 @@ export default defineConfig({
       ]
     }),
     dts({
-      include: ['src/**/*.{js,ts,vue,d.ts}'],
-      outDir: 'dist',
+      include: ['src'],
+      outDir: 'dist/types',
       staticImport: true,
       insertTypesEntry: true,
       rollupTypes: true
@@ -24,9 +24,10 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.js'),
+      entry: resolve(__dirname, 'src/index.ts'),
       name: 'VuePivottable',
-      fileName: (format) => `vue-pivottable.${format}.js`
+      fileName: (format) => `vue-pivottable.${format}.js`,
+      formats: ['es', 'umd']
     },
     rollupOptions: {
       external: ['vue', 'vue-draggable-next', 'papaparse'],

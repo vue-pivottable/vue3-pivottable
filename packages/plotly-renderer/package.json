@@ -5,13 +5,15 @@
   "exports": {
     ".": {
       "import": "./dist/plotly-renderer.es.js",
-      "require": "./dist/plotly-renderer.umd.js"
+      "require": "./dist/plotly-renderer.umd.js",
+      "types": "./dist/types/index.d.ts"
     },
     "./dist/": "./dist/",
     "./package.json": "./package.json"
   },
   "main": "./dist/plotly-renderer.umd.js",
   "module": "./dist/plotly-renderer.es.js",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist",
     "LICENSE",
@@ -47,6 +49,9 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
-    "vite": "^6.3.4"
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.4",
+    "vue-tsc": "^2.2.10"
   }
 }
