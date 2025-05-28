@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import path, { resolve } from 'path'
+import { resolve } from 'path'
 import dts from 'vite-plugin-dts'
 import vue from '@vitejs/plugin-vue'
 
@@ -38,7 +38,8 @@ export default defineConfig(() => {
     },
     resolve: {
       alias: {
-        'vue-plotly': path.resolve(__dirname, 'node_modules/vue-plotly')
+        'vue-pivottable': resolve(__dirname, '../../src'),
+        'vue-plotly': resolve(__dirname, 'node_modules/vue-plotly')
       }
     }
   }

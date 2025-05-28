@@ -4,9 +4,9 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/plotly-renderer.es.js",
-      "require": "./dist/plotly-renderer.umd.js",
-      "types": "./dist/types/index.d.ts"
+      "require": "./dist/plotly-renderer.umd.js"
     },
     "./dist/": "./dist/",
     "./package.json": "./package.json"

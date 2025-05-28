@@ -5,9 +5,9 @@
   "description": "",
   "exports": {
     ".": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/lazy-table-renderer.es.js",
-      "require": "./dist/lazy-table-renderer.umd.js",
-      "types": "./dist/types/index.d.ts"
+      "require": "./dist/lazy-table-renderer.umd.js"
     },
     "./dist/": "./dist/",
     "./package.json": "./package.json"

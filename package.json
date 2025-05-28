@@ -5,9 +5,9 @@
   "description": "",
   "exports": {
     ".": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/vue-pivottable.es.js",
-      "require": "./dist/vue-pivottable.umd.js",
-      "types": "./dist/types/index.d.ts"
+      "require": "./dist/vue-pivottable.umd.js"
     },
     "./dist/": "./dist/",
     "./package.json": "./package.json"
