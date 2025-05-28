@@ -7,7 +7,9 @@ export function providePivotData(props) {
   const error = ref(null)
 
   const pivotData = computed(() => {
-    try { return new PivotData(props) } catch (err) {
+    try {
+      return new PivotData(props)
+    } catch (err) {
       console.error(err.stack)
       error.value = 'An error occurred computing the PivotTable results.'
       return null
@@ -35,7 +37,9 @@ export function providePivotData(props) {
   })
 
   const allColorScales = computed(() => {
-    const values = rowKeys.value.reduce((acc, r) => { return acc.concat(colKeys.value.map((c) => getAggregator(r, c).value())) }, [])
+    const values = rowKeys.value.reduce((acc, r) => {
+      return acc.concat(colKeys.value.map((c) => getAggregator(r, c).value()))
+    }, [])
     return colorScaleGenerator(values)
   })
   const rowColorScales = computed(() =>
@@ -56,7 +60,13 @@ export function providePivotData(props) {
   )
 
   const valueCellColors = (rowKey, colKey, value) => {
-    if (props.heatmapMode === 'full') { return allColorScales.value(value) } else if (props.heatmapMode === 'row') { return rowColorScales.value[rowKey](value) } else if (props.heatmapMode === 'col') { return colColorScales.value[colKey](value) }
+    if (props.heatmapMode === 'full') {
+      return allColorScales.value(value)
+    } else if (props.heatmapMode === 'row') {
+      return rowColorScales.value[rowKey](value)
+    } else if (props.heatmapMode === 'col') {
+      return colColorScales.value[colKey](value)
+    }
     return {}
   }
   const rowTotalValues = colKeys.value.map((x) => getAggregator([], x).value())
@@ -76,15 +86,27 @@ export function providePivotData(props) {
     let x
     if (i !== 0) {
       let noDraw = true
-      for (x = 0; x <= j; x++) { if (arr[i - 1][x] !== arr[i][x]) { noDraw = false } }
-      if (noDraw) { return -1 }
+      for (x = 0; x <= j; x++) {
+        if (arr[i - 1][x] !== arr[i][x]) {
+          noDraw = false
+        }
+      }
+      if (noDraw) {
+        return -1
+      }
     }
 
     let len = 0
     while (i + len < arr.length) {
       let stop = false
-      for (x = 0; x <= j; x++) { if (arr[i][x] !== arr[i + len][x]) { stop = true } }
-      if (stop) { break }
+      for (x = 0; x <= j; x++) {
+        if (arr[i][x] !== arr[i + len][x]) {
+          stop = true
+        }
+      }
+      if (stop) {
+        break
+      }
       len++
     }
     return len
@@ -109,4 +131,6 @@ export function providePivotData(props) {
   return pivotDataContext
 }
 
-export function useProvidePivotData() { return inject(PIVOT_DATA_KEY) }
+export function useProvidePivotData() {
+  return inject(PIVOT_DATA_KEY)
+}
