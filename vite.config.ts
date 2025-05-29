@@ -20,7 +20,12 @@ export default defineConfig({
       outDir: 'dist/types',
       staticImport: true,
       insertTypesEntry: true,
-      rollupTypes: true
+      rollupTypes: true,
+      compilerOptions: {
+        paths: {
+          '@/helper/utilities': ['./src/helper/utilities.d.ts']
+        }
+      }
     })
   ],
   build: {
