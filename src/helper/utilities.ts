@@ -69,7 +69,7 @@ interface AggregatorTemplates {
 // ==================== PivotData 관련 타입 ====================
 interface PivotDataProps {
   data: DataRecord[] | DataRecord[][] | ((callback: (record: DataRecord) => void) => void)
-  aggregators?: Record<string, AggregatorFunction>
+  aggregators?: Record<string, AggregatorTemplate>
   cols?: string[]
   rows?: string[]
   vals?: string[]
@@ -103,8 +103,8 @@ interface LocaleStrings {
 }
 
 interface Locale {
-  aggregators?: Record<string, AggregatorFunction>
-  frAggregators?: Record<string, AggregatorFunction>
+  aggregators?: Record<string, AggregatorTemplate>
+  frAggregators?: Record<string, AggregatorTemplate>
   localeStrings: LocaleStrings
 }
 
@@ -538,72 +538,46 @@ const aggregatorTemplates: AggregatorTemplates = {
 
 // ==================== 기본 Aggregators ====================
 
-const aggregators: Record<string, AggregatorFunction> = {
-  'Count': aggregatorTemplates.count(usFmtInt)(),
-  'Count Unique Values': aggregatorTemplates.countUnique(usFmtInt)(),
-  'List Unique Values': aggregatorTemplates.listUnique(', ')(),
-  'Sum': aggregatorTemplates.sum(usFmt)(),
-  'Integer Sum': aggregatorTemplates.sum(usFmtInt)(),
-  'Average': aggregatorTemplates.average(usFmt)(),
-  'Median': aggregatorTemplates.median(usFmt)(),
-  'Sample Variance': aggregatorTemplates.var(1, usFmt)(),
-  'Sample Standard Deviation': aggregatorTemplates.stdev(1, usFmt)(),
-  'Minimum': aggregatorTemplates.min(usFmt)(),
-  'Maximum': aggregatorTemplates.max(usFmt)(),
-  'First': aggregatorTemplates.first(usFmt)(),
-  'Last': aggregatorTemplates.last(usFmt)(),
-  'Sum over Sum': aggregatorTemplates.sumOverSum(usFmt)(),
-  'Sum as Fraction of Total': aggregatorTemplates.fractionOf(aggregatorTemplates.sum(), 'total', usFmtPct)(),
-  'Sum as Fraction of Rows': aggregatorTemplates.fractionOf(aggregatorTemplates.sum(), 'row', usFmtPct)(),
-  'Sum as Fraction of Columns': aggregatorTemplates.fractionOf(aggregatorTemplates.sum(), 'col', usFmtPct)(),
-  'Count as Fraction of Total': aggregatorTemplates.fractionOf(aggregatorTemplates.count(), 'total', usFmtPct)(),
-  'Count as Fraction of Rows': aggregatorTemplates.fractionOf(aggregatorTemplates.count(), 'row', usFmtPct)(),
-  'Count as Fraction of Columns': aggregatorTemplates.fractionOf(aggregatorTemplates.count(), 'col', usFmtPct)()
+const aggregators: Record<string, AggregatorTemplate> = {
+  'Count': aggregatorTemplates.count(usFmtInt),
+  'Count Unique Values': aggregatorTemplates.countUnique(usFmtInt),
+  'List Unique Values': aggregatorTemplates.listUnique(', '),
+  'Sum': aggregatorTemplates.sum(usFmt),
+  'Integer Sum': aggregatorTemplates.sum(usFmtInt),
+  'Average': aggregatorTemplates.average(usFmt),
+  'Median': aggregatorTemplates.median(usFmt),
+  'Sample Variance': aggregatorTemplates.var(1, usFmt),
+  'Sample Standard Deviation': aggregatorTemplates.stdev(1, usFmt),
+  'Minimum': aggregatorTemplates.min(usFmt),
+  'Maximum': aggregatorTemplates.max(usFmt),
+  'First': aggregatorTemplates.first(usFmt),
+  'Last': aggregatorTemplates.last(usFmt),
+  'Sum over Sum': aggregatorTemplates.sumOverSum(usFmt),
+  'Sum as Fraction of Total': aggregatorTemplates.fractionOf(aggregatorTemplates.sum(), 'total', usFmtPct),
+  'Sum as Fraction of Rows': aggregatorTemplates.fractionOf(aggregatorTemplates.sum(), 'row', usFmtPct),
+  'Sum as Fraction of Columns': aggregatorTemplates.fractionOf(aggregatorTemplates.sum(), 'col', usFmtPct),
+  'Count as Fraction of Total': aggregatorTemplates.fractionOf(aggregatorTemplates.count(), 'total', usFmtPct),
+  'Count as Fraction of Rows': aggregatorTemplates.fractionOf(aggregatorTemplates.count(), 'row', usFmtPct),
+  'Count as Fraction of Columns': aggregatorTemplates.fractionOf(aggregatorTemplates.count(), 'col', usFmtPct)
 }
 
 // ==================== 프랑스어 Aggregators ====================
 
-const frAggregators: Record<string, AggregatorFunction> = {
-  'Compte': aggregatorTemplates.count(usFmtInt)(),
-  'Compter les valeurs uniques': aggregatorTemplates.countUnique(usFmtInt)(),
-  'Liste des valeurs uniques': aggregatorTemplates.listUnique(', ')(),
-  'Somme': aggregatorTemplates.sum(usFmt)(),
-  'Somme de nombres entiers': aggregatorTemplates.sum(usFmtInt)(),
-  'Moyenne': aggregatorTemplates.average(usFmt)(),
-  'Médiane': aggregatorTemplates.median(usFmt)(),
-  "Variance de l'échantillon": aggregatorTemplates.var(1, usFmt)(),
-  "Écart-type de l'échantillon": aggregatorTemplates.stdev(1, usFmt)(),
-  'Minimum': aggregatorTemplates.min(usFmt)(),
-  'Maximum': aggregatorTemplates.max(usFmt)(),
-  'Premier': aggregatorTemplates.first(usFmt)(),
-  'Dernier': aggregatorTemplates.last(usFmt)(),
-  'Somme Total': aggregatorTemplates.sumOverSum(usFmt)(),
-  'Somme en fraction du total': aggregatorTemplates.fractionOf(aggregatorTemplates.sum(), 'total', usFmtPct)(),
-  'Somme en tant que fraction de lignes': aggregatorTemplates.fractionOf(
-    aggregatorTemplates.sum(),
-    'row',
-    usFmtPct
-  )(),
-  'Somme en tant que fraction de colonnes': aggregatorTemplates.fractionOf(
-    aggregatorTemplates.sum(),
-    'col',
-    usFmtPct
-  )(),
-  'Comptage en tant que fraction du total': aggregatorTemplates.fractionOf(
-    aggregatorTemplates.count(),
-    'total',
-    usFmtPct
-  )(),
-  'Comptage en tant que fraction de lignes': aggregatorTemplates.fractionOf(
-    aggregatorTemplates.count(),
-    'row',
-    usFmtPct
-  )(),
-  'Comptage en tant que fraction de colonnes': aggregatorTemplates.fractionOf(
-    aggregatorTemplates.count(),
-    'col',
-    usFmtPct
-  )()
+const frAggregators: Record<string, AggregatorTemplate> = {
+  'Compte': aggregatorTemplates.count(usFmtInt),
+  'Compter les valeurs uniques': aggregatorTemplates.countUnique(usFmtInt),
+  'Liste des valeurs uniques': aggregatorTemplates.listUnique(', '),
+  'Somme': aggregatorTemplates.sum(usFmt),
+  'Somme de nombres entiers': aggregatorTemplates.sum(usFmtInt),
+  'Moyenne': aggregatorTemplates.average(usFmt),
+  'Médiane': aggregatorTemplates.median(usFmt),
+  "Variance de l'échantillon": aggregatorTemplates.var(1, usFmt),
+  "Écart-type de l'échantillon": aggregatorTemplates.stdev(1, usFmt),
+  'Minimum': aggregatorTemplates.min(usFmt),
+  'Maximum': aggregatorTemplates.max(usFmt),
+  'Premier': aggregatorTemplates.first(usFmt),
+  'Dernier': aggregatorTemplates.last(usFmt),
+  'Somme Total': aggregatorTemplates.sumOverSum(usFmt)
 }
 
 // ==================== Locales ====================
@@ -743,7 +717,7 @@ class PivotData {
 
   constructor(inputProps: Partial<PivotDataProps> = {}) {
     this.props = Object.assign({}, PivotData.defaultProps, inputProps)
-    this.aggregator = this.props.aggregators[this.props.aggregatorName]!
+    this.aggregator = this.props.aggregators[this.props.aggregatorName]!(this.props.vals)
     this.tree = {}
     this.rowKeys = []
     this.colKeys = []
