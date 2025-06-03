@@ -1,13 +1,10 @@
 import { Ref, ref, provide, inject, computed, ComputedRef } from 'vue'
-import type { PivotData, PivotDataProps } from '@/helper/utilities.d'
-import { PivotData as PivotDataClass } from '@/helper/utilities.js'
+import type { PivotData } from '../helper/utilities.d'
+import { PivotData as PivotDataClass } from '../helper/utilities.js'
 
 const PIVOT_DATA_KEY = Symbol('pivotData')
 
-interface ProvidePivotDataProps extends Partial<PivotDataProps> {
-  heatmapMode?: 'full' | 'row' | 'col'
-  tableColorScaleGenerator: (values: any[]) => (value: any) => any
-}
+interface ProvidePivotDataProps { [key: string]: any }
 
 export interface PivotDataContext {
   pivotData: ComputedRef<PivotData | null>
