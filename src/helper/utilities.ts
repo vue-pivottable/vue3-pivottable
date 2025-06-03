@@ -313,8 +313,9 @@ const aggregatorTemplates: AggregatorTemplates = {
     return ([attr]: [string]) => () => ({
       uniq: [] as any[],
       push (record: DataRecord) {
-        if (!this.uniq.includes(record[attr])) {
-          this.uniq.push(record[attr])
+        const value = record?.[attr]
+        if (!this.uniq.includes(value)) {
+          this.uniq.push(value)
         }
       },
       value () {
@@ -329,7 +330,8 @@ const aggregatorTemplates: AggregatorTemplates = {
     return ([attr]: [string]) => () => ({
       sum: 0,
       push (record: DataRecord) {
-        const val = parseFloat(String(record[attr]))
+        const raw = record?.[attr]
+        const val = raw != null ? parseFloat(String(raw)) : NaN
         if (!isNaN(val)) {
           this.sum += val
         }
@@ -350,9 +352,10 @@ const aggregatorTemplates: AggregatorTemplates = {
         attr
       ),
       push (record: DataRecord) {
-        let x = record[attr]
+        const raw = record?.[attr]
+        let x = raw
         if (['min', 'max'].includes(mode)) {
-          const numX = parseFloat(String(x))
+          const numX = x != null ? parseFloat(String(x)) : NaN
           if (!isNaN(numX)) {
             this.val = Math[mode as 'min' | 'max'](numX, this.val !== null ? this.val : numX)
           }
@@ -387,12 +390,13 @@ const aggregatorTemplates: AggregatorTemplates = {
     return ([attr]: [string]) => () => ({
       vals: [] as number[],
       push (record: DataRecord) {
-        const x = parseFloat(String(record[attr]))
+        const raw = record?.[attr]
+        const x = raw != null ? parseFloat(String(raw)) : NaN
         if (!isNaN(x)) {
           this.vals.push(x)
         }
       },
-      value () {
+      value (): number | null {
         if (this.vals.length === 0) {
           return null
         }
@@ -411,7 +415,8 @@ const aggregatorTemplates: AggregatorTemplates = {
       m: 0.0,
       s: 0.0,
       push (record: DataRecord) {
-        const x = parseFloat(String(record[attr]))
+        const raw = record?.[attr]
+        const x = raw != null ? parseFloat(String(raw)) : NaN
         if (isNaN(x)) {
           return
         }
@@ -426,7 +431,7 @@ const aggregatorTemplates: AggregatorTemplates = {
       value () {
         if (mode === 'mean') {
           if (this.n === 0) {
-            return 0 / 0
+            return NaN
           }
           return this.m
         }
@@ -452,8 +457,10 @@ const aggregatorTemplates: AggregatorTemplates = {
       sumNum: 0,
       sumDenom: 0,
       push (record: DataRecord) {
-        const numVal = parseFloat(String(record[num]))
-        const denomVal = parseFloat(String(record[denom]))
+        const rawNum = record?.[num]
+        const rawDenom = record?.[denom]
+        const numVal = rawNum != null ? parseFloat(String(rawNum)) : NaN
+        const denomVal = rawDenom != null ? parseFloat(String(rawDenom)) : NaN
         if (!isNaN(numVal)) {
           this.sumNum += numVal
         }
