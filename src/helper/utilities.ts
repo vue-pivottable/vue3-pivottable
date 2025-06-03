@@ -666,7 +666,7 @@ const derivers: Derivers = {
         return ''
       }
 
-      return formatString.replace(/%(.)/g, (m: string, p: string): string => {
+      return formatString.replace(/%(.)/g, (_: string, p: string): string => {
         switch (p) {
           case 'y':
             return String((date as any)[`get${utc}FullYear`]())
