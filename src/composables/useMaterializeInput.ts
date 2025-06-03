@@ -1,5 +1,5 @@
 import { Ref, ref, watch } from 'vue'
-import { PivotData } from '@/helper/utilities.js'
+import { PivotData } from '../helper/utilities.js'
 
 export interface UseMaterializeInputOptions {
   derivedAttributes: Ref<Record<string, (record: Record<string, any>) => any>>
