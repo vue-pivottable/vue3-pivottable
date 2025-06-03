@@ -1,6 +1,6 @@
 import { Ref, ref, provide, inject, computed, ComputedRef } from 'vue'
-import type { PivotData } from '../helper/utilities.d'
-import { PivotData as PivotDataClass } from '../helper/utilities.js'
+import type { PivotData } from '@/helper/utilities'
+import { PivotData as PivotDataClass } from '@/helper/utilities'
 
 const PIVOT_DATA_KEY = Symbol('pivotData')
 
