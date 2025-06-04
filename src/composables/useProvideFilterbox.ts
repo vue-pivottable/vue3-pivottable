@@ -2,12 +2,20 @@ import { computed, inject, provide } from 'vue'
 import { getSort } from '../helper/utilities'
 const filterBoxKey = Symbol('filterBox')
 
-export function provideFilterBox(props) {
+interface ProvideFilterBoxProps {
+  languagePack: Record<string, any>
+  locale: string
+  sorters: Record<string, any>
+  menuLimit: number
+  [key: string]: any
+}
+
+export function provideFilterBox(props: ProvideFilterBoxProps) {
   const localeStrings = computed(
     () => props.languagePack[props.locale].localeStrings
   )
   const sorters = computed(() => props.sorters)
-  const sorter = (x) => getSort(sorters.value, x)
+  const sorter = (x: string) => getSort(sorters.value, x)
   const menuLimit = computed(() => props.menuLimit)
   provide(filterBoxKey, {
     localeStrings,
