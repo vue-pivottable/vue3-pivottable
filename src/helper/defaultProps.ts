@@ -1,6 +1,7 @@
 import { aggregators, locales } from './utilities'
 import { redColorScaleGenerator } from './redColorScaleGenerator'
 import type { PropType } from 'vue'
+import type { AggregatorTemplate } from './utilities'
 
 export default {
   data: {
@@ -8,7 +9,7 @@ export default {
     required: true
   },
   aggregators: {
-    type: Object as PropType<Record<string, Function>>,
+    type: Object as PropType<Record<string, AggregatorTemplate>>,
     default: () => aggregators
   },
   aggregatorName: {
