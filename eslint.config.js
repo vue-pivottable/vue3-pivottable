@@ -1,5 +1,6 @@
 import { defineConfig } from 'eslint/config'
 import standardjs from '@seungwoo321/eslint-plugin-standard-js'
+import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 
 export default defineConfig([
@@ -14,9 +15,10 @@ export default defineConfig([
     ]
   },
   {
-    files: ['**/*.{js,mjs,cjs,vue}', 'eslint.config.js'],
+    files: ['**/*.{js,mjs,cjs,vue,ts}', 'eslint.config.js'],
     extends: [
       ...standardjs.configs.recommended,
+      ...tseslint.configs.recommended,
       ...pluginVue.configs['flat/strongly-recommended']
     ],
     rules: {
