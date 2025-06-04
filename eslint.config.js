@@ -51,7 +51,8 @@ export default defineConfig([
           ignores: ['pre', 'textarea', 'div'],
           externalIgnores: []
         }
-      ]
+      ],
+      '@typescript-eslint/no-explicit-any': 'off'
     }
   }
 ])
