@@ -54,7 +54,7 @@
     "clean": "rimraf dist",
     "clean:all": "rimraf dist packages/*/dist",
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc src/helper/utilities.ts --declaration --emitDeclarationOnly --outDir src/helper && vite build",
     "preview": "vite preview",
     "lint": "eslint",
     "build:all": "pnpm clean && pnpm build && pnpm -r --filter './packages/*' build",
