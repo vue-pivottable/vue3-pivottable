@@ -41,7 +41,9 @@ interface AggregatorInstance {
   format?: Formatter | ((x: any) => string)
   numInputs?: number
 }
-
+interface PivotDataContext {
+  getAggregator: (rowKey: any[], colKey: any[]) => AggregatorInstance
+}
 type AggregatorFunction = (data?: PivotDataContext, rowKey?: any[], colKey?: any[]) => AggregatorInstance
 type AggregatorTemplate = (...args: any[]) => AggregatorFunction
 
@@ -79,10 +81,6 @@ interface PivotDataProps {
   rowOrder?: 'key_a_to_z' | 'key_z_to_a' | 'value_a_to_z' | 'value_z_to_a'
   colOrder?: 'key_a_to_z' | 'key_z_to_a' | 'value_a_to_z' | 'value_z_to_a'
   derivedAttributes?: Record<string, (record: DataRecord) => RecordValue>
-}
-
-interface PivotDataContext {
-  getAggregator: (rowKey: any[], colKey: any[]) => AggregatorInstance
 }
 
 // ==================== Locale 관련 타입 ====================
@@ -209,8 +207,8 @@ const naturalSort: SortFunction = (as: any, bs: any): number => {
   }
 
   // finally, "smart" string sorting
-  let a = String(as)
-  let b = String(bs)
+  const a = String(as)
+  const b = String(bs)
   if (a === b) {
     return 0
   }
@@ -353,7 +351,7 @@ const aggregatorTemplates: AggregatorTemplates = {
       ),
       push (record: DataRecord) {
         const raw = record?.[attr]
-        let x = raw
+        const x = raw
         if (['min', 'max'].includes(mode)) {
           const numX = x != null ? parseFloat(String(x)) : NaN
           if (!isNaN(numX)) {
@@ -1000,4 +998,4 @@ export {
   getSort,
   sortAs,
   PivotData
-} 
+}
