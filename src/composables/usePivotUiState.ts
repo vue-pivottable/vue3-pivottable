@@ -7,7 +7,7 @@ type PivotUiState = {
   openStatus: Record<string, boolean>
 }
 
-export function usePivotUiState() {
+export function usePivotUiState () {
   const pivotUiState = reactive<PivotUiState>({
     unusedOrder: [],
     zIndices: {},

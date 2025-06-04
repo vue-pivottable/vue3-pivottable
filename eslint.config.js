@@ -17,20 +17,11 @@ export default defineConfig([
   {
     files: ['**/*.{js,mjs,cjs,vue,ts}', 'eslint.config.js'],
     extends: [
-      ...standardjs.configs.recommended,
+      ...standardjs.configs.base,
       ...tseslint.configs.recommended,
       ...pluginVue.configs['flat/strongly-recommended']
     ],
     rules: {
-      '@stylistic/space-before-function-paren': [
-        'error',
-        {
-          anonymous: 'always',
-          named: 'never',
-          asyncArrow: 'always'
-        }
-      ],
-      '@stylistic/quote-props': ['error', 'consistent'],
       'vue/html-self-closing': [
         'error',
         {

@@ -10,7 +10,7 @@ interface ProvideFilterBoxProps {
   [key: string]: any
 }
 
-export function provideFilterBox(props: ProvideFilterBoxProps) {
+export function provideFilterBox (props: ProvideFilterBoxProps) {
   const localeStrings = computed(
     () => props.languagePack[props.locale].localeStrings
   )
@@ -24,6 +24,6 @@ export function provideFilterBox(props: ProvideFilterBoxProps) {
   })
 }
 
-export function useProvideFilterBox() {
+export function useProvideFilterBox () {
   return inject(filterBoxKey)
 }

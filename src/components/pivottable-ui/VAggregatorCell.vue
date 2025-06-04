@@ -107,9 +107,9 @@ const numValsAllowed = computed(
 const currentRowSortIcon = computed(() => sortIcons[props.rowOrder].rowSymbol)
 const currentColSortIcon = computed(() => sortIcons[props.colOrder].colSymbol)
 const updateAggregatorName = (value) => emit('update:aggregatorName', value)
-const updateRowOrder = (value) =>
+const updateRowOrder = () =>
   emit('update:rowOrder', sortIcons[props.rowOrder].next)
-const updateColOrder = (value) =>
+const updateColOrder = () =>
   emit('update:colOrder', sortIcons[props.colOrder].next)
 const updateVals = (val, i) => {
   const newVals = [...props.vals]

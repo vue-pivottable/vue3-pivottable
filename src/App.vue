@@ -111,7 +111,7 @@ const sorters = ref({
 
 const vals = ref(['Tip'])
 const rendererName = ref('Table')
-const onDataParsed = (data) => {
+const onDataParsed = () => {
   rows.value = []
   cols.value = []
   vals.value = []

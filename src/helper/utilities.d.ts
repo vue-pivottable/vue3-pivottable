@@ -38,6 +38,9 @@ interface AggregatorInstance {
     format?: Formatter | ((x: any) => string);
     numInputs?: number;
 }
+interface PivotDataContext {
+    getAggregator: (rowKey: any[], colKey: any[]) => AggregatorInstance;
+}
 type AggregatorFunction = (data?: PivotDataContext, rowKey?: any[], colKey?: any[]) => AggregatorInstance;
 type AggregatorTemplate = (...args: any[]) => AggregatorFunction;
 interface AggregatorTemplates {
@@ -72,9 +75,6 @@ interface PivotDataProps {
     rowOrder?: 'key_a_to_z' | 'key_z_to_a' | 'value_a_to_z' | 'value_z_to_a';
     colOrder?: 'key_a_to_z' | 'key_z_to_a' | 'value_a_to_z' | 'value_z_to_a';
     derivedAttributes?: Record<string, (record: DataRecord) => RecordValue>;
-}
-interface PivotDataContext {
-    getAggregator: (rowKey: any[], colKey: any[]) => AggregatorInstance;
 }
 interface LocaleStrings {
     renderError: string;
