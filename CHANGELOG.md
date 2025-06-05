@@ -1,3 +1,10 @@
+## [1.0.15](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.0.14...vue-pivottable@1.0.15) (2025-06-05)
+
+
+### Bug Fixes
+
+* delay Draggable render to prevent _sortable.option error on HMR [#150](https://github.com/vue-pivottable/vue3-pivottable/issues/150) ([2ea40c8](https://github.com/vue-pivottable/vue3-pivottable/commit/2ea40c83f39f561dd409e8da23f724fa7a08849e))
+
 ## [1.0.14](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.0.13...vue-pivottable@1.0.14) (2025-05-13)
 
 
