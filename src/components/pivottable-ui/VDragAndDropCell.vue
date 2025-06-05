@@ -1,8 +1,9 @@
 <template>
   <Draggable
+    v-if="showDraggable && modelItems.length > 0"
     tag="td"
     :list="modelItems"
-    :group="{ name: 'sharted', pull: true, put: true }"
+    :group="{ name: 'shared', pull: true, put: true }"
     :ghost-class="'pvtPlaceholder'"
     :prevent-on-filter="false"
     :class="classes"
@@ -40,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch, nextTick, onBeforeUnmount } from 'vue'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 import VDraggableAttribute from './VDraggableAttribute.vue'
 
@@ -95,6 +96,7 @@ const props = defineProps({
 })
 
 const modelItems = ref([])
+const showDraggable = ref(false)
 
 const onDragMove = (event) => {
   const draggedItem = event.draggedContext.element
@@ -118,7 +120,21 @@ const onDragEnd = () => {
 
 onMounted(() => {
   modelItems.value = [...props.attributeNames]
+  nextTick(() => {
+    showDraggable.value = true
+  })
 })
+
+onBeforeUnmount(() => {
+  showDraggable.value = false
+})
+
+watch(
+  () => props.attributeNames,
+  (newVal) => {
+    modelItems.value = [...newVal]
+  }
+)
 
 const hideDropDownForUnused = computed(() => {
   return props.cellType === 'unused' && props.hideFilterBoxOfUnusedAttributes
