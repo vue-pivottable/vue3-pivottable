@@ -4,8 +4,8 @@
     class="pvtDropdown"
   >
     <option
-      v-for="(text, key) in options"
-      :key="key"
+      v-for="(text, index) in options"
+      :key="index"
       :value="text"
     >
       {{ text }}
@@ -22,23 +22,14 @@ const emit = defineEmits<{
 
 interface DropdownProps {
   options: string[]
-  value: string
+  value?: string
 }
 
 const props = withDefaults(defineProps<DropdownProps>(), {
-  options: () => [],
   value: ''
 })
 
-const valueModel = ref<string>('')
-
-watch(
-  [() => props.value, () => props.options],
-  ([val, opts]: [string, string[]]) => {
-    valueModel.value = val || opts[0] || ''
-  },
-  { immediate: true }
-)
+const valueModel = ref<string>(props.value || props.options[0] || '')
 
 watch(
   valueModel,
