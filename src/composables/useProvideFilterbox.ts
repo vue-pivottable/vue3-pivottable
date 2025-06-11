@@ -9,7 +9,6 @@ interface ProvideFilterBoxProps {
   [key: string]: any
 }
 
-// 별도의 파일로 분리?
 interface FilterBoxContext {
   localeStrings: ComputedRef<any>
   sorter: (x: string) => any

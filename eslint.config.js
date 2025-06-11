@@ -28,9 +28,6 @@ export default defineConfig([
     plugins: {
       'vue': pluginVue,
       '@typescript-eslint': tseslint
-    },
-    rules: {
-      // 필요시 규칙 추가
     }
   },
   {
