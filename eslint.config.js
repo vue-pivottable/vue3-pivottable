@@ -15,6 +15,22 @@ export default defineConfig([
     ]
   },
   {
+    files: ['**/*.vue'],
+    languageOptions: {
+      parser: require.resolve('vue-eslint-parser'),
+      parserOptions: {
+        parser: require.resolve('@typescript-eslint/parser'),
+        ecmaVersion: 2020,
+        sourceType: 'module',
+        extraFileExtensions: ['.vue']
+      }
+    },
+    plugins: {
+      'vue': pluginVue,
+      '@typescript-eslint': tseslint
+    }
+  },
+  {
     files: ['**/*.{js,mjs,cjs,vue,ts}', 'eslint.config.js'],
     extends: [
       ...standardjs.configs.base,
