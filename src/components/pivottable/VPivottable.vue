@@ -5,13 +5,12 @@
   />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
-import { defaultProps } from '@/helper'
 import TableRenderer from './renderer'
-const props = defineProps({
-  ...defaultProps
-})
+import { DefaultPropsType } from '@/types'
+
+const props = defineProps<DefaultPropsType>()
 
 const rendererComponent = computed(
   () => props.renderers[props.rendererName] || TableRenderer.Table

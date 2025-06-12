@@ -3,48 +3,30 @@
     <VPivottableBodyRows
       :row-keys="rowKeys"
       :col-keys="colKeys"
-      :row-total="rowTotal"
+      :show-row-total="showRowTotal"
       :table-options="tableOptions"
     />
     <VPivottableBodyRowsTotalRow
-      :col-total="colTotal"
-      :row-total="rowTotal"
+      :show-col-total="showColTotal"
+      :show-row-total="showRowTotal"
       :row-attrs="rowAttrs"
       :col-attrs="colAttrs"
       :col-keys="colKeys"
-      :locale-strings="localeStrings"
+      :language-pack="languagePack"
       :table-options="tableOptions"
     />
   </tbody>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useProvidePivotData } from '@/composables/useProvidePivotData'
 import VPivottableBodyRows from './VPivottableBodyRows.vue'
 import VPivottableBodyRowsTotalRow from './VPivottableBodyRowsTotalRow.vue'
+import type { DefaultPropsType } from '@/types'
 
-defineProps({
-  rowTotal: {
-    type: Boolean,
-    default: true
-  },
-  colTotal: {
-    type: Boolean,
-    default: true
-  },
-  localeStrings: {
-    type: Object,
-    default: () => ({
-      totals: 'Totals'
-    })
-  },
-  tableOptions: {
-    type: Object,
-    default: () => ({
-      clickCallback: null
-    })
-  }
-})
+type Props = Pick<DefaultPropsType, 'showRowTotal' | 'showColTotal' | 'languagePack' | 'tableOptions'>
+
+defineProps<Props>()
 
 const { pivotData, rowKeys, colKeys, rowAttrs, colAttrs } =
   useProvidePivotData()

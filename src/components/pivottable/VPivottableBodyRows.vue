@@ -36,7 +36,7 @@
       }}
     </td>
     <td
-      v-if="rowTotal"
+      v-if="showRowTotal"
       class="pvtTotal"
       :style="getRowTotalStyle(rowKey)"
       @click="
@@ -48,27 +48,19 @@
   </tr>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useProvidePivotData } from '@/composables/useProvidePivotData'
+import { DefaultPropsType } from '@/types'
 
-const props = defineProps({
-  rowKeys: {
-    type: Array,
-    required: true
-  },
-  colKeys: {
-    type: Array,
-    required: true
-  },
-  rowTotal: {
-    type: Boolean,
-    required: true
-  },
-  tableOptions: {
-    type: Object,
-    required: true
-  }
-})
+type VPivottableBodyRowsProps = Pick<
+  DefaultPropsType,
+  'showRowTotal' | 'tableOptions'
+> & {
+  rowKeys: any[][]
+  colKeys: any[][]
+}
+
+const props = defineProps<VPivottableBodyRowsProps>()
 
 const {
   pivotData,
@@ -80,19 +72,19 @@ const {
   getAggregator
 } = useProvidePivotData()
 
-const getValueCellStyle = (rowKey, colKey) => {
+const getValueCellStyle = (rowKey: any, colKey: any) => {
   const value = getAggregator(rowKey, colKey).value()
   return valueCellColors(rowKey, colKey, value)
 }
 
-const getRowTotalStyle = (rowKey) => {
+const getRowTotalStyle = (rowKey: any) => {
   const value = getAggregator(rowKey, []).value()
   return colTotalColors(value)
 }
 
-const handleCellClick = (value, rowValues, colValues) => {
+const handleCellClick = (value: any, rowValues: any, colValues: any) => {
   if (props.tableOptions?.clickCallback) {
-    const filters = {}
+    const filters = {} as any
 
     colAttrs.value.forEach((attr, i) => {
       if (colValues[i] !== undefined && colValues[i] !== null) {
@@ -106,7 +98,7 @@ const handleCellClick = (value, rowValues, colValues) => {
       }
     })
 
-    return (event) =>
+    return (event: MouseEvent) =>
       props.tableOptions.clickCallback(event, value, filters, pivotData.value)
   }
   return () => ({})

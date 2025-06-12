@@ -42,11 +42,11 @@ export default {
     default: () => locales
   },
   showRowTotal: {
-    type: Boolean,
+    type: Boolean as PropType<boolean>,
     default: true
   },
   showColTotal: {
-    type: Boolean,
+    type: Boolean as PropType<boolean>,
     default: true
   },
   cols: {

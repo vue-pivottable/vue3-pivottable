@@ -6,22 +6,13 @@
   />
 </template>
 
-<script setup>
-import { defaultProps, PivotData } from '@/helper'
+<script setup lang="ts">
 import { computed } from 'vue'
+import { usePivotData } from '@/composables'
+import { DefaultPropsType } from '@/types'
 
-const props = defineProps({
-  ...defaultProps
-})
-
-const pivotData = computed(() => {
-  try {
-    return new PivotData(props)
-  } catch (err) {
-    console.error(err.stack)
-    return null
-  }
-})
+const props = defineProps<DefaultPropsType>()
+const { pivotData, error } = usePivotData(props)
 
 const rowKeys = computed(() => pivotData.value?.getRowKeys() || [])
 const colKeys = computed(() => pivotData.value?.getColKeys() || [])
@@ -32,6 +23,7 @@ const styles = {
 }
 
 const headerRow = computed(() => {
+  if (error.value || !pivotData.value) return []
   const header = [...pivotData.value.props.rows]
 
   if (colKeys.value.length === 1 && colKeys.value[0].length === 0) {
@@ -44,10 +36,12 @@ const headerRow = computed(() => {
 })
 
 const result = computed(() => {
+  if (error.value || !pivotData.value) return []
+
   const data = rowKeys.value.reduce((acc, r) => {
     const row = [...r]
     colKeys.value.forEach((c) =>
-      row.push(pivotData.value.getAggregator(r, c).value() || '')
+      row.push(pivotData.value?.getAggregator(r, c).value() || '')
     )
     return [...acc, row]
   }, [])
