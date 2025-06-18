@@ -9,23 +9,30 @@
     </th>
     <th
       class="pvtTotalLabel"
-      v-if="showRowTotal || colAttrsLength !== 0"
+      v-if="rowTotal || colAttrsLength !== 0"
     >
-      {{ colAttrsLength === 0 && showRowTotal ? languagePack?.totals : null }}
+      {{ colAttrsLength === 0 && rowTotal ? localeStrings.totals : null }}
     </th>
   </tr>
 </template>
 
-<script setup lang="ts">
-import { DefaultPropsType } from '@/types'
-
-type VPivottableHeaderRowsProps = Pick<
-  DefaultPropsType,
-  'showRowTotal' | 'languagePack'
-> & {
-  rowAttrs: any[]
-  colAttrsLength: number
-}
-
-defineProps<VPivottableHeaderRowsProps>()
+<script setup>
+defineProps({
+  rowAttrs: {
+    type: Array,
+    required: true
+  },
+  rowTotal: {
+    type: Boolean,
+    required: true
+  },
+  colAttrsLength: {
+    type: Number,
+    required: true
+  },
+  localeStrings: {
+    type: Object,
+    required: true
+  }
+})
 </script>
