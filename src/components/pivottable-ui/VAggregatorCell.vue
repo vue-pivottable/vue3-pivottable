@@ -53,20 +53,18 @@ const emit = defineEmits<{
 type OrderType = 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a'
 
 interface AggregatorCellProps {
-  aggregatorItems: Record<string, AggregatorTemplate>
-  aggregatorName: string
+  aggregatorItems?: Record<string, AggregatorTemplate>
+  aggregatorName?: string
   rowOrder: OrderType
   colOrder: OrderType
-  vals: string[]
-  attributeNames: string[]
-  hiddenFromAggregators: string[]
+  vals?: string[]
+  attributeNames?: string[]
+  hiddenFromAggregators?: string[]
 }
 
 const props = withDefaults(defineProps<AggregatorCellProps>(), {
   aggregatorItems: () => ({}),
   aggregatorName: 'Count',
-  rowOrder: 'key_a_to_z',
-  colOrder: 'key_a_to_z',
   vals: () => [],
   attributeNames: () => [],
   hiddenFromAggregators: () => []

@@ -165,7 +165,9 @@ const props = withDefaults(
     hiddenFromDragDrop: () => [],
     restrictedFromDragDrop: () => [],
     menuLimit: 500,
-    hideFilterBoxOfUnusedAttributes: false
+    hideFilterBoxOfUnusedAttributes: false,
+    rowOrder: 'key_a_to_z',
+    colOrder: 'key_a_to_z'
   }
 )
 
