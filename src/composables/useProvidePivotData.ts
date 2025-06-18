@@ -1,10 +1,9 @@
-import { Ref, ref, provide, inject, computed, ComputedRef } from 'vue'
-import type { PivotData } from '@/helper/utilities'
-import { PivotData as PivotDataClass } from '@/helper/utilities'
+import { Ref, provide, inject, computed, ComputedRef, InjectionKey } from 'vue'
+import { PivotData } from '@/helper'
+import { usePivotData } from './'
+import type { ProvidePivotDataProps } from './usePivotData'
 
-const PIVOT_DATA_KEY = Symbol('pivotData')
 
-interface ProvidePivotDataProps { [key: string]: any }
 
 export interface PivotDataContext {
   pivotData: ComputedRef<PivotData | null>
@@ -21,19 +20,11 @@ export interface PivotDataContext {
   error: Ref<string | null>
 }
 
+const PIVOT_DATA_KEY = Symbol('pivotData') as InjectionKey<PivotDataContext>
+
+
 export function providePivotData (props: ProvidePivotDataProps): PivotDataContext {
-  const error = ref<string | null>(null)
-
-  const pivotData = computed<PivotData | null>(() => {
-    try {
-      return new PivotDataClass(props) as PivotData
-    } catch (err: any) {
-      console.error(err.stack)
-      error.value = 'An error occurred computing the PivotTable results.'
-      return null
-    }
-  })
-
+  const { pivotData, error } = usePivotData(props)
   const rowKeys = computed<any[][]>(() => pivotData.value?.getRowKeys() || [])
   const colKeys = computed<any[][]>(() => pivotData.value?.getColKeys() || [])
   const colAttrs = computed<string[]>(() => pivotData.value?.props.cols || [])
@@ -147,6 +138,10 @@ export function providePivotData (props: ProvidePivotDataProps): PivotDataContex
   return pivotDataContext
 }
 
-export function useProvidePivotData (): PivotDataContext | undefined {
-  return inject<PivotDataContext>(PIVOT_DATA_KEY)
-} 
+export function useProvidePivotData (): PivotDataContext {
+  const context = inject<PivotDataContext>(PIVOT_DATA_KEY)
+  if (!context) {
+    throw new Error('useProvidePivotData must be used within a provider')
+  }
+  return context
+}

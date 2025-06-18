@@ -25,7 +25,7 @@ const rendererOptions = computed<string[]>(() =>
 
 interface RendererDefinition {
   name: string
-  props: Record<string, any>
+  props?: Record<string, any>
   setup: (props: any) => () => VNode
 }
 

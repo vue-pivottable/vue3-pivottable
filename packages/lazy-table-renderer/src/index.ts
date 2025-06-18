@@ -6,7 +6,7 @@ export default markRaw({
   'Lazy Table': defineComponent({
     name: 'VueLazyTable',
     props: { ...PivotUtilities.defaultProps },
-    setup(props) {
+    setup (props) {
       return () =>
         h(LazyPivottableRenderer, {
           ...props,

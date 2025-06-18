@@ -1,7 +1,6 @@
-import { aggregators, locales } from './utilities'
-import { redColorScaleGenerator } from './redColorScaleGenerator'
+import { aggregators, locales, redColorScaleGenerator } from './'
+import type { AggregatorTemplate } from './'
 import type { PropType } from 'vue'
-import type { AggregatorTemplate } from './utilities'
 
 export default {
   data: {
@@ -19,7 +18,7 @@ export default {
   heatmapMode: String as PropType<'full' | 'col' | 'row' | ''>,
   tableColorScaleGenerator: {
     type: Function,
-    default: redColorScaleGenerator
+    default: (value: number[]) => redColorScaleGenerator(value),
   },
   tableOptions: {
     type: Object as PropType<Record<string, any>>,
@@ -42,11 +41,11 @@ export default {
     default: () => locales
   },
   showRowTotal: {
-    type: Boolean,
+    type: Boolean as PropType<boolean>,
     default: true
   },
   showColTotal: {
-    type: Boolean,
+    type: Boolean as PropType<boolean>,
     default: true
   },
   cols: {

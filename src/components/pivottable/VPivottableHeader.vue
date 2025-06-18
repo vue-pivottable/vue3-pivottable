@@ -1,60 +1,50 @@
 <template>
-  <thead>
-    <template v-if="pivotData">
-      <tr
-        v-for="(c, j) in colAttrs"
-        :key="`colAttrs${j}`"
-      >
-        <th
-          v-if="j === 0 && rowAttrs.length !== 0"
-          :colSpan="rowAttrs.length"
-          :rowSpan="colAttrs.length"
-        />
-        <th class="pvtAxisLabel">
-          {{ c }}
-        </th>
-        <VPivottableHeaderColumns
-          :col-keys="colKeys"
-          :col-index="j"
-          :col-attrs-length="colAttrs.length"
-          :row-attrs-length="rowAttrs.length"
-        />
-        <VPivottableHeaderRowsTotal
-          v-if="j === 0 && rowTotal"
-          :col-attrs-length="colAttrs.length"
-          :row-attrs-length="rowAttrs.length"
-          :locale-strings="localeStrings"
-        />
-      </tr>
-      <VPivottableHeaderRows
-        v-if="rowAttrs.length !== 0"
-        :row-attrs="rowAttrs"
-        :row-total="rowTotal"
-        :col-attrs-length="colAttrs.length"
-        :locale-strings="localeStrings"
+  <thead v-if="pivotData">
+    <tr
+      v-for="(c, j) in colAttrs"
+      :key="`colAttrs${j}`"
+    >
+      <th
+        v-if="j === 0 && rowAttrs.length !== 0"
+        :colSpan="rowAttrs.length"
+        :rowSpan="colAttrs.length"
       />
-    </template>
+      <th class="pvtAxisLabel">
+        {{ c }}
+      </th>
+      <VPivottableHeaderColumns
+        :col-keys="colKeys"
+        :col-index="j"
+        :col-attrs-length="colAttrs.length"
+        :row-attrs-length="rowAttrs.length"
+      />
+      <VPivottableHeaderRowsTotal
+        v-if="j === 0 && showRowTotal"
+        :col-attrs-length="colAttrs.length"
+        :row-attrs-length="rowAttrs.length"
+        :language-pack="languagePack"
+      />
+    </tr>
+    <VPivottableHeaderRows
+      v-if="rowAttrs.length !== 0"
+      :row-attrs="rowAttrs"
+      :show-row-total="showRowTotal"
+      :col-attrs-length="colAttrs.length"
+      :language-pack="languagePack"
+    />
   </thead>
 </template>
 
-<script setup>
-import { useProvidePivotData } from '@/composables/useProvidePivotData'
+<script setup lang="ts">
+import { useProvidePivotData } from '@/composables'
 import VPivottableHeaderColumns from './VPivottableHeaderColumns.vue'
 import VPivottableHeaderRows from './VPivottableHeaderRows.vue'
 import VPivottableHeaderRowsTotal from './VPivottableHeaderRowsTotal.vue'
+import type { DefaultPropsType } from '@/types'
 
-defineProps({
-  rowTotal: {
-    type: Boolean,
-    default: true
-  },
-  localeStrings: {
-    type: Object,
-    default: () => ({
-      totals: 'Totals'
-    })
-  }
-})
+type Props = Pick<DefaultPropsType, 'showRowTotal' | 'languagePack'>
+
+defineProps<Props>()
 
 const { pivotData, colAttrs, rowAttrs, colKeys } = useProvidePivotData()
 </script>
