@@ -1,0 +1,97 @@
+name: Release Develop (Pre-release)
+
+on:
+  push:
+    branches:
+      - develop
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  pre-release:
+    name: Pre-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.10.0'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check for changesets
+        id: changesets-check
+        run: |
+          if [ -n "$(ls -A .changeset/*.md 2>/dev/null | grep -v README.md)" ]; then
+            echo "has_changesets=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changesets=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Version packages as pre-release
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: |
+          # Enter pre-release mode
+          pnpm changeset pre enter beta
+          
+          # Version packages
+          pnpm changeset version
+          
+          # Get version
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          
+          # Commit changes
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: version packages for beta release" || echo "No changes to commit"
+          git push origin develop
+
+      - name: Build packages
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: pnpm build:all
+
+      - name: Publish pre-release to npm
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: |
+          # Publish with beta tag
+          pnpm changeset publish --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
+
+      - name: Create GitHub Pre-release
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: v${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: true
+          body: |
+            ## 🚧 Pre-release (Beta)
+            
+            This is a pre-release version. It may contain bugs and breaking changes.
+            
+            Install with: `npm install vue-pivottable@beta`
