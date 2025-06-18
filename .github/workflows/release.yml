@@ -17,6 +17,16 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
+      - name: Debug secrets
+        run: |
+          echo "APP_ID length: ${#APP_ID}"
+          echo "PRIVATE_KEY length: ${#PRIVATE_KEY}"
+          echo "INSTALLATION_ID length: ${#INSTALLATION_ID}"
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+          INSTALLATION_ID: ${{ secrets.APP_INSTALLATION_ID }}
+
       - name: Generate GitHub App Token
         id: generate-token
         uses: tibdex/github-app-token@v1
@@ -24,8 +34,6 @@ jobs:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: ${{ secrets.APP_INSTALLATION_ID }}
-          # Add debug output to verify installation ID
-          # installation_id: 66276079
 
       - name: Checkout
         uses: actions/checkout@v4
