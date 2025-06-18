@@ -50,6 +50,10 @@
     "url": "https://github.com/vue-pivottable/vue3-pivottable/issues"
   },
   "scripts": {
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build:all && changeset publish",
+    "release:packages": "node scripts/release-packages.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "clean": "rimraf dist",
     "clean:all": "rimraf dist packages/*/dist",
@@ -67,6 +71,7 @@
     "vue-draggable-next": "^2.2.1"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.4",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.2",
