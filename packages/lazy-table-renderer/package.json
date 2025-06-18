@@ -5,6 +5,7 @@
   "description": "",
   "exports": {
     ".": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/lazy-table-renderer.es.js",
       "require": "./dist/lazy-table-renderer.umd.js"
     },
@@ -13,6 +14,7 @@
   },
   "main": "./dist/lazy-table-renderer.umd.js",
   "module": "./dist/lazy-table-renderer.es.js",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist",
     "LICENSE",
@@ -45,13 +47,15 @@
     "build": "vite build",
     "lint": "eslint ."
   },
-  "dependencies": {},
   "peerDependencies": {
     "vue": "^3.2.0",
     "vue-pivottable": "latest"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
-    "vite": "^6.3.4"
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.4",
+    "vue-tsc": "^2.2.10"
   }
 }

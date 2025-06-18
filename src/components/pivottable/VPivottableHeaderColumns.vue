@@ -14,27 +14,16 @@
   </template>
 </template>
 
-<script setup>
-import { useProvidePivotData } from '@/composables/useProvidePivotData'
+<script setup lang="ts">
+import { useProvidePivotData } from '@/composables'
 
-defineProps({
-  colKeys: {
-    type: Array,
-    required: true
-  },
-  colIndex: {
-    type: Number,
-    required: true
-  },
-  colAttrsLength: {
-    type: Number,
-    required: true
-  },
-  rowAttrsLength: {
-    type: Number,
-    required: true
-  }
-})
+type VPivottableHeaderColumnsProps = {
+  colKeys: string[][]
+  colIndex: number
+  colAttrsLength: number
+  rowAttrsLength: number
+}
+defineProps<VPivottableHeaderColumnsProps>()
 
 const { spanSize } = useProvidePivotData()
 </script>

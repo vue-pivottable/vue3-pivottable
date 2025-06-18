@@ -1,26 +1,21 @@
 import { h, markRaw } from 'vue'
+import { RendererProps } from '@/types'
 import TableRenderer from './TableRenderer.vue'
 import TSVExportRenderers from './TSVExportRenderers.vue'
-import { defaultProps } from '@/helper'
 
-// 컴포넌트 팩토리 함수 생성 - defineComponent 사용하지 않음
 const tableComponents = markRaw({
   'Table': {
     name: 'VueTable',
-    setup(props) {
+    setup (props: RendererProps) {
       return () =>
-        h(TableRenderer, {
-          ...defaultProps,
-          ...props
-        })
+        h(TableRenderer, props)
     }
   },
   'Table Heatmap': {
     name: 'VueTableHeatmap',
-    setup(props) {
+    setup (props: RendererProps) {
       return () =>
         h(TableRenderer, {
-          ...defaultProps,
           ...props,
           heatmapMode: 'full'
         })
@@ -28,10 +23,9 @@ const tableComponents = markRaw({
   },
   'Table Col Heatmap': {
     name: 'VueTableColHeatmap',
-    setup(props) {
+    setup (props: RendererProps) {
       return () =>
         h(TableRenderer, {
-          ...defaultProps,
           ...props,
           heatmapMode: 'col'
         })
@@ -39,10 +33,9 @@ const tableComponents = markRaw({
   },
   'Table Row Heatmap': {
     name: 'VueTableRowHeatmap',
-    setup(props) {
+    setup (props: RendererProps) {
       return () =>
         h(TableRenderer, {
-          ...defaultProps,
           ...props,
           heatmapMode: 'row'
         })
@@ -50,12 +43,9 @@ const tableComponents = markRaw({
   },
   'Export Table TSV': {
     name: 'TsvExportRenderers',
-    setup(props) {
+    setup (props: RendererProps) {
       return () =>
-        h(TSVExportRenderers, {
-          ...defaultProps,
-          ...props
-        })
+        h(TSVExportRenderers, props)
     }
   }
 })
