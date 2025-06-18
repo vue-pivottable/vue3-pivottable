@@ -40,65 +40,65 @@
   </Draggable>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted, computed, watch, nextTick, onBeforeUnmount } from 'vue'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 import VDraggableAttribute from './VDraggableAttribute.vue'
 
-const emit = defineEmits<{
-  (
-    event: 'update:draggedAttribute',
-    payload: { key: string; value: string[] }
-  ): void
-  (event: 'update:zIndexOfFilterBox', attributeName: string): void
-  (
-    event: 'update:unselectedFilterValues',
-    payload: { key: string; value: Record<string, boolean> }
-  ): void
-  (
-    event: 'update:openStatusOfFilterBox',
-    payload: { key: string; value: boolean }
-  ): void
-}>()
+const emit = defineEmits([
+  'update:draggedAttribute',
+  'update:zIndexOfFilterBox',
+  'update:unselectedFilterValues',
+  'update:openStatusOfFilterBox'
+])
 
-interface DragAndDropCellProps {
-  cellType: string
-  classes?: string
-  attributeNames?: string[]
-  allFilters?: Record<string, Record<string, number>>
-  valueFilter?: Record<string, Record<string, boolean>>
-  restrictedFromDragDrop?: string[]
-  hideFilterBoxOfUnusedAttributes?: boolean
-  zIndices?: Record<string, number>
-  maxZIndex?: number
-  openStatus?: Record<string, boolean>
-}
-
-const props = withDefaults(defineProps<DragAndDropCellProps>(), {
-  classes: '',
-  attributeNames: () => [],
-  allFilters: () => ({}),
-  valueFilter: () => ({}),
-  restrictedFromDragDrop: () => [],
-  hideFilterBoxOfUnusedAttributes: false,
-  zIndices: () => ({}),
-  maxZIndex: 1000,
-  openStatus: () => ({})
+const props = defineProps({
+  cellType: {
+    type: String,
+    required: true
+  },
+  classes: {
+    type: String,
+    default: ''
+  },
+  attributeNames: {
+    type: Array,
+    default: () => []
+  },
+  allFilters: {
+    type: Object,
+    default: () => ({})
+  },
+  valueFilter: {
+    type: Object,
+    default: () => ({})
+  },
+  restrictedFromDragDrop: {
+    type: Array,
+    default: () => []
+  },
+  hideFilterBoxOfUnusedAttributes: {
+    type: Boolean,
+    default: false
+  },
+  zIndices: {
+    type: Object,
+    default: () => ({})
+  },
+  maxZIndex: {
+    type: Number,
+    default: 1000
+  },
+  openStatus: {
+    type: Object,
+    default: () => ({})
+  }
 })
 
-const modelItems = ref<string[]>([])
+const modelItems = ref([])
 const showDraggable = ref(false)
 
-interface DragMoveEvent {
-  from: HTMLElement
-  to: HTMLElement
-  draggedContext: {
-    element: string
-    index: number
-  }
-}
-
-const onDragMove = (event: DragMoveEvent) => {
+const onDragMove = (event) => {
   const draggedItem = event.draggedContext.element
   const isCrossCellMove = event.from !== event.to
 

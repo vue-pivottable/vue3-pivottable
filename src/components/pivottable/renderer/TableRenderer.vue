@@ -1,28 +1,36 @@
 <template>
   <table class="pvtTable">
     <VPivottableHeader
-      :show-row-total="props.showRowTotal"
-      :language-pack="props.languagePack"
+      :row-total="props.showRowTotal"
+      :locale-strings="props.localeStrings"
     />
     <VPivottableBody
-      :show-row-total="props.showRowTotal"
-      :show-col-total="props.showColTotal"
-      :language-pack="props.languagePack"
+      :row-total="props.showRowTotal"
       :table-options="props.tableOptions"
     />
   </table>
 </template>
 
-<script setup lang="ts">
-import { providePivotData } from '@/composables'
+<script setup>
+import { defaultProps } from '@/helper'
+import { providePivotData } from '@/composables/useProvidePivotData'
 import VPivottableHeader from '../VPivottableHeader.vue'
 import VPivottableBody from '../VPivottableBody.vue'
-import { DefaultPropsType } from '@/types'
-import { redColorScaleGenerator } from '@/helper'
 
-const props = withDefaults(defineProps<DefaultPropsType>(), {
-  tableColorScaleGenerator: (value: number[]) => redColorScaleGenerator(value)
+const props = defineProps({
+  ...defaultProps,
+  localeStrings: {
+    type: Object,
+    default: () => ({
+      totals: 'Totals'
+    })
+  },
+  tableOptions: {
+    type: Object,
+    default: () => ({
+      clickCallback: null
+    })
+  }
 })
-
 providePivotData(props)
 </script>

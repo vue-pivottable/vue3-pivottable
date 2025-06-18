@@ -1,6 +1,5 @@
 import { defineConfig } from 'eslint/config'
 import standardjs from '@seungwoo321/eslint-plugin-standard-js'
-import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 
 export default defineConfig([
@@ -15,29 +14,21 @@ export default defineConfig([
     ]
   },
   {
-    files: ['**/*.vue'],
-    languageOptions: {
-      parser: require.resolve('vue-eslint-parser'),
-      parserOptions: {
-        parser: require.resolve('@typescript-eslint/parser'),
-        ecmaVersion: 2020,
-        sourceType: 'module',
-        extraFileExtensions: ['.vue']
-      }
-    },
-    plugins: {
-      'vue': pluginVue,
-      '@typescript-eslint': tseslint
-    }
-  },
-  {
-    files: ['**/*.{js,mjs,cjs,vue,ts}', 'eslint.config.js'],
+    files: ['**/*.{js,mjs,cjs,vue}', 'eslint.config.js'],
     extends: [
-      ...standardjs.configs.base,
-      ...tseslint.configs.recommended,
+      ...standardjs.configs.recommended,
       ...pluginVue.configs['flat/strongly-recommended']
     ],
     rules: {
+      '@stylistic/space-before-function-paren': [
+        'error',
+        {
+          anonymous: 'always',
+          named: 'never',
+          asyncArrow: 'always'
+        }
+      ],
+      '@stylistic/quote-props': ['error', 'consistent'],
       'vue/html-self-closing': [
         'error',
         {
@@ -58,8 +49,7 @@ export default defineConfig([
           ignores: ['pre', 'textarea', 'div'],
           externalIgnores: []
         }
-      ],
-      '@typescript-eslint/no-explicit-any': 'off'
+      ]
     }
   }
 ])

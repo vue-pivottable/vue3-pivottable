@@ -1,10 +1,10 @@
 <template>
-  <tr v-if="showColTotal">
+  <tr v-if="colTotal">
     <th
       class="pvtTotalLabel"
       :colSpan="rowAttrs.length + (colAttrs.length === 0 ? 0 : 1)"
     >
-      {{ languagePack?.totals }}
+      {{ localeStrings.totals }}
     </th>
     <td
       v-for="(colKey, i) in colKeys"
@@ -18,7 +18,7 @@
       {{ getAggregator([], colKey).format(getAggregator([], colKey).value()) }}
     </td>
     <td
-      v-if="showRowTotal"
+      v-if="rowTotal"
       class="pvtGrandTotal"
       @click="handleCellClick(grandTotalValue, [], [])($event)"
     >
@@ -27,17 +27,28 @@
   </tr>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue'
-import { useProvidePivotData } from '@/composables'
-import { DefaultPropsType } from '@/types'
+import { useProvidePivotData } from '@/composables/useProvidePivotData'
 
-type VPivottableBodyRowsTotalRowProps = Pick<
-  DefaultPropsType,
-  'showRowTotal' | 'showColTotal' | 'languagePack' | 'tableOptions'
->
-
-const props = defineProps<VPivottableBodyRowsTotalRowProps>()
+const props = defineProps({
+  colTotal: {
+    type: Boolean,
+    required: true
+  },
+  rowTotal: {
+    type: Boolean,
+    required: true
+  },
+  localeStrings: {
+    type: Object,
+    required: true
+  },
+  tableOptions: {
+    type: Object,
+    required: true
+  }
+})
 
 const {
   getAggregator,
@@ -52,29 +63,29 @@ const grandTotalValue = computed(() => {
   return getAggregator([], []).value()
 })
 
-const getColTotalStyle = (colKey: any) => {
+const getColTotalStyle = (colKey) => {
   const value = getAggregator([], colKey).value()
   return rowTotalColors(value)
 }
 
-const handleCellClick = (value: any, rowValues: any[], colValues: any[]) => {
+const handleCellClick = (value, rowValues, colValues) => {
   if (props.tableOptions?.clickCallback) {
-    const filters = {} as any
+    const filters = {}
 
-    colAttrs.value.forEach((attr: string, i: number) => {
+    colAttrs.value.forEach((attr, i) => {
       if (colValues[i] !== undefined && colValues[i] !== null) {
         filters[attr] = colValues[i]
       }
     })
 
-    rowAttrs.value.forEach((attr: string, i: number) => {
+    rowAttrs.value.forEach((attr, i) => {
       if (rowValues[i] !== undefined && rowValues[i] !== null) {
         filters[attr] = rowValues[i]
       }
     })
 
-    return (event: MouseEvent) =>
-      props.tableOptions?.clickCallback(event, value, filters, pivotData.value)
+    return (event) =>
+      props.tableOptions.clickCallback(event, value, filters, pivotData.value)
   }
   return () => ({})
 }

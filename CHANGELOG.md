@@ -1,3 +1,22 @@
+## [1.1.1](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.1.0...vue-pivottable@1.1.1) (2025-06-18)
+
+# [1.1.0](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.0.15...vue-pivottable@1.1.0) (2025-06-18)
+
+
+### Bug Fixes
+
+* fix type error ([6426f5b](https://github.com/vue-pivottable/vue3-pivottable/commit/6426f5bedaffcd4f38ede86ebc24aa6d0624e055))
+* fix type error ([2fe1d27](https://github.com/vue-pivottable/vue3-pivottable/commit/2fe1d27a1b9c21a3fc1e42453c54ba701b673f3f))
+* fix type of default props aggregators ([660c70e](https://github.com/vue-pivottable/vue3-pivottable/commit/660c70e4daec1d6ea8226b1d1d677bb32696c0f2))
+* vite 빌드 에러 처리 [#122](https://github.com/vue-pivottable/vue3-pivottable/issues/122) ([ac2fb63](https://github.com/vue-pivottable/vue3-pivottable/commit/ac2fb6363f2cefc8495be3adf77cf82e9777f996))
+
+
+### Features
+
+* add typescript configuration to project ([9fa411b](https://github.com/vue-pivottable/vue3-pivottable/commit/9fa411bd849aae2947093d6f849713b2212e6f91))
+* add TypeScript support to pivottable components ([7abfc37](https://github.com/vue-pivottable/vue3-pivottable/commit/7abfc37376ab05a7cab64723f65ff13b35a3304a))
+* 변경사항 자동 커밋 ([38b646f](https://github.com/vue-pivottable/vue3-pivottable/commit/38b646fca94a9d6417ce5286033834d5f83da0f6))
+
 ## [1.0.15](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.0.14...vue-pivottable@1.0.15) (2025-06-05)
 
 
