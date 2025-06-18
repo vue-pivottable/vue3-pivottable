@@ -1,0 +1,81 @@
+name: Release (Simplified)
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'Packages to release (comma-separated, or "all")'
+        required: true
+        default: 'all'
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      packages: write
+      id-token: write
+    
+    steps:
+      - name: Generate GitHub App Token
+        id: app-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: ${{ secrets.APP_INSTALLATION_ID }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.10.0'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: |
+          if [ "${{ inputs.packages }}" = "all" ]; then
+            pnpm build:all
+          else
+            IFS=',' read -ra PACKAGES <<< "${{ inputs.packages }}"
+            for pkg in "${PACKAGES[@]}"; do
+              pnpm --filter "@vue-pivottable/${pkg}" build
+            done
+          fi
+
+      - name: Version and Release
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # Run semantic-release with the app token
+          # This allows it to bypass branch protection
+          if [ "${{ inputs.packages }}" = "all" ]; then
+            pnpm dlx semantic-release
+          else
+            IFS=',' read -ra PACKAGES <<< "${{ inputs.packages }}"
+            for pkg in "${PACKAGES[@]}"; do
+              cd packages/${pkg}
+              pnpm dlx semantic-release
+              cd ../..
+            done
+          fi

@@ -55,7 +55,10 @@
     "preview": "vite preview",
     "lint": "eslint",
     "build:all": "pnpm clean && pnpm build && pnpm -r --filter './packages/*' build",
-    "dev:all": "concurrently \"pnpm dev\" \"pnpm -r --parallel run dev\""
+    "dev:all": "concurrently \"pnpm dev\" \"pnpm -r --parallel run dev\"",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build:all && changeset publish"
   },
   "peerDependencies": {
     "vue": "^3.2.0"
@@ -64,6 +67,7 @@
     "vue-draggable-next": "^2.2.1"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.4",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.2",

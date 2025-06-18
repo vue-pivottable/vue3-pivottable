@@ -1,0 +1,105 @@
+name: Release Dashboard
+
+on:
+  pull_request:
+    types: [opened, synchronize, labeled, unlabeled]
+    branches: [main]
+
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check Changed Packages
+        id: changed
+        run: |
+          # Get changed files
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          
+          # Check each package
+          MAIN_CHANGED=false
+          LAZY_CHANGED=false
+          PLOTLY_CHANGED=false
+          
+          if echo "$CHANGED_FILES" | grep -E "^src/|^package\.json$" | grep -v "^packages/"; then
+            MAIN_CHANGED=true
+          fi
+          
+          if echo "$CHANGED_FILES" | grep -E "^packages/lazy-table-renderer/"; then
+            LAZY_CHANGED=true
+          fi
+          
+          if echo "$CHANGED_FILES" | grep -E "^packages/plotly-renderer/"; then
+            PLOTLY_CHANGED=true
+          fi
+          
+          echo "main_changed=$MAIN_CHANGED" >> $GITHUB_OUTPUT
+          echo "lazy_changed=$LAZY_CHANGED" >> $GITHUB_OUTPUT
+          echo "plotly_changed=$PLOTLY_CHANGED" >> $GITHUB_OUTPUT
+
+      - name: Update PR Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { main_changed, lazy_changed, plotly_changed } = ${{ toJson(steps.changed.outputs) }};
+            
+            let packages = [];
+            if (main_changed === 'true') packages.push('vue-pivottable');
+            if (lazy_changed === 'true') packages.push('@vue-pivottable/lazy-table-renderer');
+            if (plotly_changed === 'true') packages.push('@vue-pivottable/plotly-renderer');
+            
+            const hasReleaseLabel = context.payload.pull_request.labels.some(
+              label => label.name === 'release'
+            );
+            
+            const body = `## 📦 Release Status
+            
+            **Packages with changes:**
+            ${packages.length > 0 ? packages.map(p => `- ${p}`).join('\n') : '- No package changes detected'}
+            
+            **Release label:** ${hasReleaseLabel ? '✅ Applied' : '❌ Not applied'}
+            
+            ${hasReleaseLabel && packages.length > 0 ? 
+              '🚀 **This PR will trigger releases for the changed packages when merged.**' : 
+              packages.length > 0 ? 
+              '⚠️ **Add the `release` label to trigger releases when merged.**' : 
+              'ℹ️ **No package changes to release.**'
+            }
+            
+            ---
+            <sub>To release specific packages manually, use the [Manual Package Release](https://github.com/${{ github.repository }}/actions/workflows/release-manual.yml) workflow.</sub>`;
+            
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('## 📦 Release Status')
+            );
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
