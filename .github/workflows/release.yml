@@ -17,21 +17,35 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      - name: Debug Secrets
+      - name: Debug Secret Storage
         run: |
-          echo "Testing GitHub App configuration..."
-          echo "APP_ID length: ${#APP_ID}"
-          echo "PRIVATE_KEY length: ${#PRIVATE_KEY}"
-          echo "PRIVATE_KEY first 50 chars: ${PRIVATE_KEY:0:50}"
-          echo "PRIVATE_KEY last 50 chars: ${PRIVATE_KEY: -50}"
+          echo "Checking secret storage..."
           
-          # Check if it's a valid PEM format
-          if [[ "$PRIVATE_KEY" == *"BEGIN RSA PRIVATE KEY"* ]]; then
-            echo "✓ Contains BEGIN RSA PRIVATE KEY"
-          elif [[ "$PRIVATE_KEY" == *"BEGIN PRIVATE KEY"* ]]; then
-            echo "✓ Contains BEGIN PRIVATE KEY (PKCS#8 format)"
+          # Check if secrets are accessible
+          if [ -z "$APP_ID" ]; then
+            echo "ERROR: APP_ID is empty"
           else
-            echo "✗ Missing proper PEM header"
+            echo "✓ APP_ID exists (length: ${#APP_ID})"
+          fi
+          
+          if [ -z "$PRIVATE_KEY" ]; then
+            echo "ERROR: APP_PRIVATE_KEY is empty"
+          else
+            echo "✓ APP_PRIVATE_KEY exists (length: ${#PRIVATE_KEY})"
+            
+            # Check line count
+            LINE_COUNT=$(echo "$PRIVATE_KEY" | wc -l)
+            echo "  Private key line count: $LINE_COUNT"
+            
+            # Check if it's one line (might be base64 encoded or escaped)
+            if [ "$LINE_COUNT" -eq 1 ]; then
+              echo "  WARNING: Private key is on a single line"
+              
+              # Check if it contains literal \n
+              if [[ "$PRIVATE_KEY" == *"\\n"* ]]; then
+                echo "  Contains literal \\n - needs unescaping"
+              fi
+            fi
           fi
         env:
           APP_ID: ${{ secrets.APP_ID }}
