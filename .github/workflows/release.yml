@@ -17,39 +17,22 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      - name: Checkout for debugging
-        uses: actions/checkout@v4
-        
-      - name: Debug GitHub App Setup
+      - name: Debug Secrets
         run: |
           echo "Testing GitHub App configuration..."
-          echo "APP_ID: $APP_ID"
-          echo "Installation URL: https://github.com/organizations/vue-pivottable/settings/installations/66276079"
+          echo "APP_ID length: ${#APP_ID}"
+          echo "PRIVATE_KEY length: ${#PRIVATE_KEY}"
+          echo "PRIVATE_KEY first 50 chars: ${PRIVATE_KEY:0:50}"
+          echo "PRIVATE_KEY last 50 chars: ${PRIVATE_KEY: -50}"
           
-          # Create a simple script to test JWT generation
-          cat > test-jwt.js << 'EOF'
-          const crypto = require('crypto');
-          
-          const privateKey = process.env.PRIVATE_KEY;
-          const appId = process.env.APP_ID;
-          
-          console.log('App ID:', appId);
-          console.log('Private Key length:', privateKey.length);
-          console.log('Private Key starts with:', privateKey.substring(0, 30));
-          console.log('Private Key ends with:', privateKey.substring(privateKey.length - 30));
-          
-          // Simple test to see if it's a valid RSA key
-          try {
-            const sign = crypto.createSign('RSA-SHA256');
-            sign.update('test');
-            sign.sign(privateKey, 'base64');
-            console.log('✓ Private key is valid for signing');
-          } catch (error) {
-            console.error('✗ Private key validation failed:', error.message);
-          }
-          EOF
-          
-          node test-jwt.js
+          # Check if it's a valid PEM format
+          if [[ "$PRIVATE_KEY" == *"BEGIN RSA PRIVATE KEY"* ]]; then
+            echo "✓ Contains BEGIN RSA PRIVATE KEY"
+          elif [[ "$PRIVATE_KEY" == *"BEGIN PRIVATE KEY"* ]]; then
+            echo "✓ Contains BEGIN PRIVATE KEY (PKCS#8 format)"
+          else
+            echo "✗ Missing proper PEM header"
+          fi
         env:
           APP_ID: ${{ secrets.APP_ID }}
           PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
