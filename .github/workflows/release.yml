@@ -17,26 +17,9 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      - name: Validate Private Key Format
-        run: |
-          echo "Checking private key format..."
-          if echo "$PRIVATE_KEY" | grep -q "BEGIN RSA PRIVATE KEY"; then
-            echo "✓ Private key contains BEGIN RSA PRIVATE KEY"
-          else
-            echo "✗ Private key missing BEGIN RSA PRIVATE KEY header"
-          fi
-          if echo "$PRIVATE_KEY" | grep -q "END RSA PRIVATE KEY"; then
-            echo "✓ Private key contains END RSA PRIVATE KEY"
-          else
-            echo "✗ Private key missing END RSA PRIVATE KEY footer"
-          fi
-          echo "Private key line count: $(echo "$PRIVATE_KEY" | wc -l)"
-        env:
-          PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
-
       - name: Generate GitHub App Token
         id: generate-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
