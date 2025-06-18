@@ -17,28 +17,39 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      - name: Test JWT Generation
+      - name: Checkout for debugging
+        uses: actions/checkout@v4
+        
+      - name: Debug GitHub App Setup
         run: |
-          npm install -g jsonwebtoken
-          node -e "
-          const jwt = require('jsonwebtoken');
+          echo "Testing GitHub App configuration..."
+          echo "APP_ID: $APP_ID"
+          echo "Installation URL: https://github.com/organizations/vue-pivottable/settings/installations/66276079"
+          
+          # Create a simple script to test JWT generation
+          cat > test-jwt.js << 'EOF'
+          const crypto = require('crypto');
+          
           const privateKey = process.env.PRIVATE_KEY;
           const appId = process.env.APP_ID;
           
+          console.log('App ID:', appId);
+          console.log('Private Key length:', privateKey.length);
+          console.log('Private Key starts with:', privateKey.substring(0, 30));
+          console.log('Private Key ends with:', privateKey.substring(privateKey.length - 30));
+          
+          // Simple test to see if it's a valid RSA key
           try {
-            const now = Math.floor(Date.now() / 1000);
-            const payload = {
-              iat: now - 60,
-              exp: now + 600,
-              iss: appId
-            };
-            const token = jwt.sign(payload, privateKey, { algorithm: 'RS256' });
-            console.log('✓ JWT generated successfully');
-            console.log('Token length:', token.length);
+            const sign = crypto.createSign('RSA-SHA256');
+            sign.update('test');
+            sign.sign(privateKey, 'base64');
+            console.log('✓ Private key is valid for signing');
           } catch (error) {
-            console.error('✗ JWT generation failed:', error.message);
+            console.error('✗ Private key validation failed:', error.message);
           }
-          "
+          EOF
+          
+          node test-jwt.js
         env:
           APP_ID: ${{ secrets.APP_ID }}
           PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
