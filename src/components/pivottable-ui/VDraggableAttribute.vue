@@ -7,8 +7,7 @@
       <slot
         name="pvtAttr"
         :attr-name="attributeName"
-        >{{ attributeName }}</slot
-      >
+      >{{ attributeName }}</slot>
       <span
         v-if="!hideDropDown"
         @mousedown.stop
@@ -24,9 +23,7 @@
         :filter-box-values="attributeValues"
         :z-index="zIndex"
         @mousedown.stop
-        @update:z-index-of-filter-box="
-          $emit('update:zIndexOfFilterBox', $event)
-        "
+        @update:z-index-of-filter-box="$emit('update:zIndexOfFilterBox', $event)"
         @update:unselected-filter-values="
           $emit('update:unselectedFilterValues', $event)
         "
@@ -35,39 +32,45 @@
   </li>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import VFilterBox from './VFilterBox.vue'
 import { computed } from 'vue'
 
-const emit = defineEmits<{
-  (event: 'update:zIndexOfFilterBox', attributeName: string): void
-  (
-    event: 'update:unselectedFilterValues',
-    payload: { key: string; value: Record<string, boolean> }
-  ): void
-  (
-    event: 'update:openStatusOfFilterBox',
-    payload: { key: string; value: boolean }
-  ): void
-}>()
+const emit = defineEmits([
+  'update:zIndexOfFilterBox',
+  'update:unselectedFilterValues',
+  'update:openStatusOfFilterBox'
+])
 
-interface DraggableAttributeProps {
-  attributeName: string
-  attributeValues?: Record<string, number>
-  restricted?: boolean
-  open?: boolean
-  unselectedFilterValues?: Record<string, boolean>
-  zIndex?: number
-  hideDropDownForUnused?: boolean
-}
-
-const props = withDefaults(defineProps<DraggableAttributeProps>(), {
-  attributeValues: () => ({}),
-  restricted: false,
-  open: false,
-  unselectedFilterValues: () => ({}),
-  zIndex: 1000,
-  hideDropDownForUnused: false
+const props = defineProps({
+  attributeName: {
+    type: String,
+    required: true
+  },
+  attributeValues: {
+    type: Object,
+    default: () => ({})
+  },
+  restricted: {
+    type: Boolean,
+    default: false
+  },
+  open: {
+    type: Boolean,
+    default: false
+  },
+  unselectedFilterValues: {
+    type: Object,
+    default: () => ({})
+  },
+  zIndex: {
+    default: 1000,
+    type: Number
+  },
+  hideDropDownForUnused: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const toggleFilterBox = () => {

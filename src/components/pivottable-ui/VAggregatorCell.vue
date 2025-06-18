@@ -27,7 +27,7 @@
       </div>
       <template v-if="numValsAllowed">
         <VDropdown
-          v-for="(_, i) in Array.from({ length: numValsAllowed })"
+          v-for="(item, i) in new Array(numValsAllowed).fill()"
           :key="i"
           :options="valsOptions"
           :value="vals[i]"
@@ -38,70 +38,80 @@
   </td>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue'
 import VDropdown from './VDropdown.vue'
-import type { AggregatorTemplate } from '@/helper/utilities'
 
-const emit = defineEmits<{
-  (event: 'update:aggregatorName', value: string): void
-  (event: 'update:rowOrder', value: string): void
-  (event: 'update:colOrder', value: string): void
-  (event: 'update:vals', value: string[]): void
-}>()
-
-type OrderType = 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a'
-
-interface AggregatorCellProps {
-  aggregatorItems?: Record<string, AggregatorTemplate>
-  aggregatorName?: string
-  rowOrder: OrderType
-  colOrder: OrderType
-  vals?: string[]
-  attributeNames?: string[]
-  hiddenFromAggregators?: string[]
-}
-
-const props = withDefaults(defineProps<AggregatorCellProps>(), {
-  aggregatorItems: () => ({}),
-  aggregatorName: 'Count',
-  vals: () => [],
-  attributeNames: () => [],
-  hiddenFromAggregators: () => []
+const emit = defineEmits([
+  'update:aggregatorName',
+  'update:rowOrder',
+  'update:colOrder',
+  'update:vals'
+])
+const props = defineProps({
+  aggregatorItems: {
+    type: Object,
+    default: () => ({})
+  },
+  aggregatorName: {
+    type: String,
+    default: 'Count'
+  },
+  rowOrder: {
+    type: String,
+    default: 'key_a_to_z',
+    validator: function (value) {
+      return (
+        ['key_a_to_z', 'value_a_to_z', 'value_z_to_a'].indexOf(value) !== -1
+      )
+    }
+  },
+  colOrder: {
+    type: String,
+    default: 'key_a_to_z',
+    validator: function (value) {
+      return (
+        ['key_a_to_z', 'value_a_to_z', 'value_z_to_a'].indexOf(value) !== -1
+      )
+    }
+  },
+  vals: {
+    type: Array,
+    default: function () {
+      return []
+    }
+  },
+  attributeNames: {
+    type: Array,
+    default: () => []
+  },
+  hiddenFromAggregators: {
+    type: Array,
+    default: () => []
+  }
 })
-
-const sortIcons: Record<
-  OrderType,
-  { rowSymbol: string; colSymbol: string; next: OrderType }
-> = {
+const sortIcons = {
   key_a_to_z: { rowSymbol: '↕', colSymbol: '↔', next: 'value_a_to_z' },
   value_a_to_z: { rowSymbol: '↓', colSymbol: '→', next: 'value_z_to_a' },
   value_z_to_a: { rowSymbol: '↑', colSymbol: '←', next: 'key_a_to_z' }
-} as const
-
+}
 const aggregatorOptions = computed(() => Object.keys(props.aggregatorItems))
 const valsOptions = computed(() =>
   props.attributeNames.filter(
     (item) => !props.hiddenFromAggregators.includes(item)
   )
 )
-const numValsAllowed = computed(() => {
-  const aggregator = props.aggregatorItems[props.aggregatorName]
-  if (!aggregator) return 0
-  const aggregatorInstance = aggregator([])?.()
-  return aggregatorInstance?.numInputs || 0
-})
-
+const numValsAllowed = computed(
+  () => props.aggregatorItems[props.aggregatorName]([])().numInputs || 0
+)
 const currentRowSortIcon = computed(() => sortIcons[props.rowOrder].rowSymbol)
 const currentColSortIcon = computed(() => sortIcons[props.colOrder].colSymbol)
-
-const updateAggregatorName = (value: string) =>
-  emit('update:aggregatorName', value)
-const updateRowOrder = () =>
+const updateAggregatorName = (value) => emit('update:aggregatorName', value)
+const updateRowOrder = (value) =>
   emit('update:rowOrder', sortIcons[props.rowOrder].next)
-const updateColOrder = () =>
+const updateColOrder = (value) =>
   emit('update:colOrder', sortIcons[props.colOrder].next)
-const updateVals = (val: string, i: number) => {
+const updateVals = (val, i) => {
   const newVals = [...props.vals]
   newVals[i] = val
   emit('update:vals', newVals)

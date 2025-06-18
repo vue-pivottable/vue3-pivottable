@@ -1,10 +1,9 @@
 import { VuePivottable, VuePivottableUi } from './components'
-import * as PivotUtilities from './helper'
 import TableRenderer from './components/pivottable/renderer'
-import type { Component } from 'vue'
-export * from './composables'
+import * as PivotUtilities from './helper'
+export * from './composables/index.js'
 
-const Renderer: Record<string, Component> = {
+const Renderer = {
   ...TableRenderer
 }
 

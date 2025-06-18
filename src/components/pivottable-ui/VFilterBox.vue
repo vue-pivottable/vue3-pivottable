@@ -62,96 +62,85 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, computed } from 'vue'
 import { useProvideFilterBox } from '../../composables'
-
-interface FilterBoxProps {
-  unselectedFilterValues?: Record<string, boolean>
-  filterBoxKey?: string
-  zIndex?: number
-  filterBoxValues?: Record<string, number>
-}
-
-const props = withDefaults(defineProps<FilterBoxProps>(), {
-  unselectedFilterValues: () => ({}),
-  filterBoxKey: '',
-  zIndex: 0,
-  filterBoxValues: () => ({})
+const props = defineProps({
+  unselectedFilterValues: {
+    type: Object,
+    default: () => ({})
+  },
+  filterBoxKey: {
+    type: String,
+    default: ''
+  },
+  zIndex: {
+    type: Number,
+    default: 0
+  },
+  filterBoxValues: {
+    type: Object,
+    default: () => ({})
+  }
 })
-
-const { localeStrings, sorter, menuLimit } = useProvideFilterBox()!
+const { localeStrings, sorter, menuLimit } = useProvideFilterBox()
 const filterBoxValuesList = Object.keys(props.filterBoxValues)
 const filterText = ref('')
 const showMenu = ref(filterBoxValuesList.length < menuLimit.value)
 const sortedList = [...filterBoxValuesList].sort(sorter(props.filterBoxKey))
 const filteredList = computed(() => sortedList.filter(matchesFilter))
 const unselectedValues = computed(() => props.unselectedFilterValues)
-
-const emit = defineEmits<{
-  (event: 'update:zIndexOfFilterBox', attributeName: string): void
-  (
-    event: 'update:unselectedFilterValues',
-    payload: { key: string; value: Record<string, boolean> }
-  ): void
-}>()
-
-const moveFilterBoxToTop = (e: MouseEvent) => {
+const emit = defineEmits([
+  'update:zIndexOfFilterBox',
+  'update:unselectedFilterValues'
+])
+const moveFilterBoxToTop = (e) => {
   e.stopPropagation()
   emit('update:zIndexOfFilterBox', props.filterBoxKey)
 }
 const handleFilterTextClear = () => {
   filterText.value = ''
 }
-const matchesFilter = (x: string) =>
-  x
-    .toLowerCase()
-    .trim()
-    .includes((filterText.value ?? '').toLowerCase().trim())
-const addValuesToFilter = (values: string[]) => {
-  const filterValues = values.reduce(
-    (r, v) => {
-      r[v] = true
-      return r
-    },
-    Object.assign({}, unselectedValues.value)
-  )
+const matchesFilter = (x) =>
+  x.toLowerCase().trim().includes(filterText.value.toLowerCase().trim())
+const addValuesToFilter = (values) => {
+  const filterValues = values.reduce((r, v) => {
+    r[v] = true
+    return r
+  }, Object.assign({}, unselectedValues.value))
   emit('update:unselectedFilterValues', {
     key: props.filterBoxKey,
     value: filterValues
   })
 }
-const removeValuesFromFilter = (values: string[]) => {
-  const filterValues = values.reduce(
-    (r, v) => {
-      if (r[v]) {
-        delete r[v]
-      }
-      return r
-    },
-    Object.assign({}, unselectedValues.value)
-  )
+const removeValuesFromFilter = (values) => {
+  const filterValues = values.reduce((r, v) => {
+    if (r[v]) {
+      delete r[v]
+    }
+    return r
+  }, Object.assign({}, unselectedValues.value))
   emit('update:unselectedFilterValues', {
     key: props.filterBoxKey,
     value: filterValues
   })
 }
-const toggleValue = (value: string) => {
+const toggleValue = (value) => {
   if (value in unselectedValues.value) {
     removeValuesFromFilter([value])
   } else {
     addValuesToFilter([value])
   }
 }
-const selectOnly = (e: MouseEvent, value: string) => {
+const selectOnly = (e, value) => {
   e.stopPropagation()
   setValuesInFilter(
     props.filterBoxKey,
     filterBoxValuesList.filter((y) => y !== value)
   )
 }
-const setValuesInFilter = (filterBoxKey: string, values: string[]) => {
-  const filterValues = values.reduce<Record<string, boolean>>((r, v) => {
+const setValuesInFilter = (filterBoxKey, values) => {
+  const filterValues = values.reduce((r, v) => {
     r[v] = true
     return r
   }, {})

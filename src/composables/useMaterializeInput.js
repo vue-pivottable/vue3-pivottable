@@ -1,38 +1,24 @@
-import { Ref, ref, watch } from 'vue'
-import { PivotData } from '@/helper'
+import { ref, watch } from 'vue'
+import { PivotData } from '@/helper/utilities.js'
 
-export interface UseMaterializeInputOptions {
-  derivedAttributes: Ref<Record<string, (record: Record<string, any>) => any>>
-}
+export function useMaterializeInput(dataSource, options) {
+  const rawData = ref(null)
+  const allFilters = ref({})
+  const materializedInput = ref([])
 
-export interface UseMaterializeInputReturn {
-  rawData: Ref<any>
-  allFilters: Ref<Record<string, Record<string, number>>>
-  materializedInput: Ref<any[]>
-  processData: (data: any) => { AllFilters: Record<string, Record<string, number>>; materializedInput: any[] } | void
-}
-
-export function useMaterializeInput (
-  dataSource: Ref<any>,
-  options: UseMaterializeInputOptions
-): UseMaterializeInputReturn {
-  const rawData = ref<any>(null)
-  const allFilters = ref<Record<string, Record<string, number>>>({})
-  const materializedInput = ref<any[]>([])
-
-  function processData (data: any) {
+  function processData(data) {
     if (!data || rawData.value === data) return
 
     rawData.value = data
-    const newAllFilters: Record<string, Record<string, number>> = {}
-    const newMaterializedInput: any[] = []
+    const newAllFilters = {}
+    const newMaterializedInput = []
 
     let recordsProcessed = 0
 
     PivotData.forEachRecord(
       data,
       options.derivedAttributes.value,
-      function (record: Record<string, any>) {
+      function (record) {
         newMaterializedInput.push(record)
 
         for (const attr of Object.keys(record)) {
@@ -80,4 +66,4 @@ export function useMaterializeInput (
     materializedInput,
     processData
   }
-} 
+}
