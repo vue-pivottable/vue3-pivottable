@@ -1,0 +1,101 @@
+name: Manual Package Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to release'
+        required: true
+        type: choice
+        options:
+          - vue-pivottable
+          - lazy-table-renderer
+          - plotly-renderer
+          - all
+      release-type:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - auto
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    
+    steps:
+      - name: Generate GitHub App Token
+        id: app-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: ${{ secrets.APP_INSTALLATION_ID }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.10.0'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Build Package(s)
+        run: |
+          if [ "${{ inputs.package }}" = "all" ]; then
+            pnpm build:all
+          elif [ "${{ inputs.package }}" = "vue-pivottable" ]; then
+            pnpm build
+          else
+            pnpm --filter @vue-pivottable/${{ inputs.package }} build
+          fi
+
+      - name: Version and Release
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
+        run: |
+          if [ "${{ inputs.release-type }}" != "auto" ]; then
+            VERSION_ARG="--release-as ${{ inputs.release-type }}"
+          else
+            VERSION_ARG=""
+          fi
+          
+          if [ "${{ inputs.package }}" = "all" ]; then
+            # Release all packages
+            pnpm dlx semantic-release $VERSION_ARG
+            cd packages/lazy-table-renderer && pnpm dlx semantic-release $VERSION_ARG && cd ../..
+            cd packages/plotly-renderer && NPM_TOKEN=$NPM_TOKEN_SUMIN pnpm dlx semantic-release $VERSION_ARG && cd ../..
+          elif [ "${{ inputs.package }}" = "vue-pivottable" ]; then
+            pnpm dlx semantic-release $VERSION_ARG
+          else
+            cd packages/${{ inputs.package }}
+            if [ "${{ inputs.package }}" = "plotly-renderer" ]; then
+              NPM_TOKEN=$NPM_TOKEN_SUMIN pnpm dlx semantic-release $VERSION_ARG
+            else
+              pnpm dlx semantic-release $VERSION_ARG
+            fi
+          fi
