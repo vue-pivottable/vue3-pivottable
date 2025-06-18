@@ -58,7 +58,8 @@
     "dev:all": "concurrently \"pnpm dev\" \"pnpm -r --parallel run dev\"",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm build:all && changeset publish"
+    "release": "pnpm build:all && changeset publish",
+    "release:packages": "node scripts/release-packages.js"
   },
   "peerDependencies": {
     "vue": "^3.2.0"
@@ -74,7 +75,10 @@
     "@semantic-release/npm": "^12.0.1",
     "@seungwoo321/eslint-plugin-standard-js": "^1.0.1",
     "@seungwoo321/prettier-config": "^1.0.1",
+    "@types/node": "^22.15.21",
+    "@types/papaparse": "^5.3.16",
     "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
     "@vue-pivottable/lazy-table-renderer": "workspace:*",
     "@vue-pivottable/plotly-renderer": "workspace:*",
     "concurrently": "^9.1.2",
@@ -86,10 +90,13 @@
     "papaparse": "^5.5.2",
     "rimraf": "^6.0.1",
     "semantic-release": "^24.2.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.33.1",
     "vite": "^6.3.4",
     "vite-plugin-dts": "^4.5.3",
     "vite-plugin-static-copy": "^2.3.1",
-    "vue": "^3.2.0"
+    "vue": "^3.2.0",
+    "vue-tsc": "^2.2.10"
   },
   "packageManager": "pnpm@9.12.2"
 }

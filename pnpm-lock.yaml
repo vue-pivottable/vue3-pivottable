@@ -33,6 +33,12 @@ importers:
       '@seungwoo321/prettier-config':
         specifier: ^1.0.1
         version: 1.0.1(prettier@3.5.3)
+      '@types/node':
+        specifier: ^22.15.21
+        version: 22.15.21
+      '@types/papaparse':
+        specifier: ^5.3.16
+        version: 5.3.16
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
         version: 5.2.4(vite@6.3.5(@types/node@22.15.21))(vue@3.5.15(typescript@5.8.3))
@@ -42,6 +48,9 @@ importers:
       '@vue-pivottable/plotly-renderer':
         specifier: workspace:*
         version: link:packages/plotly-renderer
+      '@vue/tsconfig':
+        specifier: ^0.7.0
+        version: 0.7.0(typescript@5.8.3)(vue@3.5.15(typescript@5.8.3))
       concurrently:
         specifier: ^9.1.2
         version: 9.1.2
@@ -69,6 +78,12 @@ importers:
       semantic-release:
         specifier: ^24.2.3
         version: 24.2.5(typescript@5.8.3)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+      typescript-eslint:
+        specifier: ^8.33.1
+        version: 8.33.1(eslint@9.27.0)(typescript@5.8.3)
       vite:
         specifier: ^6.3.4
         version: 6.3.5(@types/node@22.15.21)
@@ -81,6 +96,9 @@ importers:
       vue:
         specifier: ^3.2.0
         version: 3.5.15(typescript@5.8.3)
+      vue-tsc:
+        specifier: ^2.2.10
+        version: 2.2.10(typescript@5.8.3)
 
   packages/lazy-table-renderer:
     dependencies:
@@ -89,14 +107,23 @@ importers:
         version: 3.5.15(typescript@5.8.3)
       vue-pivottable:
         specifier: latest
-        version: 1.1.1(sortablejs@1.15.6)(vue@3.5.15(typescript@5.8.3))
+        version: 1.0.15(sortablejs@1.15.6)(vue@3.5.15(typescript@5.8.3))
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
         version: 5.2.4(vite@6.3.5(@types/node@22.15.21))(vue@3.5.15(typescript@5.8.3))
+      '@vue/tsconfig':
+        specifier: ^0.7.0
+        version: 0.7.0(typescript@5.8.3)(vue@3.5.15(typescript@5.8.3))
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
       vite:
         specifier: ^6.3.4
         version: 6.3.5(@types/node@22.15.21)
+      vue-tsc:
+        specifier: ^2.2.10
+        version: 2.2.10(typescript@5.8.3)
 
   packages/plotly-renderer:
     dependencies:
@@ -116,9 +143,18 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
         version: 5.2.4(vite@6.3.5(@types/node@22.15.21))(vue@3.5.15(typescript@5.8.3))
+      '@vue/tsconfig':
+        specifier: ^0.7.0
+        version: 0.7.0(typescript@5.8.3)(vue@3.5.15(typescript@5.8.3))
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
       vite:
         specifier: ^6.3.4
         version: 6.3.5(@types/node@22.15.21)
+      vue-tsc:
+        specifier: ^2.2.10
+        version: 2.2.10(typescript@5.8.3)
 
 packages:
 
@@ -765,6 +801,9 @@ packages:
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
+  '@types/papaparse@5.3.16':
+    resolution: {integrity: sha512-T3VuKMC2H0lgsjI9buTB3uuKj3EMD2eap1MOuEQuBQ44EnDx/IkGhU6EwiTf9zG3za4SKlmwKAImdDKdNnCsXg==}
+
   '@types/semver@7.7.0':
     resolution: {integrity: sha512-k107IF4+Xr7UHjwDc7Cfd6PRQfbdkiRabXGRjo07b4WyPahFBZCZ1sE+BNxYIJPPg73UkfOsVOLwqVc/6ETrIA==}
 
@@ -891,6 +930,14 @@ packages:
       typescript:
         optional: true
 
+  '@vue/language-core@2.2.10':
+    resolution: {integrity: sha512-+yNoYx6XIKuAO8Mqh1vGytu8jkFEOH5C8iOv3i8Z/65A7x9iAOXA97Q+PqZ3nlm2lxf5rOJuIGI/wDtx/riNYw==}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   '@vue/reactivity@3.5.15':
     resolution: {integrity: sha512-GaA5VUm30YWobCwpvcs9nvFKf27EdSLKDo2jA0IXzGS344oNpFNbEQ9z+Pp5ESDaxyS8FcH0vFN/XSe95BZtHQ==}
 
@@ -907,6 +954,17 @@ packages:
 
   '@vue/shared@3.5.15':
     resolution: {integrity: sha512-bKvgFJJL1ZX9KxMCTQY6xD9Dhe3nusd1OhyOb1cJYGqvAr0Vg8FIjHPMOEVbJ9GDT9HG+Bjdn4oS8ohKP8EvoA==}
+
+  '@vue/tsconfig@0.7.0':
+    resolution: {integrity: sha512-ku2uNz5MaZ9IerPPUyOHzyjhXoX2kVJaVf7hL315DC17vS6IiZRmmCPfggNbU16QTvM80+uYYy3eYJB59WCtvg==}
+    peerDependencies:
+      typescript: 5.x
+      vue: ^3.4.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      vue:
+        optional: true
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -960,6 +1018,9 @@ packages:
 
   alien-signals@0.4.14:
     resolution: {integrity: sha512-itUAVzhczTmP2U5yX67xVpsbbOiquusbWVyA9N+sy6+r6YVbFkahXvNCeEPWEOMhwDYwbVbGHFkVL03N9I5g+Q==}
+
+  alien-signals@1.0.13:
+    resolution: {integrity: sha512-OGj9yyTnJEttvzhTUWuscOvtqxq5vrhF7vL9oS0xJ2mK0ItPYP1/y+vCFebfxoEyAz0++1AIwJ5CMr+Fk3nDmg==}
 
   ansi-colors@4.1.3:
     resolution: {integrity: sha512-/6w/C21Pm1A7aZitlI5Ni/2J6FFQN8i1Cvz3kHABAAbw93v/NlvKdVOqz7CCWz/3iv/JplRSEEZ83XION15ovw==}
@@ -3231,10 +3292,16 @@ packages:
     peerDependencies:
       vue: ^3.2.0
 
-  vue-pivottable@1.1.1:
-    resolution: {integrity: sha512-CHz5JBJSccYsmqkI0HAM67MKI45CTvf1wk0oato8OVtSG7pttD26JAdiJyWqE+TlB2jsseCB+ansMNsnYW/n1w==}
+  vue-pivottable@1.0.15:
+    resolution: {integrity: sha512-OSZK1/Xm11BQjLK7I1ZDi5oiaGfHyB+iqOhLCsIdcMveno5xmcilvZOv5lHQRZ+RmeNyvCEp8jfy4Pui6MeWOw==}
     peerDependencies:
       vue: ^3.2.0
+
+  vue-tsc@2.2.10:
+    resolution: {integrity: sha512-jWZ1xSaNbabEV3whpIDMbjVSVawjAyW+x1n3JeGQo7S0uv2n9F/JMgWW90tGWNFRKya4YwKMZgCtr0vRAM7DeQ==}
+    hasBin: true
+    peerDependencies:
+      typescript: '>=5.0.0'
 
   vue@3.5.15:
     resolution: {integrity: sha512-aD9zK4rB43JAMK/5BmS4LdPiEp8Fdh8P1Ve/XNuMF5YRf78fCyPE6FUbQwcaWQ5oZ1R2CD9NKE0FFOVpMR7gEQ==}
@@ -4032,9 +4099,12 @@ snapshots:
   '@types/node@22.15.21':
     dependencies:
       undici-types: 6.21.0
-    optional: true
 
   '@types/normalize-package-data@2.4.4': {}
+
+  '@types/papaparse@5.3.16':
+    dependencies:
+      '@types/node': 22.15.21
 
   '@types/semver@7.7.0': {}
 
@@ -4232,6 +4302,19 @@ snapshots:
     optionalDependencies:
       typescript: 5.8.3
 
+  '@vue/language-core@2.2.10(typescript@5.8.3)':
+    dependencies:
+      '@volar/language-core': 2.4.14
+      '@vue/compiler-dom': 3.5.15
+      '@vue/compiler-vue2': 2.7.16
+      '@vue/shared': 3.5.15
+      alien-signals: 1.0.13
+      minimatch: 9.0.5
+      muggle-string: 0.4.1
+      path-browserify: 1.0.1
+    optionalDependencies:
+      typescript: 5.8.3
+
   '@vue/reactivity@3.5.15':
     dependencies:
       '@vue/shared': 3.5.15
@@ -4255,6 +4338,11 @@ snapshots:
       vue: 3.5.15(typescript@5.8.3)
 
   '@vue/shared@3.5.15': {}
+
+  '@vue/tsconfig@0.7.0(typescript@5.8.3)(vue@3.5.15(typescript@5.8.3))':
+    optionalDependencies:
+      typescript: 5.8.3
+      vue: 3.5.15(typescript@5.8.3)
 
   acorn-jsx@5.3.2(acorn@8.14.1):
     dependencies:
@@ -4306,6 +4394,8 @@ snapshots:
       uri-js: 4.4.1
 
   alien-signals@0.4.14: {}
+
+  alien-signals@1.0.13: {}
 
   ansi-colors@4.1.3: {}
 
@@ -6591,8 +6681,7 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
-  undici-types@6.21.0:
-    optional: true
+  undici-types@6.21.0: {}
 
   unicode-emoji-modifier-base@1.0.0: {}
 
@@ -6690,12 +6779,18 @@ snapshots:
     transitivePeerDependencies:
       - sortablejs
 
-  vue-pivottable@1.1.1(sortablejs@1.15.6)(vue@3.5.15(typescript@5.8.3)):
+  vue-pivottable@1.0.15(sortablejs@1.15.6)(vue@3.5.15(typescript@5.8.3)):
     dependencies:
       vue: 3.5.15(typescript@5.8.3)
       vue-draggable-next: 2.2.1(sortablejs@1.15.6)(vue@3.5.15(typescript@5.8.3))
     transitivePeerDependencies:
       - sortablejs
+
+  vue-tsc@2.2.10(typescript@5.8.3):
+    dependencies:
+      '@volar/typescript': 2.4.14
+      '@vue/language-core': 2.2.10(typescript@5.8.3)
+      typescript: 5.8.3
 
   vue@3.5.15(typescript@5.8.3):
     dependencies:

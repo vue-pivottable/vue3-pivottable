@@ -4,34 +4,38 @@
     class="pvtDropdown"
   >
     <option
-      v-for="(text, key) in options"
-      :key="key"
+      v-for="(text, index) in options"
+      :key="index"
       :value="text"
-      :selected="text === valueModel ? 'selected' : undefined"
     >
       {{ text }}
     </option>
   </select>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue'
 
-const props = defineProps({
-  options: {
-    type: Array,
-    default: () => []
-  },
-  value: {
-    type: String,
-    default: ''
-  }
+const emit = defineEmits<{
+  (event: 'update:value', value: string): void
+}>()
+
+interface DropdownProps {
+  options: string[]
+  value?: string
+}
+
+const props = withDefaults(defineProps<DropdownProps>(), {
+  value: ''
 })
-const valueModel = ref(props.value || props.options[0])
-const emit = defineEmits(['update:value'])
+
+const valueModel = ref<string>(props.value || props.options[0] || '')
+
 watch(
   valueModel,
-  (newVal) => { emit('update:value', newVal) },
+  (newVal) => {
+    emit('update:value', newVal)
+  },
   { immediate: true }
 )
 </script>

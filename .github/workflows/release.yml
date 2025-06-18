@@ -45,16 +45,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build all packages
-        run: pnpm build:all
-
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
         with:
           # This will create a PR with version bumps and changelog updates
           # When the PR is merged, it will publish to npm
-          publish: pnpm changeset publish
+          publish: pnpm release:packages
           version: pnpm changeset version
           commit: "chore: release packages"
           title: "chore: release packages"
@@ -62,6 +59,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
 
       # Alternative: Use semantic-release with GitHub App token
       # - name: Release
