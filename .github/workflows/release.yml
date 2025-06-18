@@ -17,39 +17,19 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      - name: Debug Secret Storage
+      - name: Verify App ID
         run: |
-          echo "Checking secret storage..."
+          echo "Verifying App ID..."
+          echo "Expected App ID: 1254720"
+          echo "Actual App ID from secret: $APP_ID"
           
-          # Check if secrets are accessible
-          if [ -z "$APP_ID" ]; then
-            echo "ERROR: APP_ID is empty"
+          if [ "$APP_ID" = "1254720" ]; then
+            echo "✓ App ID matches expected value"
           else
-            echo "✓ APP_ID exists (length: ${#APP_ID})"
-          fi
-          
-          if [ -z "$PRIVATE_KEY" ]; then
-            echo "ERROR: APP_PRIVATE_KEY is empty"
-          else
-            echo "✓ APP_PRIVATE_KEY exists (length: ${#PRIVATE_KEY})"
-            
-            # Check line count
-            LINE_COUNT=$(echo "$PRIVATE_KEY" | wc -l)
-            echo "  Private key line count: $LINE_COUNT"
-            
-            # Check if it's one line (might be base64 encoded or escaped)
-            if [ "$LINE_COUNT" -eq 1 ]; then
-              echo "  WARNING: Private key is on a single line"
-              
-              # Check if it contains literal \n
-              if [[ "$PRIVATE_KEY" == *"\\n"* ]]; then
-                echo "  Contains literal \\n - needs unescaping"
-              fi
-            fi
+            echo "✗ App ID mismatch!"
           fi
         env:
           APP_ID: ${{ secrets.APP_ID }}
-          PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Generate GitHub App Token
         id: generate-token
