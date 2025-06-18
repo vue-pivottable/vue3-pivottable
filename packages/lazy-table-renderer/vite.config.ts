@@ -24,7 +24,7 @@ export default defineConfig(() => {
         formats: ['es', 'umd']
       },
       rollupOptions: {
-        external: ['vue'],
+        external: ['vue', 'vue-pivottable'],
         output: {
           exports: 'named',
           globals: {
@@ -35,6 +35,11 @@ export default defineConfig(() => {
       },
       sourcemap: true,
       target: 'es2015'
+    },
+    resolve: {
+      alias: {
+        'vue-pivottable': resolve(__dirname, 'node_modules/vue-pivottable')
+      }
     }
   }
 })

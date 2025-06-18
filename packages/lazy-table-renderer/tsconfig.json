@@ -3,10 +3,7 @@
   "compilerOptions": {
     "noEmit": true,
     "baseUrl": ".",
-    "allowJs": true,
-    "paths": {
-      "vue-pivottable": ["../../dist"]
-    }
+    "allowJs": true
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"]

@@ -17,9 +17,9 @@ export default defineConfig([
   {
     files: ['**/*.vue'],
     languageOptions: {
-      parser: require.resolve('vue-eslint-parser'),
+      parser: 'vue-eslint-parser',
       parserOptions: {
-        parser: require.resolve('@typescript-eslint/parser'),
+        parser: '@typescript-eslint/parser',
         ecmaVersion: 2020,
         sourceType: 'module',
         extraFileExtensions: ['.vue']
