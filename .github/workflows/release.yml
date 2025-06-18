@@ -17,6 +17,32 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
+      - name: Test JWT Generation
+        run: |
+          npm install -g jsonwebtoken
+          node -e "
+          const jwt = require('jsonwebtoken');
+          const privateKey = process.env.PRIVATE_KEY;
+          const appId = process.env.APP_ID;
+          
+          try {
+            const now = Math.floor(Date.now() / 1000);
+            const payload = {
+              iat: now - 60,
+              exp: now + 600,
+              iss: appId
+            };
+            const token = jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+            console.log('✓ JWT generated successfully');
+            console.log('Token length:', token.length);
+          } catch (error) {
+            console.error('✗ JWT generation failed:', error.message);
+          }
+          "
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Generate GitHub App Token
         id: generate-token
         uses: actions/create-github-app-token@v2
