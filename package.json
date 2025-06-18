@@ -64,6 +64,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "build:all": "pnpm clean && pnpm build && pnpm -r --filter './packages/*' build",
     "dev:all": "concurrently \"pnpm dev\" \"pnpm -r --parallel run dev\"",
     "prepare": "husky"
@@ -77,12 +78,13 @@
   "lint-staged": {
     "*.{js,ts,vue}": [
       "eslint --fix"
+    ],
+    "*.{ts,vue}": [
+      "tsc-files --noEmit"
     ]
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.4",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.2",
     "@semantic-release/npm": "^12.0.1",
     "@seungwoo321/eslint-plugin-standard-js": "^1.0.1",
@@ -105,7 +107,7 @@
     "papaparse": "^5.5.2",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
-    "semantic-release": "^24.2.3",
+    "tsc-files": "^1.1.4",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.33.1",
     "vite": "^6.3.4",
