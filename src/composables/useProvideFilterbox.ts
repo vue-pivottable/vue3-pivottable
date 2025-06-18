@@ -1,11 +1,13 @@
 import { computed, ComputedRef, inject, provide, InjectionKey } from 'vue'
 import { getSort } from '@/helper'
 import { DefaultPropsType } from '@/types'
+import { Locale } from '@/helper'
 
-type ProvideFilterBoxProps = Pick<DefaultPropsType,
-  'languagePack' | 'locale' | 'sorters'> & {
-    menuLimit: number
-  }
+type ProvideFilterBoxProps = Pick<DefaultPropsType, 'sorters'> & {
+  menuLimit: number
+  languagePack: Record<string, Locale>
+  locale: string
+}
 
 interface FilterBoxContext {
   localeStrings: ComputedRef<any>
@@ -15,9 +17,9 @@ interface FilterBoxContext {
 
 const filterBoxKey = Symbol('filterBox') as InjectionKey<FilterBoxContext>
 
-export function provideFilterBox (props: ProvideFilterBoxProps) {
+export function provideFilterBox(props: ProvideFilterBoxProps) {
   const localeStrings = computed(
-    () => props.languagePack?.[props.locale || 'en']?.localeStrings
+    () => props.languagePack[props.locale].localeStrings
   )
   const sorters = computed(() => props.sorters)
   const sorter = (x: string) => getSort(sorters.value, x)
@@ -29,6 +31,6 @@ export function provideFilterBox (props: ProvideFilterBoxProps) {
   })
 }
 
-export function useProvideFilterBox () {
+export function useProvideFilterBox() {
   return inject(filterBoxKey)
 }

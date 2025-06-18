@@ -1,5 +1,6 @@
 import type { AggregatorTemplate } from '@/helper'
 import { VNode } from 'vue'
+import { Locale } from '@/helper'
 
 export interface DefaultPropsType {
   data: any
@@ -11,7 +12,7 @@ export interface DefaultPropsType {
   renderers: Record<string, RendererDefinition>
   rendererName: string
   locale?: string
-  languagePack?: Record<string, { localeStrings: Record<string, string> }>
+  languagePack?: Record<string, Locale>
   showRowTotal?: boolean
   showColTotal?: boolean
   cols: string[]

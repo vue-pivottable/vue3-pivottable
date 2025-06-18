@@ -18,8 +18,11 @@ import { providePivotData } from '@/composables'
 import VPivottableHeader from '../VPivottableHeader.vue'
 import VPivottableBody from '../VPivottableBody.vue'
 import { DefaultPropsType } from '@/types'
+import { redColorScaleGenerator } from '@/helper'
 
-const props = defineProps<DefaultPropsType>()
+const props = withDefaults(defineProps<DefaultPropsType>(), {
+  tableColorScaleGenerator: (value: number[]) => redColorScaleGenerator(value)
+})
 
 providePivotData(props)
 </script>

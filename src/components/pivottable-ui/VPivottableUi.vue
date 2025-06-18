@@ -145,6 +145,7 @@ import {
   provideFilterBox
 } from '@/composables'
 import { DefaultPropsType } from '@/types'
+import { locales } from '@/helper'
 
 const props = withDefaults(
   defineProps<
@@ -167,7 +168,9 @@ const props = withDefaults(
     menuLimit: 500,
     hideFilterBoxOfUnusedAttributes: false,
     rowOrder: 'key_a_to_z',
-    colOrder: 'key_a_to_z'
+    colOrder: 'key_a_to_z',
+    languagePack: () => locales,
+    locale: 'en'
   }
 )
 
