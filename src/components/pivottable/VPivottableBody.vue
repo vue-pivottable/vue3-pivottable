@@ -19,12 +19,15 @@
 </template>
 
 <script setup lang="ts">
-import { useProvidePivotData } from '@/composables/useProvidePivotData'
+import { useProvidePivotData } from '@/composables'
 import VPivottableBodyRows from './VPivottableBodyRows.vue'
 import VPivottableBodyRowsTotalRow from './VPivottableBodyRowsTotalRow.vue'
 import type { DefaultPropsType } from '@/types'
 
-type Props = Pick<DefaultPropsType, 'showRowTotal' | 'showColTotal' | 'languagePack' | 'tableOptions'>
+type Props = Pick<
+  DefaultPropsType,
+  'showRowTotal' | 'showColTotal' | 'languagePack' | 'tableOptions'
+>
 
 defineProps<Props>()
 

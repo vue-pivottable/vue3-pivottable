@@ -4,7 +4,7 @@
       class="pvtTotalLabel"
       :colSpan="rowAttrs.length + (colAttrs.length === 0 ? 0 : 1)"
     >
-      {{ languagePack.totals }}
+      {{ languagePack?.totals }}
     </th>
     <td
       v-for="(colKey, i) in colKeys"
@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useProvidePivotData } from '@/composables/useProvidePivotData'
+import { useProvidePivotData } from '@/composables'
 import { DefaultPropsType } from '@/types'
 
 type VPivottableBodyRowsTotalRowProps = Pick<
@@ -61,20 +61,20 @@ const handleCellClick = (value: any, rowValues: any[], colValues: any[]) => {
   if (props.tableOptions?.clickCallback) {
     const filters = {} as any
 
-    colAttrs.value.forEach((attr, i) => {
+    colAttrs.value.forEach((attr: string, i: number) => {
       if (colValues[i] !== undefined && colValues[i] !== null) {
         filters[attr] = colValues[i]
       }
     })
 
-    rowAttrs.value.forEach((attr, i) => {
+    rowAttrs.value.forEach((attr: string, i: number) => {
       if (rowValues[i] !== undefined && rowValues[i] !== null) {
         filters[attr] = rowValues[i]
       }
     })
 
     return (event: MouseEvent) =>
-      props.tableOptions.clickCallback(event, value, filters, pivotData.value)
+      props.tableOptions?.clickCallback(event, value, filters, pivotData.value)
   }
   return () => ({})
 }

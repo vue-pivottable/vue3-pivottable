@@ -38,7 +38,7 @@
   </td>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import VDropdown from './VDropdown.vue'
 

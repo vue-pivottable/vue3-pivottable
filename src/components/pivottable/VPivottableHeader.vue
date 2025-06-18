@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { useProvidePivotData } from '@/composables/useProvidePivotData'
+import { useProvidePivotData } from '@/composables'
 import VPivottableHeaderColumns from './VPivottableHeaderColumns.vue'
 import VPivottableHeaderRows from './VPivottableHeaderRows.vue'
 import VPivottableHeaderRowsTotal from './VPivottableHeaderRowsTotal.vue'

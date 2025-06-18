@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { providePivotData } from '@/composables/useProvidePivotData'
+import { providePivotData } from '@/composables'
 import VPivottableHeader from '../VPivottableHeader.vue'
 import VPivottableBody from '../VPivottableBody.vue'
 import { DefaultPropsType } from '@/types'

@@ -1,10 +1,5 @@
-import { AggregatorTemplate } from '@/helper'
-import type {
-  ComputedRef,
-  RendererElement,
-  RendererNode,
-  VNode
-} from 'vue'
+import type { AggregatorTemplate } from '@/helper'
+import { VNode } from 'vue'
 
 export interface DefaultPropsType {
   data: any
@@ -13,10 +8,10 @@ export interface DefaultPropsType {
   heatmapMode?: 'full' | 'col' | 'row' | ''
   tableColorScaleGenerator?: (...args: any[]) => any
   tableOptions?: Record<string, any>
-  renderers: Record<string, any>
+  renderers: Record<string, RendererDefinition>
   rendererName: string
   locale?: string
-  languagePack?: Record<string, any>
+  languagePack?: Record<string, { localeStrings: Record<string, string> }>
   showRowTotal?: boolean
   showColTotal?: boolean
   cols: string[]
@@ -33,6 +28,8 @@ export interface DefaultPropsType {
 
 export type RendererProps = DefaultPropsType & Record<string, unknown>
 
-export type RendererComponent = ComputedRef<
-  VNode<RendererNode, RendererElement, RendererProps>
->
+export interface RendererDefinition {
+  name: string
+  props?: Record<string, any>
+  setup: (props: any) => () => VNode
+}

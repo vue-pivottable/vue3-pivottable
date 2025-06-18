@@ -11,7 +11,7 @@
       class="pvtTotalLabel"
       v-if="showRowTotal || colAttrsLength !== 0"
     >
-      {{ colAttrsLength === 0 && showRowTotal ? languagePack.totals : null }}
+      {{ colAttrsLength === 0 && showRowTotal ? languagePack?.totals : null }}
     </th>
   </tr>
 </template>

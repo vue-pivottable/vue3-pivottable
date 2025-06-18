@@ -1,10 +1,7 @@
 import { h, markRaw } from 'vue'
+import { RendererProps } from '@/types'
 import TableRenderer from './TableRenderer.vue'
 import TSVExportRenderers from './TSVExportRenderers.vue'
-import { RendererProps } from '@/types'
-
-// 각 렌더러의 props 타입을 명확히 지정 (any → 추후 구체화)
-
 
 const tableComponents = markRaw({
   'Table': {

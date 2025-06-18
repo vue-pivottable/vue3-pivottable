@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue'
 import { PivotData } from '@/helper'
-import type { ProvidePivotDataProps } from './useProvidePivotData'
+
+export interface ProvidePivotDataProps { [key: string]: any }
 
 export function usePivotData (props: ProvidePivotDataProps) {
   const error = ref<string | null>(null)

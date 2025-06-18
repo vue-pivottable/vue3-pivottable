@@ -1,24 +1,14 @@
+import { DefaultPropsType } from '@/types'
 import { computed, reactive, ComputedRef, UnwrapRef } from 'vue'
-
-// 초기 props 타입 정의 (실제 프로젝트 상황에 맞게 확장 가능)
-export interface UsePropsStateProps {
-  languagePack: Record<string, { localeStrings: Record<string, string> }>
-  locale: string
-  valueFilter?: Record<string, any>
-  rendererName?: string
-  heatmapMode?: string
-  aggregatorName?: string
-  rowOrder?: string
-  colOrder?: string
-  vals?: any[]
-  [key: string]: any
-}
+import { locales, LocaleStrings } from '@/helper'
+export type UsePropsStateProps = Pick<DefaultPropsType,
+  'aggregators' | 'languagePack' | 'locale' | 'valueFilter' | 'rendererName' | 'heatmapMode' | 'aggregatorName' | 'rowOrder' | 'colOrder' | 'vals'>
 
 export interface UsePropsStateReturn<T extends UsePropsStateProps> {
   state: UnwrapRef<T>
-  localeStrings: ComputedRef<Record<string, string>>
+  localeStrings: ComputedRef<Record<string, string> | LocaleStrings>
   updateState: (key: keyof T, value: any) => void
-  updateMultiple: (updates: Partial<T>) => void
+  updateMultiple: (updates: Partial<T> & { allFilters?: any, materializedInput?: any }) => void
   onUpdateValueFilter: (payload: { key: string; value: any }) => void
   onUpdateRendererName: (rendererName: string) => void
   onUpdateAggregatorName: (aggregatorName: string) => void
@@ -35,8 +25,8 @@ export function usePropsState<T extends UsePropsStateProps> (
     ...initialProps
   }) as UnwrapRef<T>
 
-  const localeStrings = computed<Record<string, string>>(
-    () => initialProps.languagePack[initialProps.locale].localeStrings
+  const localeStrings = computed(
+    () => initialProps?.languagePack?.[initialProps?.locale || 'en'].localeStrings ?? locales['en'].localeStrings
   )
 
   const updateState = (key: keyof T, value: any) => {

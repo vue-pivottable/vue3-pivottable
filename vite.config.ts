@@ -16,16 +16,14 @@ export default defineConfig({
       ]
     }),
     dts({
-      include: ['src'],
+      include: [
+        'src',
+      ],
       outDir: 'dist/types',
       staticImport: true,
       insertTypesEntry: true,
       rollupTypes: true,
-      compilerOptions: {
-        paths: {
-          '@/helper/utilities': ['./src/helper/utilities.d.ts']
-        }
-      }
+      tsconfigPath: './tsconfig.json'
     })
   ],
   build: {

@@ -3,7 +3,7 @@
     class="pvtTotalLabel"
     :rowSpan="colAttrsLength + (rowAttrsLength === 0 ? 0 : 1)"
   >
-    {{ languagePack.totals }}
+    {{ languagePack?.totals }}
   </th>
 </template>
 

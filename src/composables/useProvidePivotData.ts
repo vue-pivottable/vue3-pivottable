@@ -1,10 +1,9 @@
-import { Ref, provide, inject, computed, ComputedRef } from 'vue'
-import type { PivotData } from '@/helper/utilities'
-import { usePivotData } from './usePivotData'
+import { Ref, provide, inject, computed, ComputedRef, InjectionKey } from 'vue'
+import { PivotData } from '@/helper'
+import { usePivotData } from './'
+import type { ProvidePivotDataProps } from './usePivotData'
 
-const PIVOT_DATA_KEY = Symbol('pivotData')
 
-export interface ProvidePivotDataProps { [key: string]: any }
 
 export interface PivotDataContext {
   pivotData: ComputedRef<PivotData | null>
@@ -20,6 +19,9 @@ export interface PivotDataContext {
   colTotalColors: (value: any) => any
   error: Ref<string | null>
 }
+
+const PIVOT_DATA_KEY = Symbol('pivotData') as InjectionKey<PivotDataContext>
+
 
 export function providePivotData (props: ProvidePivotDataProps): PivotDataContext {
   const { pivotData, error } = usePivotData(props)

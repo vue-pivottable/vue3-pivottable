@@ -131,13 +131,12 @@
   </table>
 </template>
 
-<script setup>
-import { defaultProps, PivotData, sortAs } from '@/helper'
+<script setup lang="ts">
+import { aggregators, PivotData, sortAs } from '@/helper'
 import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
 import VPivottable from '../pivottable/VPivottable.vue'
-import TableRenderer from '../pivottable/renderer/index'
 import { computed, watch } from 'vue'
 import {
   usePropsState,
@@ -145,38 +144,31 @@ import {
   usePivotUiState,
   provideFilterBox
 } from '@/composables'
+import { DefaultPropsType } from '@/types'
 
-const props = defineProps({
-  ...defaultProps,
-  hiddenAttributes: {
-    type: Array,
-    default: () => []
-  },
-  hiddenFromAggregators: {
-    type: Array,
-    default: () => []
-  },
-  hiddenFromDragDrop: {
-    type: Array,
-    default: () => []
-  },
-  restrictedFromDragDrop: {
-    type: Array,
-    default: () => []
-  },
-  menuLimit: {
-    type: Number,
-    default: 500
-  },
-  pivotModel: {
-    type: Object,
-    default: () => ({})
-  },
-  hideFilterBoxOfUnusedAttributes: {
-    type: Boolean,
-    default: false
+const props = withDefaults(
+  defineProps<
+    DefaultPropsType & {
+      hiddenAttributes?: string[]
+      hiddenFromAggregators?: string[]
+      hiddenFromDragDrop?: string[]
+      restrictedFromDragDrop?: string[]
+      menuLimit?: number
+      pivotModel?: any
+      hideFilterBoxOfUnusedAttributes?: boolean
+    }
+  >(),
+  {
+    aggregators: () => aggregators,
+    hiddenAttributes: () => [],
+    hiddenFromAggregators: () => [],
+    hiddenFromDragDrop: () => [],
+    restrictedFromDragDrop: () => [],
+    menuLimit: 500,
+    hideFilterBoxOfUnusedAttributes: false
   }
-})
+)
+
 const {
   state,
   localeStrings,
@@ -205,7 +197,7 @@ const { allFilters, materializedInput } = useMaterializeInput(
 )
 
 const rendererItems = computed(() =>
-  Object.keys(state.renderers).length ? state.renderers : TableRenderer
+  Object.keys(state.renderers).length ? state.renderers : {}
 )
 const aggregatorItems = computed(() => state.aggregators)
 const rowAttrs = computed(() => {
@@ -238,7 +230,7 @@ const unusedAttrs = computed(() => {
         !state.hiddenAttributes.includes(e) &&
         !state.hiddenFromDragDrop.includes(e)
     )
-    .sort(sortAs(state.unusedOrder))
+    .sort(sortAs(pivotUiState.unusedOrder))
 })
 
 const pivotData = computed(() => new PivotData(state))
@@ -264,12 +256,13 @@ const pivotProps = computed(() => ({
   rowOrder: state.rowOrder,
   colOrder: state.colOrder,
   tableMaxWidth: state.tableMaxWidth,
-  localeStrings: localeStrings.value
+  localeStrings: localeStrings.value,
+  menuLimit: props.menuLimit
 }))
 
-onUpdateUnusedOrder(props.unusedAttrs)
+onUpdateUnusedOrder(unusedAttrs.value)
 
-provideFilterBox(props)
+provideFilterBox(pivotProps.value)
 
 watch(
   [allFilters, materializedInput],

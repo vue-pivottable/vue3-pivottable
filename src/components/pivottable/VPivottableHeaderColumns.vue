@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { useProvidePivotData } from '@/composables/useProvidePivotData'
+import { useProvidePivotData } from '@/composables'
 
 type VPivottableHeaderColumnsProps = {
   colKeys: string[][]

@@ -29,7 +29,7 @@ const headerRow = computed(() => {
   if (colKeys.value.length === 1 && colKeys.value[0].length === 0) {
     header.push(props.aggregatorName)
   } else {
-    colKeys.value.forEach((c) => header.push(c.join('-')))
+    colKeys.value.forEach((c: any[]) => header.push(c.join('-')))
   }
 
   return header
@@ -38,9 +38,9 @@ const headerRow = computed(() => {
 const result = computed(() => {
   if (error.value || !pivotData.value) return []
 
-  const data = rowKeys.value.reduce((acc, r) => {
+  const data = rowKeys.value.reduce((acc: any[], r: any[]) => {
     const row = [...r]
-    colKeys.value.forEach((c) =>
+    colKeys.value.forEach((c: any[]) =>
       row.push(pivotData.value?.getAggregator(r, c).value() || '')
     )
     return [...acc, row]

@@ -921,7 +921,7 @@ class PivotData {
   ): void {
     let addRecord: (record: DataRecord) => void
 
-    if (Object.getOwnPropertyNames(derivedAttributes).length === 0) {
+    if (derivedAttributes && Object.getOwnPropertyNames(derivedAttributes).length === 0) {
       addRecord = f
     } else {
       addRecord = (record: DataRecord) => {

@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { useProvidePivotData } from '@/composables/useProvidePivotData'
+import { useProvidePivotData } from '@/composables'
 import { DefaultPropsType } from '@/types'
 
 type VPivottableBodyRowsProps = Pick<
@@ -86,20 +86,20 @@ const handleCellClick = (value: any, rowValues: any, colValues: any) => {
   if (props.tableOptions?.clickCallback) {
     const filters = {} as any
 
-    colAttrs.value.forEach((attr, i) => {
+    colAttrs.value.forEach((attr: string, i: number) => {
       if (colValues[i] !== undefined && colValues[i] !== null) {
         filters[attr] = colValues[i]
       }
     })
 
-    rowAttrs.value.forEach((attr, i) => {
+    rowAttrs.value.forEach((attr: string, i: number) => {
       if (rowValues[i] !== undefined && rowValues[i] !== null) {
         filters[attr] = rowValues[i]
       }
     })
 
     return (event: MouseEvent) =>
-      props.tableOptions.clickCallback(event, value, filters, pivotData.value)
+      props.tableOptions?.clickCallback(event, value, filters, pivotData.value)
   }
   return () => ({})
 }
