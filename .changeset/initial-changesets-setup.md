@@ -1,7 +1,5 @@
 ---
 "vue-pivottable": patch
-"@vue-pivottable/lazy-table-renderer": patch
-"@vue-pivottable/plotly-renderer": patch
 ---
 
 chore: implement Changesets for monorepo release management

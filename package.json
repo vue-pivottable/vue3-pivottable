@@ -61,7 +61,8 @@
     "dev:all": "concurrently \"pnpm dev\" \"pnpm -r --parallel run dev\"",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm build:all && changeset publish"
+    "release": "pnpm build:all && changeset publish",
+    "release:packages": "node scripts/release-packages.js"
   },
   "peerDependencies": {
     "vue": "^3.2.0"
