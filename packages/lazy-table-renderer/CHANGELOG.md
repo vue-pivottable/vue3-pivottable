@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.4
+
+### Patch Changes
+
+- fe3926e: test: 하위 패키지만 업데이트 시 release 브랜치 동기화 워크플로우 테스트
+  - vue-pivottable@1.1.4
+
 ## 1.1.3
 
 ### Patch Changes
