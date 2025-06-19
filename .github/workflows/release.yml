@@ -173,18 +173,24 @@ jobs:
               --target ${{ github.sha }}
           }
           
-          # Check main package
-          MAIN_VERSION=$(node -p "require('./package.json').version")
-          create_release "vue-pivottable" "$MAIN_VERSION" "vue-pivottable"
+          # Only create releases for packages that had beta versions
+          BETA_PACKAGES="${{ steps.check-versions.outputs.beta_packages }}"
+          
+          # Check if main package had beta
+          if [[ " $BETA_PACKAGES " == *" vue-pivottable "* ]]; then
+            MAIN_VERSION=$(node -p "require('./package.json').version")
+            create_release "vue-pivottable" "$MAIN_VERSION" "vue-pivottable"
+          fi
           
           # Check sub-packages
           for pkg in packages/*/; do
             if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
-              PKG_NAME=$(cd "$pkg" && node -p "require('./package.json').name")
-              PKG_VERSION=$(cd "$pkg" && node -p "require('./package.json').version")
-              # Create release for all packages that were released
-              if [ "$PKG_NAME" != "" ] && [ "$PKG_VERSION" != "" ]; then
-                create_release "$PKG_NAME" "$PKG_VERSION" "$PKG_NAME"
+              PKG_NAME=$(basename "$pkg")
+              # Only process if this package had beta version
+              if [[ " $BETA_PACKAGES " == *" $PKG_NAME "* ]]; then
+                FULL_PKG_NAME=$(cd "$pkg" && node -p "require('./package.json').name")
+                PKG_VERSION=$(cd "$pkg" && node -p "require('./package.json').version")
+                create_release "$FULL_PKG_NAME" "$PKG_VERSION" "$FULL_PKG_NAME"
               fi
             fi
           done
