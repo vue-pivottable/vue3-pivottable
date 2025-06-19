@@ -100,12 +100,9 @@ jobs:
           Changed packages: $CHANGED_PACKAGES"
           git push origin develop
           
-          # Use main package version for output (if changed) or first changed package
-          if [ "$ORIGINAL_MAIN" != "$NEW_MAIN" ]; then
-            echo "version=${NEW_MAIN}-beta.${TIMESTAMP}" >> $GITHUB_OUTPUT
-          else
-            echo "version=beta.${TIMESTAMP}" >> $GITHUB_OUTPUT
-          fi
+          # Always use current main package version for GitHub release tag
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Run quality checks
         if: steps.changesets-check.outputs.has_changesets == 'true'
