@@ -95,8 +95,11 @@ jobs:
       - name: Update versions to stable
         if: steps.check-versions.outputs.has_beta == 'true'
         run: |
-          # Update main package
-          npm version ${{ steps.check-versions.outputs.base_version }} --no-git-tag-version
+          # Update main package only if it has beta
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          if [[ $MAIN_VERSION == *"-beta"* ]]; then
+            npm version ${{ steps.check-versions.outputs.base_version }} --no-git-tag-version
+          fi
           
           # Update sub-packages
           for pkg in packages/*/; do
