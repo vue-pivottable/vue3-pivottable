@@ -99,8 +99,12 @@ jobs:
       - name: Build packages
         if: steps.changesets-check.outputs.has_changesets == 'true'
         run: |
-          echo "Building all packages..."
-          pnpm build:all
+          set -e  # Exit immediately if any command fails
+          echo "Building main package first..."
+          pnpm build  # Build main package first to generate type declarations
+          
+          echo "Building sub-packages..."
+          pnpm -r --filter './packages/*' build  # Build sub-packages after main
 
       - name: Create GitHub Pre-release
         if: steps.changesets-check.outputs.has_changesets == 'true'
