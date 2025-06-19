@@ -37,6 +37,7 @@
   "author": "Sumin, Lee <lsumin1127@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "clean": "rimraf dist",
     "build": "vite build"
   },
   "dependencies": {

@@ -43,7 +43,7 @@
   "license": "MIT",
   "scripts": {
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --scope lazy-table-renderer",
-    "clean": "rimraf lib",
+    "clean": "rimraf dist",
     "build": "vite build",
     "lint": "eslint ."
   },
