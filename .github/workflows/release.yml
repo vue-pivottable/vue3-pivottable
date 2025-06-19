@@ -205,17 +205,3 @@ jobs:
             
             **Note**: Changesets were already consumed in develop branch." \
             || echo "PR creation failed"
-          
-          # Also create PR to sync with develop
-          gh pr create \
-            --base develop \
-            --head ${{ steps.create-release.outputs.release_branch }} \
-            --title "chore: sync release v${{ steps.create-release.outputs.version }} to develop" \
-            --body "## 🔄 Release Sync
-            
-            This PR syncs the stable release back to develop:
-            - ✅ Version alignment
-            - ✅ Ensures develop has latest stable version
-            
-            **Important**: Review carefully for any conflicts with ongoing development." \
-            || echo "Sync PR creation failed"
