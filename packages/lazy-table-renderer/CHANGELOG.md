@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- 67c8f7c: test: 릴리즈 워크플로우 테스트
+- f8d2a1c: test: main 워크플로우 수정 확인
+
+## 1.1.1
+
+### Patch Changes
+
 - 6c1a31f: test: 워크플로우 수정 테스트
 
 ## 1.1.0

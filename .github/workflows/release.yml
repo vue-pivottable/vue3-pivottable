@@ -158,6 +158,9 @@ jobs:
             
             echo "Creating release for $PKG_NAME@$PKG_VERSION"
             
+            # Delete existing release if it exists (likely a beta version)
+            gh release delete "${PKG_NAME}@${PKG_VERSION}" --yes 2>/dev/null || true
+            
             gh release create "${PKG_NAME}@${PKG_VERSION}" \
               --title "${PKG_NAME}@${PKG_VERSION}" \
               --notes "## 🚀 Stable Release
