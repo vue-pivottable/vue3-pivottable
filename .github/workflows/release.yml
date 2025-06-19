@@ -85,6 +85,7 @@ jobs:
           done
 
       - name: Create release branch
+        id: create-release
         if: steps.check-versions.outputs.has_beta == 'true'
         run: |
           VERSION=${{ steps.check-versions.outputs.base_version }}
