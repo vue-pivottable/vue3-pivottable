@@ -107,7 +107,8 @@ jobs:
               cd "$pkg"
               PKG_VERSION=$(node -p "require('./package.json').version")
               if [[ $PKG_VERSION == *"-beta"* ]]; then
-                PKG_BASE=$(echo $PKG_VERSION | sed 's/-beta.*//')
+                # Remove all beta suffixes (handle multiple -beta occurrences)
+                PKG_BASE=$(echo $PKG_VERSION | sed 's/-beta.*$//')
                 npm version $PKG_BASE --no-git-tag-version
               fi
               cd -
