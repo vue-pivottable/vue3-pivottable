@@ -125,28 +125,51 @@ jobs:
           echo "Building sub-packages..."
           pnpm -r --filter './packages/*' build  # Build sub-packages after main
 
-      - name: Create GitHub Pre-release
+      - name: Create GitHub Pre-releases
         if: steps.changesets-check.outputs.has_changesets == 'true'
-        id: create-release
-        uses: actions/create-release@v1
+        run: |
+          # Create release for each package with beta version
+          create_release() {
+            local PKG_NAME=$1
+            local PKG_VERSION=$2
+            local NPM_NAME=$3
+            
+            echo "Creating release for $PKG_NAME@$PKG_VERSION"
+            
+            gh release create "${PKG_NAME}@${PKG_VERSION}" \
+              --title "${PKG_NAME}@${PKG_VERSION}" \
+              --notes "## 🚧 Pre-release (Beta)
+          
+          This is a pre-release version. It may contain bugs and breaking changes.
+          
+          Install with: \`npm install ${NPM_NAME}@beta\`
+          
+          ### Version: ${PKG_VERSION}" \
+              --prerelease \
+              --target ${{ github.sha }}
+          }
+          
+          # Check main package
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          if [[ $MAIN_VERSION == *"-beta"* ]]; then
+            create_release "vue-pivottable" "$MAIN_VERSION" "vue-pivottable"
+          fi
+          
+          # Check sub-packages
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              PKG_NAME=$(cd "$pkg" && node -p "require('./package.json').name")
+              PKG_VERSION=$(cd "$pkg" && node -p "require('./package.json').version")
+              if [[ $PKG_VERSION == *"-beta"* ]]; then
+                create_release "$PKG_NAME" "$PKG_VERSION" "$PKG_NAME"
+              fi
+            fi
+          done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: vue-pivottable@${{ steps.version.outputs.version }}
-          release_name: vue-pivottable@${{ steps.version.outputs.version }}
-          draft: false
-          prerelease: true
-          body: |
-            ## 🚧 Pre-release (Beta)
-            
-            This is a pre-release version. It may contain bugs and breaking changes.
-            
-            Install with: `npm install vue-pivottable@beta`
-            
-            ### Version: ${{ steps.version.outputs.version }}
 
       - name: Publish pre-release to npm
-        if: steps.changesets-check.outputs.has_changesets == 'true' && steps.create-release.outcome == 'success'
+        if: steps.changesets-check.outputs.has_changesets == 'true'
         run: |
           # Publish with beta tag only after GitHub release is created
           RELEASE_TAG=beta node scripts/release-packages.cjs
