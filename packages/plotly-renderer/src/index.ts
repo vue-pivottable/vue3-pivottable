@@ -3,9 +3,9 @@ import { providePivotData, PivotUtilities } from 'vue-pivottable'
 import PlotlyChart from './components/PlotlyChart.vue'
 import PlotlyScatterChart from './components/PlotlyScatterChart.vue'
 
-function withPivotProvider(
-  ChartComponent,
-  ChartType,
+function withPivotProvider (
+  ChartComponent: any,
+  ChartType: any,
   traceOptions = {},
   layoutOptions = {},
   transpose = false
@@ -13,7 +13,7 @@ function withPivotProvider(
   return defineComponent({
     name: ChartType.name || 'vue-plotly-renderer',
     props: { ...PivotUtilities.defaultProps },
-    setup(props) {
+    setup (props) {
       providePivotData(props)
       const { aggregatorName, aggregators, rows, cols, vals } = props
       return () =>
