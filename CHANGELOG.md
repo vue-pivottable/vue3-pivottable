@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.1.3
+
+### Patch Changes
+
+- 0c3c5b0: fix: 하위 패키지 이중 베타 버전 문제 해결
+
+  - lazy-table-renderer와 plotly-renderer의 잘못된 베타 버전 수정
+  - 워크플로우 개선사항 적용을 위한 릴리스 준비
+
+## 1.1.3
+
+### Patch Changes
+
+- ad33eb8: fix: 프로덕션 릴리스를 위한 버전 업데이트
+
+  - 워크플로우 개선사항 반영
+  - 안정적인 배포 프로세스 확립
+
+## 1.1.2
+
+### Patch Changes
+
+- dae29ab: fix: 베타와 프로덕션 릴리스 워크플로우 개선
+
+  - 베타와 프로덕션 모두 동일한 release-packages.cjs 스크립트 사용
+  - changeset이 적용된 패키지만 베타 버전 생성하도록 수정
+  - 프로덕션 릴리스 시 기존 릴리스 브랜치 삭제 후 재생성
+  - 프로덕션 배포가 릴리스 브랜치에서 실행되도록 수정
+
 ## 1.1.2
 
 ### Patch Changes
