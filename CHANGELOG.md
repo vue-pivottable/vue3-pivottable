@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.4
+
+### Patch Changes
+
+- d2ae696: test: 전체 릴리즈 프로세스 테스트를 위한 메인 패키지 업데이트
+
 ## 1.1.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.2
+
+### Patch Changes
+
+- d2ae696: test: 전체 릴리즈 프로세스 테스트를 위한 lazy-table-renderer 업데이트
+
 ## 1.1.1
 
 ### Patch Changes
