@@ -4,6 +4,17 @@
 
 ### Patch Changes
 
+- dae29ab: fix: 베타와 프로덕션 릴리스 워크플로우 개선
+
+  - 베타와 프로덕션 모두 동일한 release-packages.cjs 스크립트 사용
+  - changeset이 적용된 패키지만 베타 버전 생성하도록 수정
+  - 프로덕션 릴리스 시 기존 릴리스 브랜치 삭제 후 재생성
+  - 프로덕션 배포가 릴리스 브랜치에서 실행되도록 수정
+
+## 1.1.2
+
+### Patch Changes
+
 - 34e74ef: fix: 프로덕션 배포가 release 브랜치에서 실행되도록 수정
 
   - release.yml에서 release-packages.cjs 사용하도록 변경
