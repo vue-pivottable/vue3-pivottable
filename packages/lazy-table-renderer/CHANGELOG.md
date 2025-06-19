@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.1.4
+
+### Patch Changes
+
+- dfb072a: test: 릴리스 워크플로우 개선 테스트
+  - vue-pivottable@1.1.4
+
+## 1.1.4
+
+### Patch Changes
+
+- fe3926e: test: 하위 패키지만 업데이트 시 release 브랜치 동기화 워크플로우 테스트
+  - vue-pivottable@1.1.4
+
+## 1.1.3
+
+### Patch Changes
+
+- 94f0f23: test: 하위 패키지만 업데이트하는 경우 릴리즈 브랜치 동기화 테스트
+  - vue-pivottable@1.1.4
+
 ## 1.1.3
 
 ### Patch Changes
