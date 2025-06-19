@@ -105,7 +105,7 @@ jobs:
         if: steps.check-versions.outputs.has_beta == 'true'
         run: |
           # Publish with latest tag (overwrites beta)
-          node scripts/release-packages.js
+          node scripts/release-packages.cjs
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

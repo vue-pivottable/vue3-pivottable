@@ -3,6 +3,9 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 
+// Check if running in beta mode
+const isBeta = process.argv.includes('--beta') || process.env.RELEASE_TAG === 'beta';
+
 // Color codes for output
 const colors = {
   reset: '\x1b[0m',
@@ -26,20 +29,20 @@ const packages = [
     name: 'vue3-pivottable',
     path: '.',
     buildCmd: 'pnpm build',
-    publishCmd: 'pnpm changeset publish'
+    publishCmd: isBeta ? 'pnpm publish --tag beta --no-git-checks' : 'pnpm changeset publish'
   },
   {
     name: '@vue-pivottable/plotly-renderer',
     path: './packages/plotly-renderer',
     buildCmd: 'pnpm --filter @vue-pivottable/plotly-renderer build',
-    publishCmd: 'pnpm changeset publish --filter @vue-pivottable/plotly-renderer',
+    publishCmd: isBeta ? 'pnpm publish --filter @vue-pivottable/plotly-renderer --tag beta --no-git-checks' : 'pnpm changeset publish --filter @vue-pivottable/plotly-renderer',
     tokenEnv: 'NPM_TOKEN_SUMIN'
   },
   {
     name: '@vue-pivottable/lazy-table-renderer',
     path: './packages/lazy-table-renderer',
     buildCmd: 'pnpm --filter @vue-pivottable/lazy-table-renderer build',
-    publishCmd: 'pnpm changeset publish --filter @vue-pivottable/lazy-table-renderer',
+    publishCmd: isBeta ? 'pnpm publish --filter @vue-pivottable/lazy-table-renderer --tag beta --no-git-checks' : 'pnpm changeset publish --filter @vue-pivottable/lazy-table-renderer',
     tokenEnv: 'NPM_TOKEN_SUMIN'
   }
 ];
