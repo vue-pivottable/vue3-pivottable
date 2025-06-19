@@ -1,18 +1,28 @@
 # Changelog
 
+## 1.1.0
+
+### Patch Changes
+
+- 34e74ef: fix: 프로덕션 배포가 release 브랜치에서 실행되도록 수정
+
+  - release.yml에서 release-packages.cjs 사용하도록 변경
+  - npm 배포 전 release 브랜치로 checkout하도록 수정
+  - 베타와 프로덕션 배포가 동일한 스크립트 사용
+
 ## [1.1.0](https://github.com/vue-pivottable/vue3-pivottable/compare/@vue-pivottable/lazy-table-renderer@1.0.13...@vue-pivottable/lazy-table-renderer@1.1.0) (2024-06-18)
 
 ### Features
 
-* TypeScript migration for improved type safety
-* Enhanced virtual scrolling performance
-* Better integration with main vue-pivottable package
+- TypeScript migration for improved type safety
+- Enhanced virtual scrolling performance
+- Better integration with main vue-pivottable package
 
 ## [1.0.13](https://github.com/vue-pivottable/vue3-pivottable/compare/@vue-pivottable/lazy-table-renderer@1.0.12...@vue-pivottable/lazy-table-renderer@1.0.13) (2024-05-07)
 
 ### Bug Fixes
 
-* Fixed build configuration for monorepo setup
+- Fixed build configuration for monorepo setup
 
 ## [1.0.0](https://github.com/vue-pivottable/vue3-pivottable/releases/tag/@vue-pivottable/lazy-table-renderer@1.0.0) (2024-05-07)
 
