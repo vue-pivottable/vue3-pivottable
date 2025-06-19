@@ -101,11 +101,14 @@ jobs:
           echo "release_branch=$RELEASE_BRANCH" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Publish to npm
+      - name: Checkout release branch and publish
         if: steps.check-versions.outputs.has_beta == 'true'
         run: |
+          # Checkout to release branch for publishing
+          git checkout ${{ steps.create-release.outputs.release_branch }}
+          
           # Publish with latest tag (overwrites beta)
-          node scripts/release-packages.js
+          node scripts/release-packages.cjs
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
