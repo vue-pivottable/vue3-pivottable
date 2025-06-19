@@ -25,20 +25,20 @@ const packages = [
   {
     name: 'vue3-pivottable',
     path: '.',
-    buildCmd: 'pnpm build',
+    buildCmd: 'pnpm clean && pnpm build',
     publishCmd: 'pnpm changeset publish'
   },
   {
     name: '@vue-pivottable/plotly-renderer',
     path: './packages/plotly-renderer',
-    buildCmd: 'pnpm --filter @vue-pivottable/plotly-renderer build',
+    buildCmd: 'pnpm --filter @vue-pivottable/plotly-renderer clean && pnpm --filter @vue-pivottable/plotly-renderer build',
     publishCmd: 'pnpm changeset publish --filter @vue-pivottable/plotly-renderer',
     tokenEnv: 'NPM_TOKEN_SUMIN'
   },
   {
     name: '@vue-pivottable/lazy-table-renderer',
     path: './packages/lazy-table-renderer',
-    buildCmd: 'pnpm --filter @vue-pivottable/lazy-table-renderer build',
+    buildCmd: 'pnpm --filter @vue-pivottable/lazy-table-renderer clean && pnpm --filter @vue-pivottable/lazy-table-renderer build',
     publishCmd: 'pnpm changeset publish --filter @vue-pivottable/lazy-table-renderer',
     tokenEnv: 'NPM_TOKEN_SUMIN'
   }
@@ -60,6 +60,17 @@ async function releasePackages() {
       // Check if package directory exists
       if (!fs.existsSync(pkg.path)) {
         throw new Error(`Package directory not found: ${pkg.path}`);
+      }
+
+      // Get package version
+      const packageJsonPath = `${pkg.path}/package.json`;
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      const currentVersion = packageJson.version;
+
+      // Skip if not a beta version (no changeset)
+      if (!currentVersion.includes('-beta')) {
+        log.info(`Skipping ${pkg.name} - no beta version (${currentVersion})`);
+        continue;
       }
 
       // Build package
