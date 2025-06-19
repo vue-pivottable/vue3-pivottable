@@ -121,3 +121,77 @@ jobs:
             This is a pre-release version. It may contain bugs and breaking changes.
             
             Install with: `npm install vue-pivottable@beta`
+
+      - name: Create or Update PR to main
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 현재 버전 가져오기
+          VERSION=$(node -p "require('./package.json').version")
+          
+          # 기존 PR 확인
+          PR_NUMBER=$(gh pr list --base main --head develop --state open --json number -q '.[0].number')
+          
+          if [ -z "$PR_NUMBER" ]; then
+            # 새 PR 생성
+            gh pr create \
+              --base main \
+              --head develop \
+              --title "Release: $VERSION" \
+              --body "## 🚀 Release $VERSION
+              
+              This PR contains the latest beta release ready for production.
+              
+              ### Beta Version
+              - $VERSION
+              
+              ### Packages to be released
+              - vue-pivottable: $VERSION
+              - Check sub-packages for version updates
+              
+              ### Pre-release Testing
+              - Beta version has been published to npm with tag @beta
+              - Install with: \`npm install vue-pivottable@beta\`
+              
+              ### Release Notes
+              See [CHANGELOG.md](./CHANGELOG.md) for details.
+              
+              ---
+              ⚠️ **Note**: This PR will be automatically updated if new changes are pushed to develop."
+          else
+            # 기존 PR 업데이트
+            echo "Updating existing PR #$PR_NUMBER with new beta version..."
+            
+            gh pr edit $PR_NUMBER \
+              --title "Release: $VERSION" \
+              --body "## 🚀 Release $VERSION (Updated)
+              
+              This PR has been automatically updated with the latest beta release.
+              
+              ### Current Beta Version
+              - $VERSION
+              
+              ### Packages to be released
+              - vue-pivottable: $VERSION
+              - Check sub-packages for version updates
+              
+              ### Pre-release Testing
+              - Beta version has been published to npm with tag @beta
+              - Install with: \`npm install vue-pivottable@beta\`
+              
+              ### ⚠️ Important
+              **This PR has been updated with new commits. Please review the changes again.**
+              
+              ### Release Notes
+              See [CHANGELOG.md](./CHANGELOG.md) for details.
+              
+              ---
+              Last updated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+            
+            # PR을 ready for review 상태로 설정
+            gh pr ready $PR_NUMBER
+            
+            # auto-updated 라벨 추가
+            gh pr edit $PR_NUMBER --add-label "auto-updated,needs-review"
+          fi

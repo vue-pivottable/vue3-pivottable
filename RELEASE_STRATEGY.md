@@ -1,5 +1,7 @@
 # Release Strategy
 
+> English | [한국어](./RELEASE_STRATEGY.ko.md)
+
 ## Overview
 
 This document outlines the release strategy for the vue3-pivottable monorepo, which uses Changesets for version management and supports independent package releases.
@@ -79,16 +81,16 @@ Our monorepo contains three independently versioned packages:
 graph TD
     A[Changeset Files] --> B{Which packages?}
     B -->|vue-pivottable| C[Main Package]
-    B -->|@vue-pivottable/plotly-renderer| D[Plotly Renderer]
-    B -->|@vue-pivottable/lazy-table-renderer| E[Lazy Table Renderer]
+    B -->|plotly-renderer| D[Plotly Renderer]
+    B -->|lazy-table-renderer| E[Lazy Table Renderer]
     
     C --> F[Independent Version]
     D --> G[Independent Version]
     E --> H[Independent Version]
     
-    F --> I[Build → Publish if changed]
-    G --> J[Build → Publish if changed]
-    H --> K[Build → Publish if changed]
+    F --> I[Build then Publish if changed]
+    G --> J[Build then Publish if changed]
+    H --> K[Build then Publish if changed]
 ```
 
 ### Configuration
@@ -200,6 +202,38 @@ vue-pivottable: 1.2.0-beta.1234567890 → 1.2.0
 3. **Independent versions** - Don't bump unchanged packages
 4. **Quality first** - All checks must pass before publish
 
+## Handling Updates During Release Process
+
+### Scenario: Changes to develop after PR to main
+
+When a PR from develop to main is already open and new changes are pushed to develop:
+
+1. **Automatic PR Update**
+   - The release-develop workflow automatically detects existing PR
+   - Updates PR title with new beta version
+   - Updates PR description with timestamp and new version info
+   - Adds `auto-updated` and `needs-review` labels
+   - Sets PR back to "ready for review" state
+
+2. **Review Process**
+   - Reviewers are notified of the update via labels
+   - Previous approvals remain but re-review is recommended
+   - PR description shows clear "Updated" status with timestamp
+
+3. **Benefits**
+   - PR history and discussions are preserved
+   - No manual intervention required
+   - Clear audit trail of all beta versions
+
+### Example Flow
+```
+1. v1.2.0-beta.1234567890 → PR #123 created
+2. New fix pushed to develop
+3. v1.2.1-beta.2345678901 → PR #123 automatically updated
+4. Reviewers see "auto-updated" label and re-review
+5. Once approved, merge to main triggers stable release
+```
+
 ## Troubleshooting
 
 ### Beta version not publishing?
@@ -216,3 +250,8 @@ vue-pivottable: 1.2.0-beta.1234567890 → 1.2.0
 - Run `pnpm typecheck` locally
 - Check all workspace packages: `pnpm -r typecheck`
 - Ensure dependencies are up to date
+
+### PR not updating automatically?
+- Check GitHub Actions permissions
+- Verify GITHUB_TOKEN has write access to PRs
+- Check if PR is in open state
