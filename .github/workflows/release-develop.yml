@@ -104,10 +104,6 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
 
       - name: Create GitHub Pre-release
         if: steps.changesets-check.outputs.has_changesets == 'true'
