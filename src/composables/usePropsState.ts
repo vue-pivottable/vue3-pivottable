@@ -26,7 +26,7 @@ export function usePropsState<T extends UsePropsStateProps> (
   }) as UnwrapRef<T>
 
   const localeStrings = computed(
-    () => initialProps?.languagePack?.[initialProps?.locale || 'en'].localeStrings ?? locales['en'].localeStrings
+    () => initialProps?.languagePack?.[initialProps?.locale || 'en'].localeStrings ?? locales.en.localeStrings
   )
 
   const updateState = (key: keyof T, value: any) => {
