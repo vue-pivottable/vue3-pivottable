@@ -6,10 +6,8 @@ export type RecordFunctionType = () => object
 
 export interface RendererDefinition {
   name: string
-  renderer?: any
-  value?: string | RecordFunctionType
   props?: Record<string, any>
-  setup?: (props: any) => () => VNode
+  setup: (props: any) => () => VNode
 }
 
 export interface DefaultPropsType {

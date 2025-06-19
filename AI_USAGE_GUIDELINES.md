@@ -1,0 +1,239 @@
+# AI 사용 지침 (AI Usage Guidelines)
+
+## 목적
+이 문서는 Cursor Editor 및 Claude Code에서 AI를 활용한 코드 작업 시 따라야 할 지침을 정의합니다.
+
+## 핵심 원칙
+
+### 1. 코드 변경 전 승인 필수
+코드 변경이 필요한 경우, 반드시 다음 프로세스를 따릅니다:
+
+1. **현재 상황 분석**
+   - 문제점을 명확히 파악
+   - 관련 코드 및 사용처 확인
+   - 영향 범위 분석
+
+2. **제안 사항 제시**
+   - 변경이 필요한 이유를 명확한 근거와 함께 설명
+   - 여러 해결 방안이 있다면 각각의 장단점 제시
+   - 권장하는 방향 제안
+
+3. **승인 대기**
+   - 사용자의 명시적 승인을 받은 후 진행
+   - 승인 없이 임의로 코드 변경 금지
+
+## 실제 사례 예시
+
+### 사례 1: ESLint 설정 오류 해결
+
+#### 1) 문제 발견
+```bash
+> pnpm lint
+ConfigError: Config "UserConfig[0][2] > typescript-eslint/base": Key "plugins": Cannot redefine plugin "@typescript-eslint".
+```
+
+#### 2) 분석 및 보고
+```markdown
+문제를 발견했습니다. `@typescript-eslint` 플러그인이 중복 정의되었습니다.
+
+**문제 분석:**
+- tseslint를 플러그인으로 잘못 사용하고 있습니다.
+- ESLint 9.27.0의 플랫 설정 구조에 맞지 않습니다.
+
+수정하겠습니다.
+```
+
+#### 3) 실제 수정
+```javascript
+// Before
+plugins: {
+  'vue': pluginVue,
+  '@typescript-eslint': tseslint  // 잘못된 사용
+}
+
+// After - 플러그인 제거하고 configs로 사용
+...tseslint.configs.recommended,
+```
+
+### 사례 2: TypeScript 타입 오류 해결
+
+#### 1) 문제 발견
+```typescript
+// 빌드 오류
+Type 'undefined' is not assignable to type '(props: any) => () => VNode'.
+```
+
+#### 2) 분석 및 보고
+```markdown
+**문제 분석:**
+- `RendererDefinition`의 `setup` 속성이 optional(`?`)인데, 일부 컴포넌트에서는 required로 기대하고 있습니다.
+- 하위 패키지들이 `vue-pivottable`의 타입을 찾지 못하고 있습니다.
+
+**제안 사항:**
+1. `RendererDefinition`의 `setup`을 required로 변경하거나
+2. 사용하는 곳에서 optional로 처리하도록 수정
+
+어떤 방향으로 진행할까요? 기존 코드의 의도를 확인하고 싶습니다.
+```
+
+#### 3) 사용자 응답 후 진행
+> "2번으로 변경 후 다른 변경사항이 있는 경우에는 동일하게 보고하고 컨펌받고 진행해야됩니다."
+
+```markdown
+네, 2번 방향으로 진행하겠습니다.
+[코드 수정 진행]
+```
+
+### 사례 3: 타입 정의 개선
+
+#### 1) 코드 분석
+```typescript
+// 실제 사용처 확인
+grep -n "\.renderer[^s]" src/components/pivottable/VPivottable.vue
+// 결과: 사용하지 않음
+
+grep -B2 -A2 "\.value" src/components/pivottable/renderer/index.ts
+// 결과: 사용하지 않음
+```
+
+#### 2) 보고 및 제안
+```markdown
+**현재 상황:**
+- 실제 렌더러 정의: `name`과 `setup`만 사용
+- `renderer`: 사용 안 함
+- `value`: 사용 안 함
+- `props`: optional로 사용 가능
+
+**제안:**
+```typescript
+export interface RendererDefinition {
+  name: string
+  props?: Record<string, any>
+  setup: (props: any) => () => VNode
+}
+```
+
+이렇게 단순화하는 것이 맞을까요?
+```
+
+#### 3) 승인 후 수정
+> "네 맞습니다. 제안대로 적용하고..."
+
+### 사례 4: 빌드 오류 대응
+
+#### 1) 테스트 실행
+```bash
+pnpm lint
+pnpm typecheck
+pnpm build:all
+```
+
+#### 2) 오류 발생 시 보고
+```markdown
+ESLint 오류가 발생했습니다. release-packages-beta.js 파일을 ES modules로 변환해야 합니다.
+
+**오류 내용:**
+```
+3:22  error  A `require()` style import is forbidden
+```
+
+**원인:**
+현재 프로젝트가 ES modules를 사용하는데 CommonJS 구문을 사용
+
+**해결 방안:**
+require → import 구문으로 변환
+```
+
+### 사례 5: 하위 패키지 타입 이슈
+
+#### 1) 상황 파악
+```markdown
+**문제 분석:**
+1. `RendererDefinition`에서 `setup`은 필수, `props`는 optional이 맞음
+2. 하위 패키지들은 아직 TypeScript 전환이 완료되지 않음
+3. 빌드는 성공하지만 타입 체크에서 경고가 발생
+
+**제안 사항:**
+
+### 1. 메인 패키지의 타입 수정
+[타입 정의 코드]
+
+### 2. 하위 패키지 타입 체크 무시
+- 각 하위 패키지의 `tsconfig.json`에 `"skipLibCheck": true` 추가
+- 또는 하위 패키지의 import 부분에 `// @ts-ignore` 추가
+- 빌드 스크립트에서 타입 체크 제외
+
+### 3. 워크플로우 수정
+- PR 체크 시 하위 패키지의 타입 체크를 건너뛰도록 설정
+
+어떤 방향이 좋을까요? 하위 패키지는 추후 타입 전환 시까지 타입 체크를 무시하는 것이 현실적일 것 같습니다.
+```
+
+## 주요 지침
+
+### 1. 점진적 접근
+- 한 번에 하나의 문제만 해결
+- 각 단계마다 테스트 수행
+- 결과 보고 후 다음 단계 진행
+
+### 2. 명확한 근거 제시
+```markdown
+// 좋은 예시
+"RendererDefinition에서 renderer 속성이 실제로 사용되는 곳이 없습니다.
+grep 검색 결과: [검색 결과 첨부]
+따라서 제거를 제안합니다."
+
+// 나쁜 예시
+"이 속성은 필요 없어 보입니다."
+```
+
+### 3. 사용자 의도 확인
+```markdown
+"기존 코드의 의도를 확인하고 싶습니다."
+"어떤 방향으로 진행할까요?"
+"이렇게 수정하는 것이 맞을까요?"
+```
+
+### 4. 테스트 결과 공유
+```bash
+# 항상 다음 명령어로 검증
+pnpm lint      # ESLint 검사
+pnpm typecheck # TypeScript 타입 체크
+pnpm build:all # 전체 빌드
+```
+
+## 금지 사항
+
+1. **무단 코드 변경**
+   - 승인 없이 코드 수정 금지
+   - "수정하겠습니다" 후 바로 수정 X
+
+2. **의존성 다운그레이드**
+   - 특정 버전의 의존성(예: ESLint 9.27.0)은 프로젝트 호환성을 위해 반드시 유지
+   - 버전 변경이 필요한 경우 충분한 검토와 승인 필요
+
+3. **추측성 변경**
+   - 사용처 확인 없이 "아마도", "보통은" 등으로 변경 금지
+   - 명확한 근거 기반으로만 수정
+
+## 커뮤니케이션 원칙
+
+1. **간결하고 명확하게**
+   - 불필요한 설명 최소화
+   - 핵심만 전달
+
+2. **단계별 보고**
+   ```markdown
+   1. 문제 발견
+   2. 원인 분석
+   3. 해결 방안 제시
+   4. 승인 요청
+   5. 실행 및 결과 보고
+   ```
+
+3. **오류 시 즉시 보고**
+   - 예상치 못한 오류 발생 시 즉시 중단
+   - 오류 내용과 원인 분석 제시
+   - 해결 방안 제안 후 승인 대기
+
+이 지침은 효율적이고 안전한 AI 활용 코드 작업을 위한 것입니다.
