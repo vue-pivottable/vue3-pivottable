@@ -16,18 +16,12 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
 import VDropdown from './VDropdown.vue'
-import type { VNode } from 'vue'
+import type { RendererDefinition } from '@/types'
 
 const slots = useSlots()
 const rendererOptions = computed<string[]>(() =>
   Object.keys(props.rendererItems)
 )
-
-interface RendererDefinition {
-  name: string
-  props?: Record<string, any>
-  setup: (props: any) => () => VNode
-}
 
 interface RendererCellProps {
   rendererName: string

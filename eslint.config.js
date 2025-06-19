@@ -1,9 +1,9 @@
-import { defineConfig } from 'eslint/config'
 import standardjs from '@seungwoo321/eslint-plugin-standard-js'
 import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
+import vueParser from 'vue-eslint-parser'
 
-export default defineConfig([
+export default [
   {
     ignores: [
       'packages/plotly-renderer/**',
@@ -14,29 +14,22 @@ export default defineConfig([
       '**/dist/**'
     ]
   },
+  ...standardjs.configs.base,
+  ...tseslint.configs.recommended,
+  ...pluginVue.configs['flat/strongly-recommended'],
   {
     files: ['**/*.vue'],
     languageOptions: {
-      parser: require.resolve('vue-eslint-parser'),
+      parser: vueParser,
       parserOptions: {
-        parser: require.resolve('@typescript-eslint/parser'),
+        parser: '@typescript-eslint/parser',
         ecmaVersion: 2020,
         sourceType: 'module',
         extraFileExtensions: ['.vue']
       }
-    },
-    plugins: {
-      'vue': pluginVue,
-      '@typescript-eslint': tseslint
     }
   },
   {
-    files: ['**/*.{js,mjs,cjs,vue,ts}', 'eslint.config.js'],
-    extends: [
-      ...standardjs.configs.base,
-      ...tseslint.configs.recommended,
-      ...pluginVue.configs['flat/strongly-recommended']
-    ],
     rules: {
       'vue/html-self-closing': [
         'error',
@@ -59,7 +52,8 @@ export default defineConfig([
           externalIgnores: []
         }
       ],
-      '@typescript-eslint/no-explicit-any': 'off'
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-require-imports': 'off'
     }
   }
-])
+]

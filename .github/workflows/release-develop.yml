@@ -1,0 +1,211 @@
+name: Release Develop (Pre-release)
+
+on:
+  push:
+    branches:
+      - develop
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  pre-release:
+    name: Pre-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.10.0'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check for changesets
+        id: changesets-check
+        run: |
+          if [ -n "$(ls -A .changeset/*.md 2>/dev/null | grep -v README.md)" ]; then
+            echo "has_changesets=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changesets=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Version packages as beta
+        id: version
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: |
+          # Apply changesets and consume them
+          pnpm changeset version
+          
+          # Update to beta versions
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          TIMESTAMP=$(date +%s)
+          
+          # Remove ALL existing beta suffixes if present and add new one
+          CLEAN_VERSION=$(echo "$MAIN_VERSION" | sed 's/-beta\.[0-9]*//g')
+          BETA_VERSION="${CLEAN_VERSION}-beta.${TIMESTAMP}"
+          
+          # Update main package
+          npm version $BETA_VERSION --no-git-tag-version
+          
+          # Update sub-packages
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              cd "$pkg"
+              PKG_VERSION=$(node -p "require('./package.json').version")
+              # Remove ALL existing beta suffixes if present and add new one
+              PKG_CLEAN=$(echo "$PKG_VERSION" | sed 's/-beta\.[0-9]*//g')
+              PKG_BETA="${PKG_CLEAN}-beta.${TIMESTAMP}"
+              npm version $PKG_BETA --no-git-tag-version
+              cd -
+            fi
+          done
+          
+          # Commit all changes
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: prepare beta release"
+          git push origin develop
+          
+          echo "version=$BETA_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Run quality checks
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: |
+          echo "Running type checks..."
+          pnpm typecheck
+          pnpm -r typecheck || true
+          
+          echo "Running linting..."
+          pnpm lint
+          pnpm -r lint || true
+          
+      - name: Build packages
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: |
+          set -e  # Exit immediately if any command fails
+          echo "Building main package first..."
+          pnpm build  # Build main package first to generate type declarations
+          
+          echo "Building sub-packages..."
+          pnpm -r --filter './packages/*' build  # Build sub-packages after main
+
+      - name: Create GitHub Pre-release
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: vue-pivottable@${{ steps.version.outputs.version }}
+          release_name: vue-pivottable@${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: true
+          body: |
+            ## 🚧 Pre-release (Beta)
+            
+            This is a pre-release version. It may contain bugs and breaking changes.
+            
+            Install with: `npm install vue-pivottable@beta`
+            
+            ### Version: ${{ steps.version.outputs.version }}
+
+      - name: Publish pre-release to npm
+        if: steps.changesets-check.outputs.has_changesets == 'true' && steps.create-release.outcome == 'success'
+        run: |
+          # Publish with beta tag only after GitHub release is created
+          node scripts/release-packages-beta.js
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
+
+      - name: Create or Update PR to main
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 현재 버전 가져오기
+          VERSION=$(node -p "require('./package.json').version")
+          
+          # 기존 PR 확인
+          PR_NUMBER=$(gh pr list --base main --head develop --state open --json number -q '.[0].number')
+          
+          if [ -z "$PR_NUMBER" ]; then
+            # 새 PR 생성
+            gh pr create \
+              --base main \
+              --head develop \
+              --title "Release: $VERSION" \
+              --body "## 🚀 Release $VERSION
+              
+              This PR contains the latest beta release ready for production.
+              
+              ### Beta Version
+              - $VERSION
+              
+              ### Packages to be released
+              - vue-pivottable: $VERSION
+              - Check sub-packages for version updates
+              
+              ### Pre-release Testing
+              - Beta version has been published to npm with tag @beta
+              - Install with: \`npm install vue-pivottable@beta\`
+              
+              ### Release Notes
+              See [CHANGELOG.md](./CHANGELOG.md) for details.
+              
+              ---
+              ⚠️ **Note**: This PR will be automatically updated if new changes are pushed to develop."
+          else
+            # 기존 PR 업데이트
+            echo "Updating existing PR #$PR_NUMBER with new beta version..."
+            
+            gh pr edit $PR_NUMBER \
+              --title "Release: $VERSION" \
+              --body "## 🚀 Release $VERSION (Updated)
+              
+              This PR has been automatically updated with the latest beta release.
+              
+              ### Current Beta Version
+              - $VERSION
+              
+              ### Packages to be released
+              - vue-pivottable: $VERSION
+              - Check sub-packages for version updates
+              
+              ### Pre-release Testing
+              - Beta version has been published to npm with tag @beta
+              - Install with: \`npm install vue-pivottable@beta\`
+              
+              ### ⚠️ Important
+              **This PR has been updated with new commits. Please review the changes again.**
+              
+              ### Release Notes
+              See [CHANGELOG.md](./CHANGELOG.md) for details.
+              
+              ---
+              Last updated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+            
+            # PR을 ready for review 상태로 설정
+            gh pr ready $PR_NUMBER
+            
+            # auto-updated 라벨 추가
+            gh pr edit $PR_NUMBER --add-label "auto-updated,needs-review"
+          fi

@@ -1,6 +1,6 @@
 # Vue Pivottable
 
-> English | [한국어](./README.ko.md)
+> [English](./README.md) | 한국어
 
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 [![npm](https://flat.badgen.net/npm/v/vue-pivottable)](https://npmjs.com/package/vue-pivottable)
@@ -8,25 +8,21 @@
 [![npm](https://flat.badgen.net/npm/license/vue-pivottable)](https://flat.badgen.net/npm/license/vue-pivottable)
 [![jsdelivr](https://data.jsdelivr.com/v1/package/npm/vue-pivottable/badge)](https://www.jsdelivr.com/package/npm/vue-pivottable)
 
-**Pivot Table Component for Vue 3**
+**Vue 3용 피벗 테이블 컴포넌트**
 
-`vue-pivottable` is a Vue 3-compatible pivot table component, which is a Vue wrapper of the popular [react-pivottable](https://github.com/plotly/react-pivottable). This library allows you to easily summarize, transform, and visualize large datasets in a pivot table UI.
+`vue-pivottable`은 Vue 3 호환 피벗 테이블 컴포넌트로, 인기 있는 [react-pivottable](https://github.com/plotly/react-pivottable)의 Vue 래퍼입니다. 이 라이브러리를 사용하면 대용량 데이터셋을 피벗 테이블 UI에서 쉽게 요약, 변환, 시각화할 수 있습니다.
 
-Looking for the Vue 2 compatible version?
+Vue 2 호환 버전을 찾고 계신가요?
 👉 [v0.4.68 on github](https://github.com/seungwoo321/vue-pivottable)
 
-<!-- 주요 기능 -->
+## 기능
 
-## Features
+- Vue 3 Composition API로 구축
+- 다양한 집계기와 렌더러 지원
+- 드래그 앤 드롭 필드 구성이 가능한 대화형 UI
+- 쉬운 사용자 정의 및 확장 (렌더러, 집계기, 스타일)
 
-- Built with Vue 3 Composition API
-- Supports multiple aggregators and renderers
-- Interactive UI with drag-and-drop field configuration
-- Easy to customize and extend (renderers, aggregators, styles)
-
-<!-- 설치 방법 -->
-
-## Installation
+## 설치
 
 ### NPM
 
@@ -40,9 +36,7 @@ npm install vue-pivottable
 pnpm add vue-pivottable
 ```
 
-<!-- 사용법 (Quick Start)-->
-
-## Quick Start
+## 빠른 시작
 
 ```vue
 <template>
@@ -62,46 +56,40 @@ import 'vue-pivottable/dist/vue-pivottable.css'
 </script>
 ```
 
-<!-- 링크나 세부 API 설명 -->
+## 문서
 
-## Documentation
+자세한 API 및 props 사용법은 [문서](https://vue-pivottable.vercel.app/)를 참조하세요.
 
-For detailed API and props usage, please visit the [docs](https://vue-pivottable.vercel.app/).
+## 라이브 데모
 
-<!-- 데모 사이트 링크 (없으면 임시로 로컬에서 돌릴 수 있는 설명)-->
+[Stackblitz](https://stackblitz.com/edit/vitejs-vite-dviwcxsq?file=src%2FApp.vue)에서 `vue-pivottable-ui`의 라이브 데모를 사용해 보세요.
 
-## Live Demo
+## 개발
 
-Try out the live demo of `vue-pivottable-ui` in [Stackblitz](https://stackblitz.com/edit/vitejs-vite-dviwcxsq?file=src%2FApp.vue)
-
-## Development
-
-To run the project locally:
+프로젝트를 로컬에서 실행하려면:
 
 ```bash
-# Clone the repo
+# 저장소 클론
 git clone https://github.com/vue-pivottable/vue3-pivottable.git
 cd vue-pivottable
 
-# Install dependencies
+# 의존성 설치
 pnpm install
 
-# Start the dev server
+# 개발 서버 시작
 pnpm dev
 
 ```
 
-Then open http://localhost:8080 in your browser.
+그런 다음 브라우저에서 http://localhost:8080을 여세요.
 
-## Inspired
+## 영감
 
-Inspired by plotly/react-pivottable - React-based pivot table library
+plotly/react-pivottable에서 영감을 받음 - React 기반 피벗 테이블 라이브러리
 
-<!-- end -->
+## 기여자 ✨
 
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+이 멋진 사람들에게 감사드립니다 ([이모지 키](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -121,4 +109,4 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
+이 프로젝트는 [all-contributors](https://github.com/all-contributors/all-contributors) 사양을 따릅니다. 모든 종류의 기여를 환영합니다!

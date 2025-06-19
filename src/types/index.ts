@@ -2,6 +2,14 @@ import type { AggregatorTemplate } from '@/helper'
 import { VNode } from 'vue'
 import { Locale } from '@/helper'
 
+export type RecordFunctionType = () => object
+
+export interface RendererDefinition {
+  name: string
+  props?: Record<string, any>
+  setup: (props: any) => () => VNode
+}
+
 export interface DefaultPropsType {
   data: any
   aggregators?: Record<string, AggregatorTemplate>
@@ -28,9 +36,3 @@ export interface DefaultPropsType {
 }
 
 export type RendererProps = DefaultPropsType & Record<string, unknown>
-
-export interface RendererDefinition {
-  name: string
-  props?: Record<string, any>
-  setup: (props: any) => () => VNode
-}
