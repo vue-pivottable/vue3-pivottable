@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+### Patch Changes
+
+- 6c1a31f: test: 워크플로우 수정 테스트
+
 ## 1.1.0
 
 ### Patch Changes
