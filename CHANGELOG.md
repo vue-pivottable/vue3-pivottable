@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.3
+
+### Patch Changes
+
+- ad33eb8: fix: 프로덕션 릴리스를 위한 버전 업데이트
+
+  - 워크플로우 개선사항 반영
+  - 안정적인 배포 프로세스 확립
+
 ## 1.1.2
 
 ### Patch Changes
