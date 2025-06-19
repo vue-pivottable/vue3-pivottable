@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- 94f0f23: test: 하위 패키지만 업데이트하는 경우 릴리즈 브랜치 동기화 테스트
+  - vue-pivottable@1.1.4
+
+## 1.1.3
+
+### Patch Changes
+
 - dc3b7dc: fix: 하위 패키지 빌드 오류 수정
 
   - lazy-table-renderer: vue-pivottable 버전 의존성 업데이트 (^1.1.4)
