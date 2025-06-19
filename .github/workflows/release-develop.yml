@@ -1,0 +1,127 @@
+name: Release Develop (Pre-release)
+
+on:
+  push:
+    branches:
+      - develop
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  pre-release:
+    name: Pre-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.10.0'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check for changesets
+        id: changesets-check
+        run: |
+          if [ -n "$(ls -A .changeset/*.md 2>/dev/null | grep -v README.md)" ]; then
+            echo "has_changesets=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changesets=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Version packages as beta
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: |
+          # Apply changesets and consume them
+          pnpm changeset version
+          
+          # Update to beta versions
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          BETA_VERSION="${MAIN_VERSION}-beta.$(date +%s)"
+          
+          # Update main package
+          npm version $BETA_VERSION --no-git-tag-version
+          
+          # Update sub-packages
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              cd "$pkg"
+              PKG_VERSION=$(node -p "require('./package.json').version")
+              PKG_BETA="${PKG_VERSION}-beta.$(date +%s)"
+              npm version $PKG_BETA --no-git-tag-version
+              cd -
+            fi
+          done
+          
+          # Commit all changes
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: prepare beta release"
+          git push origin develop
+          
+          echo "version=$BETA_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Run quality checks
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: |
+          echo "Running type checks..."
+          pnpm typecheck
+          pnpm -r typecheck || true
+          
+          echo "Running linting..."
+          pnpm lint
+          pnpm -r lint || true
+          
+      - name: Build packages
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: |
+          echo "Building all packages..."
+          pnpm build:all
+
+      - name: Publish pre-release to npm
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: |
+          # Publish with beta tag
+          node scripts/release-packages-beta.js
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
+
+      - name: Create GitHub Pre-release
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: v${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: true
+          body: |
+            ## 🚧 Pre-release (Beta)
+            
+            This is a pre-release version. It may contain bugs and breaking changes.
+            
+            Install with: `npm install vue-pivottable@beta`

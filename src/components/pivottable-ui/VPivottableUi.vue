@@ -132,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import { aggregators, PivotData, sortAs } from '@/helper'
+import { aggregators, PivotData, sortAs , locales } from '@/helper'
 import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
@@ -145,7 +145,6 @@ import {
   provideFilterBox
 } from '@/composables'
 import { DefaultPropsType } from '@/types'
-import { locales } from '@/helper'
 
 const props = withDefaults(
   defineProps<
@@ -163,6 +162,7 @@ const props = withDefaults(
     aggregators: () => aggregators,
     hiddenAttributes: () => [],
     hiddenFromAggregators: () => [],
+    pivotModel: () => ({}),
     hiddenFromDragDrop: () => [],
     restrictedFromDragDrop: () => [],
     menuLimit: 500,

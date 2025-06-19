@@ -1,7 +1,6 @@
 import { computed, ComputedRef, inject, provide, InjectionKey } from 'vue'
-import { getSort } from '@/helper'
+import { getSort , Locale } from '@/helper'
 import { DefaultPropsType } from '@/types'
-import { Locale } from '@/helper'
 
 type ProvideFilterBoxProps = Pick<DefaultPropsType, 'sorters'> & {
   menuLimit: number

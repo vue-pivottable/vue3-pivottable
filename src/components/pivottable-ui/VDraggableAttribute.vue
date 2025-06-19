@@ -7,8 +7,7 @@
       <slot
         name="pvtAttr"
         :attr-name="attributeName"
-        >{{ attributeName }}</slot
-      >
+      >{{ attributeName }}</slot>
       <span
         v-if="!hideDropDown"
         @mousedown.stop
