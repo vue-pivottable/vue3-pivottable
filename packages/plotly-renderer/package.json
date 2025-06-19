@@ -1,6 +1,6 @@
 {
   "name": "@vue-pivottable/plotly-renderer",
-  "version": "2.0.1-beta.1750306542",
+  "version": "2.0.1-beta.1750307879",
   "type": "module",
   "exports": {
     ".": {
