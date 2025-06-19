@@ -46,6 +46,7 @@ jobs:
           fi
 
       - name: Version packages as beta
+        id: version
         if: steps.changesets-check.outputs.has_changesets == 'true'
         run: |
           # Apply changesets and consume them
@@ -53,7 +54,11 @@ jobs:
           
           # Update to beta versions
           MAIN_VERSION=$(node -p "require('./package.json').version")
-          BETA_VERSION="${MAIN_VERSION}-beta.$(date +%s)"
+          TIMESTAMP=$(date +%s)
+          
+          # Remove ALL existing beta suffixes if present and add new one
+          CLEAN_VERSION=$(echo "$MAIN_VERSION" | sed 's/-beta\.[0-9]*//g')
+          BETA_VERSION="${CLEAN_VERSION}-beta.${TIMESTAMP}"
           
           # Update main package
           npm version $BETA_VERSION --no-git-tag-version
@@ -63,7 +68,9 @@ jobs:
             if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
               cd "$pkg"
               PKG_VERSION=$(node -p "require('./package.json').version")
-              PKG_BETA="${PKG_VERSION}-beta.$(date +%s)"
+              # Remove ALL existing beta suffixes if present and add new one
+              PKG_CLEAN=$(echo "$PKG_VERSION" | sed 's/-beta\.[0-9]*//g')
+              PKG_BETA="${PKG_CLEAN}-beta.${TIMESTAMP}"
               npm version $PKG_BETA --no-git-tag-version
               cd -
             fi
@@ -95,24 +102,15 @@ jobs:
           echo "Building all packages..."
           pnpm build:all
 
-      - name: Publish pre-release to npm
-        if: steps.changesets-check.outputs.has_changesets == 'true'
-        run: |
-          # Publish with beta tag
-          node scripts/release-packages-beta.js
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
-
       - name: Create GitHub Pre-release
         if: steps.changesets-check.outputs.has_changesets == 'true'
+        id: create-release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.version.outputs.version }}
-          release_name: v${{ steps.version.outputs.version }}
+          tag_name: vue-pivottable@${{ steps.version.outputs.version }}
+          release_name: vue-pivottable@${{ steps.version.outputs.version }}
           draft: false
           prerelease: true
           body: |
@@ -121,6 +119,18 @@ jobs:
             This is a pre-release version. It may contain bugs and breaking changes.
             
             Install with: `npm install vue-pivottable@beta`
+            
+            ### Version: ${{ steps.version.outputs.version }}
+
+      - name: Publish pre-release to npm
+        if: steps.changesets-check.outputs.has_changesets == 'true' && steps.create-release.outcome == 'success'
+        run: |
+          # Publish with beta tag only after GitHub release is created
+          node scripts/release-packages-beta.js
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
 
       - name: Create or Update PR to main
         if: steps.changesets-check.outputs.has_changesets == 'true'
