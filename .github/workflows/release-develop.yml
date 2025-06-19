@@ -45,30 +45,65 @@ jobs:
             echo "has_changesets=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Enter pre-release mode
+      - name: Version packages as beta
         if: steps.changesets-check.outputs.has_changesets == 'true'
         run: |
-          # Check if already in pre-release mode
-          if [ ! -f ".changeset/pre.json" ]; then
-            pnpm changeset pre enter beta
-          fi
+          # Apply changesets and consume them
+          pnpm changeset version
           
-          # Create snapshot release without consuming changesets
-          pnpm changeset version --snapshot beta
+          # Update to beta versions
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          BETA_VERSION="${MAIN_VERSION}-beta.$(date +%s)"
           
-          # Get version
-          VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          # Update main package
+          npm version $BETA_VERSION --no-git-tag-version
+          
+          # Update sub-packages
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              cd "$pkg"
+              PKG_VERSION=$(node -p "require('./package.json').version")
+              PKG_BETA="${PKG_VERSION}-beta.$(date +%s)"
+              npm version $PKG_BETA --no-git-tag-version
+              cd -
+            fi
+          done
+          
+          # Commit all changes
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: prepare beta release"
+          git push origin develop
+          
+          echo "version=$BETA_VERSION" >> $GITHUB_OUTPUT
 
+      - name: Run quality checks
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: |
+          echo "Running type checks..."
+          pnpm typecheck
+          pnpm -r typecheck || true
+          
+          echo "Running linting..."
+          pnpm lint
+          pnpm -r lint || true
+          
       - name: Build packages
         if: steps.changesets-check.outputs.has_changesets == 'true'
-        run: pnpm build:all
+        run: |
+          echo "Building all packages..."
+          pnpm build:all
 
       - name: Publish pre-release to npm
         if: steps.changesets-check.outputs.has_changesets == 'true'
         run: |
-          # Publish snapshot with beta tag
-          pnpm changeset publish --tag beta --no-git-tag
+          # Publish with beta tag
+          node scripts/release-packages-beta.js
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

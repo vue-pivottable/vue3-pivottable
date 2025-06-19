@@ -1,4 +1,4 @@
-name: Release
+name: Release (Simplified)
 
 on:
   push:
@@ -21,7 +21,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -37,57 +36,74 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Check for changesets
-        id: changesets-check
+      - name: Run quality checks
         run: |
-          if [ -n "$(ls -A .changeset/*.md 2>/dev/null | grep -v README.md)" ]; then
-            echo "has_changesets=true" >> $GITHUB_OUTPUT
+          echo "Running type checks..."
+          pnpm typecheck
+          pnpm -r typecheck || true
+          
+          echo "Running linting..."
+          pnpm lint
+          pnpm -r lint || true
+          
+      - name: Build packages
+        run: |
+          echo "Building all packages..."
+          pnpm build:all
+
+      - name: Check beta versions
+        id: check-versions
+        run: |
+          # Check if packages have beta versions
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          if [[ $MAIN_VERSION == *"-beta"* ]]; then
+            echo "has_beta=true" >> $GITHUB_OUTPUT
+            # Extract base version without beta suffix
+            BASE_VERSION=$(echo $MAIN_VERSION | sed 's/-beta.*//')
+            echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
           else
-            echo "has_changesets=false" >> $GITHUB_OUTPUT
+            echo "has_beta=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create Release Branch
-        if: steps.changesets-check.outputs.has_changesets == 'true'
+      - name: Update versions to stable
+        if: steps.check-versions.outputs.has_beta == 'true'
         run: |
-          # Get current version from package.json
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          # Update main package
+          npm version ${{ steps.check-versions.outputs.base_version }} --no-git-tag-version
           
-          # Create release branch
-          RELEASE_BRANCH="release/v${CURRENT_VERSION}"
+          # Update sub-packages
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              cd "$pkg"
+              PKG_VERSION=$(node -p "require('./package.json').version")
+              if [[ $PKG_VERSION == *"-beta"* ]]; then
+                PKG_BASE=$(echo $PKG_VERSION | sed 's/-beta.*//')
+                npm version $PKG_BASE --no-git-tag-version
+              fi
+              cd -
+            fi
+          done
+
+      - name: Create release branch
+        if: steps.check-versions.outputs.has_beta == 'true'
+        run: |
+          VERSION=${{ steps.check-versions.outputs.base_version }}
+          RELEASE_BRANCH="release/v${VERSION}"
+          
           git checkout -b $RELEASE_BRANCH
-          
-          # Apply changesets version updates
-          pnpm changeset version
-          
-          # Get new version after changesets
-          NEW_VERSION=$(node -p "require('./package.json').version")
-          
-          # If version changed, update branch name
-          if [ "$CURRENT_VERSION" != "$NEW_VERSION" ]; then
-            git branch -m "release/v${NEW_VERSION}"
-            RELEASE_BRANCH="release/v${NEW_VERSION}"
-          fi
-          
-          # Commit version changes
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "chore: release v${NEW_VERSION}" || echo "No changes to commit"
-          
-          # Push release branch
+          git commit -m "chore: release v${VERSION}" || echo "No changes"
           git push origin $RELEASE_BRANCH
           
           echo "release_branch=$RELEASE_BRANCH" >> $GITHUB_OUTPUT
-          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-
-      - name: Build packages
-        if: steps.changesets-check.outputs.has_changesets == 'true'
-        run: pnpm build:all
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Publish to npm
-        if: steps.changesets-check.outputs.has_changesets == 'true'
+        if: steps.check-versions.outputs.has_beta == 'true'
         run: |
-          # Use custom release script for fault-tolerant publishing
+          # Publish with latest tag (overwrites beta)
           node scripts/release-packages.js
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -95,20 +111,50 @@ jobs:
           NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
 
       - name: Create GitHub Release
-        if: steps.changesets-check.outputs.has_changesets == 'true'
+        if: steps.check-versions.outputs.has_beta == 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.release.outputs.version }}
-          release_name: Release v${{ steps.release.outputs.version }}
+          tag_name: v${{ steps.create-release.outputs.version }}
+          release_name: Release v${{ steps.create-release.outputs.version }}
           draft: false
           prerelease: false
-          
-      - name: Update main branch
-        if: steps.changesets-check.outputs.has_changesets == 'true'
+          body: |
+            ## 🚀 Stable Release
+            
+            This release promotes the beta version to stable.
+            
+            Install with: `npm install vue-pivottable@latest`
+
+      - name: Create PR to update main
+        if: steps.check-versions.outputs.has_beta == 'true'
         run: |
-          # Merge release branch back to main
-          git checkout main
-          git merge ${{ steps.release.outputs.release_branch }} --no-ff -m "chore: merge release v${{ steps.release.outputs.version }}"
-          git push origin main
+          # Create PR from release branch back to main
+          gh pr create \
+            --base main \
+            --head ${{ steps.create-release.outputs.release_branch }} \
+            --title "chore: update main with release v${{ steps.create-release.outputs.version }}" \
+            --body "## 📦 Release Update
+            
+            This PR updates main branch with:
+            - ✅ Stable version numbers (beta suffix removed)
+            - ✅ Updated package.json files
+            - ✅ Release commit
+            
+            **Note**: Changesets were already consumed in develop branch." \
+            || echo "PR creation failed"
+          
+          # Also create PR to sync with develop
+          gh pr create \
+            --base develop \
+            --head ${{ steps.create-release.outputs.release_branch }} \
+            --title "chore: sync release v${{ steps.create-release.outputs.version }} to develop" \
+            --body "## 🔄 Release Sync
+            
+            This PR syncs the stable release back to develop:
+            - ✅ Version alignment
+            - ✅ Ensures develop has latest stable version
+            
+            **Important**: Review carefully for any conflicts with ongoing development." \
+            || echo "Sync PR creation failed"

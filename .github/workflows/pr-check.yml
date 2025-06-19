@@ -28,10 +28,18 @@ jobs:
         run: pnpm install
 
       - name: Run ESLint
-        run: pnpm lint
+        run: |
+          echo "Linting main package..."
+          pnpm lint
+          echo "Linting all workspace packages..."
+          pnpm -r lint || true  # Continue even if some packages don't have lint script
 
       - name: Run TypeScript type check
-        run: pnpm typecheck
+        run: |
+          echo "Checking main package..."
+          pnpm typecheck
+          echo "Checking all workspace packages..."
+          pnpm -r typecheck || true  # Continue even if some packages don't have typecheck script
 
       - name: Check for changesets
         run: |
