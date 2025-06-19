@@ -1,7 +1,5 @@
 ---
 "vue-pivottable": patch
-"@vue-pivottable/lazy-table-renderer": patch
-"@vue-pivottable/plotly-renderer": patch
 ---
 
 fix: 베타와 프로덕션 릴리스 워크플로우 통일
