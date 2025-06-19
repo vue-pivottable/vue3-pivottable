@@ -95,8 +95,11 @@ jobs:
       - name: Update versions to stable
         if: steps.check-versions.outputs.has_beta == 'true'
         run: |
-          # Update main package
-          npm version ${{ steps.check-versions.outputs.base_version }} --no-git-tag-version
+          # Update main package only if it has beta
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          if [[ $MAIN_VERSION == *"-beta"* ]]; then
+            npm version ${{ steps.check-versions.outputs.base_version }} --no-git-tag-version
+          fi
           
           # Update sub-packages
           for pkg in packages/*/; do
@@ -144,22 +147,49 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
 
-      - name: Create GitHub Release
+      - name: Create GitHub Releases
         if: steps.check-versions.outputs.has_beta == 'true'
-        uses: actions/create-release@v1
+        run: |
+          # Create release for each package with stable version
+          create_release() {
+            local PKG_NAME=$1
+            local PKG_VERSION=$2
+            local NPM_NAME=$3
+            
+            echo "Creating release for $PKG_NAME@$PKG_VERSION"
+            
+            # Delete existing release if it exists (likely a beta version)
+            gh release delete "${PKG_NAME}@${PKG_VERSION}" --yes 2>/dev/null || true
+            
+            gh release create "${PKG_NAME}@${PKG_VERSION}" \
+              --title "${PKG_NAME}@${PKG_VERSION}" \
+              --notes "## 🚀 Stable Release
+          
+          This release promotes the beta version to stable.
+          
+          Install with: \`npm install ${NPM_NAME}@latest\`
+          
+          ### Version: ${PKG_VERSION}" \
+              --target ${{ github.sha }}
+          }
+          
+          # Check main package
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          create_release "vue-pivottable" "$MAIN_VERSION" "vue-pivottable"
+          
+          # Check sub-packages
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              PKG_NAME=$(cd "$pkg" && node -p "require('./package.json').name")
+              PKG_VERSION=$(cd "$pkg" && node -p "require('./package.json').version")
+              # Create release for all packages that were released
+              if [ "$PKG_NAME" != "" ] && [ "$PKG_VERSION" != "" ]; then
+                create_release "$PKG_NAME" "$PKG_VERSION" "$PKG_NAME"
+              fi
+            fi
+          done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.create-release.outputs.version }}
-          release_name: Release v${{ steps.create-release.outputs.version }}
-          draft: false
-          prerelease: false
-          body: |
-            ## 🚀 Stable Release
-            
-            This release promotes the beta version to stable.
-            
-            Install with: `npm install vue-pivottable@latest`
 
       - name: Create PR to update main
         if: steps.check-versions.outputs.has_beta == 'true'
