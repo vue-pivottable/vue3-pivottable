@@ -134,97 +134,12 @@ jobs:
           echo "release_branch=$RELEASE_BRANCH" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Checkout release branch and publish
+      - name: Trigger release branch workflow
         if: steps.check-versions.outputs.has_beta == 'true'
         run: |
-          # Checkout to release branch for publishing
-          git checkout ${{ steps.create-release.outputs.release_branch }}
-          
-          # Publish with latest tag (overwrites beta)
-          node scripts/release-packages.cjs
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
-
-      - name: Create GitHub Releases
-        if: steps.check-versions.outputs.has_beta == 'true'
-        run: |
-          # Create release for each package with stable version
-          create_release() {
-            local PKG_NAME=$1
-            local PKG_VERSION=$2
-            local NPM_NAME=$3
-            
-            echo "Creating release for $PKG_NAME@$PKG_VERSION"
-            
-            # Delete existing release if it exists (likely a beta version)
-            gh release delete "${PKG_NAME}@${PKG_VERSION}" --yes 2>/dev/null || true
-            
-            gh release create "${PKG_NAME}@${PKG_VERSION}" \
-              --title "${PKG_NAME}@${PKG_VERSION}" \
-              --notes "## 🚀 Stable Release
-          
-          This release promotes the beta version to stable.
-          
-          Install with: \`npm install ${NPM_NAME}@latest\`
-          
-          ### Version: ${PKG_VERSION}" \
-              --target ${{ github.sha }}
-          }
-          
-          # Only create releases for packages that had beta versions
-          BETA_PACKAGES="${{ steps.check-versions.outputs.beta_packages }}"
-          
-          # Check if main package had beta
-          if [[ " $BETA_PACKAGES " == *" vue-pivottable "* ]]; then
-            MAIN_VERSION=$(node -p "require('./package.json').version")
-            create_release "vue-pivottable" "$MAIN_VERSION" "vue-pivottable"
-          fi
-          
-          # Check sub-packages
-          for pkg in packages/*/; do
-            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
-              PKG_NAME=$(basename "$pkg")
-              # Only process if this package had beta version
-              if [[ " $BETA_PACKAGES " == *" $PKG_NAME "* ]]; then
-                FULL_PKG_NAME=$(cd "$pkg" && node -p "require('./package.json').name")
-                PKG_VERSION=$(cd "$pkg" && node -p "require('./package.json').version")
-                create_release "$FULL_PKG_NAME" "$PKG_VERSION" "$FULL_PKG_NAME"
-              fi
-            fi
-          done
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create PR to update main
-        if: steps.check-versions.outputs.has_beta == 'true'
-        run: |
-          # Create PR from release branch back to main
-          gh pr create \
-            --base main \
-            --head ${{ steps.create-release.outputs.release_branch }} \
-            --title "chore: update main with release v${{ steps.create-release.outputs.version }}" \
-            --body "## 📦 Release Update
-            
-            This PR updates main branch with:
-            - ✅ Stable version numbers (beta suffix removed)
-            - ✅ Updated package.json files
-            - ✅ Release commit
-            
-            **Note**: Changesets were already consumed in develop branch." \
-            || echo "PR creation failed"
-          
-          # Also create PR to sync with develop
-          gh pr create \
-            --base develop \
-            --head ${{ steps.create-release.outputs.release_branch }} \
-            --title "chore: sync release v${{ steps.create-release.outputs.version }} to develop" \
-            --body "## 🔄 Release Sync
-            
-            This PR syncs the stable release back to develop:
-            - ✅ Version alignment
-            - ✅ Ensures develop has latest stable version
-            
-            **Important**: Review carefully for any conflicts with ongoing development." \
-            || echo "Sync PR creation failed"
+          echo "Release branch created: ${{ steps.create-release.outputs.release_branch }}"
+          echo "The release branch workflow will handle:"
+          echo "- Publishing to npm"
+          echo "- Creating GitHub releases"
+          echo "- Syncing with develop (auto-merge)"
+          echo "- Creating PR to main"
