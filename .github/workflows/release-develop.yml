@@ -130,7 +130,7 @@ jobs:
         if: steps.changesets-check.outputs.has_changesets == 'true' && steps.create-release.outcome == 'success'
         run: |
           # Publish with beta tag only after GitHub release is created
-          node scripts/release-packages-beta.js
+          RELEASE_TAG=beta node scripts/release-packages.cjs
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
