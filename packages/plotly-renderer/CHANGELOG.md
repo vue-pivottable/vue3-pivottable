@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.2
+
+### Patch Changes
+
+- 726ccb7: fix: 중복된 베타 버전 정리
+  - vue-pivottable@1.1.4
+
 ## 2.0.1
 
 ### Patch Changes
