@@ -49,29 +49,44 @@ jobs:
         id: version
         if: steps.changesets-check.outputs.has_changesets == 'true'
         run: |
+          # Store original versions before changeset
+          ORIGINAL_MAIN=$(node -p "require('./package.json').version" | sed 's/-beta\.[0-9]*//g')
+          declare -A ORIGINAL_VERSIONS
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              PKG_NAME=$(basename "$pkg")
+              ORIGINAL_VERSIONS[$PKG_NAME]=$(cd "$pkg" && node -p "require('./package.json').version" | sed 's/-beta\.[0-9]*//g')
+            fi
+          done
+          
           # Apply changesets and consume them
           pnpm changeset version
           
-          # Update to beta versions
-          MAIN_VERSION=$(node -p "require('./package.json').version")
+          # Check for version changes and update to beta
           TIMESTAMP=$(date +%s)
+          CHANGED_PACKAGES=""
           
-          # Remove ALL existing beta suffixes if present and add new one
-          CLEAN_VERSION=$(echo "$MAIN_VERSION" | sed 's/-beta\.[0-9]*//g')
-          BETA_VERSION="${CLEAN_VERSION}-beta.${TIMESTAMP}"
+          # Check main package
+          NEW_MAIN=$(node -p "require('./package.json').version")
+          if [ "$ORIGINAL_MAIN" != "$NEW_MAIN" ]; then
+            BETA_VERSION="${NEW_MAIN}-beta.${TIMESTAMP}"
+            npm version $BETA_VERSION --no-git-tag-version
+            CHANGED_PACKAGES="vue-pivottable"
+          fi
           
-          # Update main package
-          npm version $BETA_VERSION --no-git-tag-version
-          
-          # Update sub-packages
+          # Check sub-packages
           for pkg in packages/*/; do
             if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
               cd "$pkg"
-              PKG_VERSION=$(node -p "require('./package.json').version")
-              # Remove ALL existing beta suffixes if present and add new one
-              PKG_CLEAN=$(echo "$PKG_VERSION" | sed 's/-beta\.[0-9]*//g')
-              PKG_BETA="${PKG_CLEAN}-beta.${TIMESTAMP}"
-              npm version $PKG_BETA --no-git-tag-version
+              PKG_NAME=$(basename "$pkg")
+              NEW_VERSION=$(node -p "require('./package.json').version")
+              
+              # Only add beta if version changed
+              if [ "${ORIGINAL_VERSIONS[$PKG_NAME]}" != "$NEW_VERSION" ]; then
+                PKG_BETA="${NEW_VERSION}-beta.${TIMESTAMP}"
+                npm version $PKG_BETA --no-git-tag-version
+                CHANGED_PACKAGES="$CHANGED_PACKAGES $PKG_NAME"
+              fi
               cd -
             fi
           done
@@ -80,10 +95,17 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "chore: prepare beta release"
+          git commit -m "chore: prepare beta release
+          
+          Changed packages: $CHANGED_PACKAGES"
           git push origin develop
           
-          echo "version=$BETA_VERSION" >> $GITHUB_OUTPUT
+          # Use main package version for output (if changed) or first changed package
+          if [ "$ORIGINAL_MAIN" != "$NEW_MAIN" ]; then
+            echo "version=${NEW_MAIN}-beta.${TIMESTAMP}" >> $GITHUB_OUTPUT
+          else
+            echo "version=beta.${TIMESTAMP}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Run quality checks
         if: steps.changesets-check.outputs.has_changesets == 'true'
