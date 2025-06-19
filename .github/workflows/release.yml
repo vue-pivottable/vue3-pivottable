@@ -54,16 +54,43 @@ jobs:
       - name: Check beta versions
         id: check-versions
         run: |
-          # Check if packages have beta versions
+          # Check if any package has beta version
+          HAS_BETA=false
+          BETA_PACKAGES=""
+          
+          # Check main package
           MAIN_VERSION=$(node -p "require('./package.json').version")
           if [[ $MAIN_VERSION == *"-beta"* ]]; then
-            echo "has_beta=true" >> $GITHUB_OUTPUT
-            # Extract base version without beta suffix
+            HAS_BETA=true
+            BETA_PACKAGES="vue-pivottable"
+            # Extract base version without beta suffix for release branch
             BASE_VERSION=$(echo $MAIN_VERSION | sed 's/-beta.*//')
             echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
-          else
-            echo "has_beta=false" >> $GITHUB_OUTPUT
           fi
+          
+          # Check sub-packages
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              PKG_NAME=$(basename "$pkg")
+              PKG_VERSION=$(cd "$pkg" && node -p "require('./package.json').version")
+              if [[ $PKG_VERSION == *"-beta"* ]]; then
+                HAS_BETA=true
+                BETA_PACKAGES="$BETA_PACKAGES $PKG_NAME"
+              fi
+            fi
+          done
+          
+          echo "has_beta=$HAS_BETA" >> $GITHUB_OUTPUT
+          echo "beta_packages=$BETA_PACKAGES" >> $GITHUB_OUTPUT
+          
+          # Use main package version for release branch, or highest version
+          if [ -z "${BASE_VERSION}" ]; then
+            # If main package is not beta, use its version for release branch
+            BASE_VERSION=$(echo $MAIN_VERSION | sed 's/-beta.*//')
+            echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "Found beta packages: $BETA_PACKAGES"
 
       - name: Update versions to stable
         if: steps.check-versions.outputs.has_beta == 'true'
