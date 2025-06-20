@@ -20,26 +20,30 @@ const log = {
   warning: (msg) => console.log(`${colors.yellow}⚠${colors.reset} ${msg}`)
 };
 
+// Get release tag from environment variable
+const releaseTag = process.env.RELEASE_TAG || 'latest';
+log.info(`Publishing with tag: ${releaseTag}`);
+
 // Package configurations
 const packages = [
   {
     name: 'vue3-pivottable',
     path: '.',
     buildCmd: 'pnpm clean && pnpm build',
-    publishCmd: 'pnpm changeset publish'
+    publishCmd: `pnpm changeset publish --tag ${releaseTag}`
   },
   {
     name: '@vue-pivottable/plotly-renderer',
     path: './packages/plotly-renderer',
     buildCmd: 'pnpm --filter @vue-pivottable/plotly-renderer clean && pnpm --filter @vue-pivottable/plotly-renderer build',
-    publishCmd: 'pnpm changeset publish --filter @vue-pivottable/plotly-renderer',
+    publishCmd: `pnpm changeset publish --filter @vue-pivottable/plotly-renderer --tag ${releaseTag}`,
     tokenEnv: 'NPM_TOKEN_SUMIN'
   },
   {
     name: '@vue-pivottable/lazy-table-renderer',
     path: './packages/lazy-table-renderer',
     buildCmd: 'pnpm --filter @vue-pivottable/lazy-table-renderer clean && pnpm --filter @vue-pivottable/lazy-table-renderer build',
-    publishCmd: 'pnpm changeset publish --filter @vue-pivottable/lazy-table-renderer',
+    publishCmd: `pnpm changeset publish --filter @vue-pivottable/lazy-table-renderer --tag ${releaseTag}`,
     tokenEnv: 'NPM_TOKEN_SUMIN'
   }
 ];
