@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.4
+
+### Patch Changes
+
+- 639ff48: test: 베타 태그 배포 수정 테스트
+  - vue-pivottable@1.1.4
+
 ## 2.0.3
 
 ### Patch Changes
