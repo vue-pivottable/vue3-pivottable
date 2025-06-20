@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.6
+
+### Patch Changes
+
+- fix: 버전 관리 문제 해결을 위한 버전 범프
+
+  - develop 브랜치의 버전이 베타 접미사 없이 유지되는 문제 해결
+  - npm에 이미 배포된 버전과 충돌 방지
+
 ## 1.1.5
 
 ### Patch Changes
