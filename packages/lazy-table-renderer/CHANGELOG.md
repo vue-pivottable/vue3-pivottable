@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.6
+
+### Patch Changes
+
+- 96362f1: test: 릴리즈 프로세스 최종 검증을 위한 테스트 업데이트
+  - vue-pivottable@1.1.4
+
 ## 1.1.5
 
 ### Patch Changes
