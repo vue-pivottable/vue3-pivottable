@@ -59,19 +59,55 @@ jobs:
             fi
           done
           
+          # Store package.json files BEFORE changeset to preserve peerDependencies
+          echo "Backing up peerDependencies before changeset..."
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              cp "$pkg/package.json" "$pkg/package.json.backup"
+              echo "✓ Backed up $pkg/package.json"
+            fi
+          done
+          
           # Apply changesets and consume them
           pnpm changeset version
           
-          # Check for version changes and update to beta
+          # Ensure beta versions on develop branch
           TIMESTAMP=$(date +%s)
           CHANGED_PACKAGES=""
           
+          # Function to update beta timestamp (preserving version increments)
+          update_beta_timestamp() {
+            local current_version=$1
+            local timestamp=$2
+            
+            # If already has beta suffix, replace only the timestamp
+            if [[ "$current_version" == *"-beta."* ]]; then
+              echo "$current_version" | sed "s/-beta\.[0-9]*$/-beta.${timestamp}/"
+            else
+              # Add beta suffix to non-beta versions
+              echo "${current_version}-beta.${timestamp}"
+            fi
+          }
+          
+          # Apply beta suffixes to packages
+          echo "Applying beta timestamps to packages..."
+          
           # Check main package
           NEW_MAIN=$(node -p "require('./package.json').version")
-          if [ "$ORIGINAL_MAIN" != "$NEW_MAIN" ]; then
-            BETA_VERSION="${NEW_MAIN}-beta.${TIMESTAMP}"
-            npm version $BETA_VERSION --no-git-tag-version
+          
+          # If version changed OR doesn't have beta suffix, update it
+          if [ "$ORIGINAL_MAIN" != "$NEW_MAIN" ] || [[ "$NEW_MAIN" != *"-beta."* ]]; then
+            # If already has beta, just update timestamp; otherwise add beta
+            if [[ "$NEW_MAIN" == *"-beta."* ]]; then
+              BETA_MAIN=$(echo "$NEW_MAIN" | sed "s/-beta\.[0-9]*$/-beta.${TIMESTAMP}/")
+            else
+              BETA_MAIN="${NEW_MAIN}-beta.${TIMESTAMP}"
+            fi
+            npm version $BETA_MAIN --no-git-tag-version
             CHANGED_PACKAGES="vue-pivottable"
+            echo "✓ Updated vue-pivottable: $NEW_MAIN → $BETA_MAIN"
+          else
+            echo "✓ vue-pivottable unchanged: $NEW_MAIN"
           fi
           
           # Check sub-packages
@@ -81,20 +117,42 @@ jobs:
               PKG_NAME=$(basename "$pkg")
               NEW_VERSION=$(node -p "require('./package.json').version")
               
-              # Only add beta if version changed
-              if [ "${ORIGINAL_VERSIONS[$PKG_NAME]}" != "$NEW_VERSION" ]; then
-                PKG_BETA="${NEW_VERSION}-beta.${TIMESTAMP}"
-                npm version $PKG_BETA --no-git-tag-version
+              # If version changed OR doesn't have beta suffix, update it
+              if [ "${ORIGINAL_VERSIONS[$PKG_NAME]}" != "$NEW_VERSION" ] || [[ "$NEW_VERSION" != *"-beta."* ]]; then
+                # If already has beta, just update timestamp; otherwise add beta
+                if [[ "$NEW_VERSION" == *"-beta."* ]]; then
+                  BETA_VERSION=$(echo "$NEW_VERSION" | sed "s/-beta\.[0-9]*$/-beta.${TIMESTAMP}/")
+                else
+                  BETA_VERSION="${NEW_VERSION}-beta.${TIMESTAMP}"
+                fi
+                npm version $BETA_VERSION --no-git-tag-version
                 CHANGED_PACKAGES="$CHANGED_PACKAGES $PKG_NAME"
+                echo "✓ Updated $PKG_NAME: $NEW_VERSION → $BETA_VERSION"
+              else
+                echo "✓ $PKG_NAME unchanged: $NEW_VERSION"
               fi
               cd -
             fi
           done
           
-          # Store package.json files before changeset modifications
+          # Restore peerDependencies from backup to prevent auto-update
+          echo "Restoring peerDependencies from backup..."
           for pkg in packages/*/; do
-            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
-              cp "$pkg/package.json" "$pkg/package.json.backup"
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json.backup" ]; then
+              cd "$pkg"
+              echo "Restoring peerDependencies for $(basename "$pkg")"
+              # Extract peerDependencies from backup and apply to current
+              node -e "
+                const fs = require('fs');
+                const backup = JSON.parse(fs.readFileSync('./package.json.backup', 'utf8'));
+                const current = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+                if (backup.peerDependencies) {
+                  console.log('Restoring peerDependencies:', backup.peerDependencies);
+                  current.peerDependencies = backup.peerDependencies;
+                  fs.writeFileSync('./package.json', JSON.stringify(current, null, 2) + '\\n');
+                }
+              "
+              cd -
             fi
           done
           
@@ -106,30 +164,12 @@ jobs:
           
           Changed packages: $CHANGED_PACKAGES"
           
-          # Restore peerDependencies from backup to prevent beta version pollution
+          # Clean up backup files
           for pkg in packages/*/; do
             if [ -d "$pkg" ] && [ -f "$pkg/package.json.backup" ]; then
-              cd "$pkg"
-              # Extract peerDependencies from backup and apply to current
-              node -e "
-                const fs = require('fs');
-                const backup = JSON.parse(fs.readFileSync('./package.json.backup', 'utf8'));
-                const current = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
-                if (backup.peerDependencies) {
-                  current.peerDependencies = backup.peerDependencies;
-                }
-                fs.writeFileSync('./package.json', JSON.stringify(current, null, 2) + '\\n');
-              "
-              rm -f package.json.backup
-              cd -
+              rm -f "$pkg/package.json.backup"
             fi
           done
-          
-          # Commit peerDependencies fix if there are changes
-          if ! git diff --quiet; then
-            git add -A
-            git commit -m "fix: restore peerDependencies to prevent beta version pollution"
-          fi
           
           git push origin develop
           
@@ -166,6 +206,14 @@ jobs:
             local PKG_NAME=$1
             local PKG_VERSION=$2
             local NPM_NAME=$3
+            
+            echo "Checking if release ${PKG_NAME}@${PKG_VERSION} already exists..."
+            
+            # Check if release already exists
+            if gh release view "${PKG_NAME}@${PKG_VERSION}" &>/dev/null; then
+              echo "⚠️  Release ${PKG_NAME}@${PKG_VERSION} already exists, skipping..."
+              return 0
+            fi
             
             echo "Creating release for $PKG_NAME@$PKG_VERSION"
             

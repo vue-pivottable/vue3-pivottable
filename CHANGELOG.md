@@ -1,5 +1,94 @@
 # Changelog
 
+## 1.1.7
+
+### Patch Changes
+
+- d72a22d: test: 수정된 베타 버전 증가 로직 테스트
+
+  **수정된 워크플로우 검증:**
+
+  1. changeset 실행 전 베타 접미사 제거
+  2. changeset version으로 버전 증가 (1.1.6 → 1.1.7, 2.0.7 → 2.0.8)
+  3. 증가된 버전에 베타 접미사 재적용
+
+  **기대 결과:**
+
+  - vue-pivottable: 1.1.6-beta.xxx → 1.1.7-beta.yyy
+  - plotly-renderer: 2.0.7-beta.xxx → 2.0.8-beta.yyy
+  - lazy-table-renderer: 변경 없음 (changeset 제외)
+
+## 1.1.6
+
+### Patch Changes
+
+- d8c5bff: test: 올바른 베타 버전 증가 테스트
+
+  **수정된 로직 테스트:**
+
+  - changeset version의 버전 증가를 보존
+  - 선택적 베타 타임스탬프 적용 (변경된 패키지만)
+  - lazy-table-renderer는 changeset 없으므로 변경되지 않아야 함
+
+  **기대 결과:**
+
+  - vue-pivottable: 1.1.6-beta.old → 1.1.7-beta.new (버전 증가 + 새 타임스탬프)
+  - plotly-renderer: 2.0.7-beta.old → 2.0.8-beta.new (버전 증가 + 새 타임스탬프)
+  - lazy-table-renderer: 1.1.7-beta.old → 1.1.7-beta.old (변경 없음)
+
+## 1.1.6
+
+### Patch Changes
+
+- d29dbcb: test: 베타 타임스탬프 교체 시나리오 테스트
+
+  **현재 상황:**
+
+  - develop 브랜치에 이미 베타 버전들이 존재
+  - main PR #247이 승인되지 않은 상태
+  - 추가 changeset으로 베타 타임스탬프 교체 테스트
+
+  **기대 결과:**
+
+  - vue-pivottable: 1.1.6-beta.OLD → 1.1.7-beta.NEW
+  - plotly-renderer: 2.0.7-beta.OLD → 2.0.8-beta.NEW
+  - lazy-table-renderer: 1.1.7-beta.OLD (변경 없음, changeset 없음)
+
+  **테스트 목표:**
+
+  - 베타 중복 방지 (1.1.7-beta.xxx-beta.yyy 같은 형태 방지)
+  - 새로운 타임스탬프로 교체
+  - main PR #247 자동 업데이트
+
+## 1.1.6
+
+### Patch Changes
+
+- 655b3b1: test: 단일 패키지 배포 시나리오 테스트
+
+  - vue-pivottable만 변경하여 1개 패키지 배포 테스트
+  - main PR이 있는 상태에서 추가 변경사항 반영 테스트
+
+## 1.1.6
+
+### Patch Changes
+
+- 9b0077c: fix: 워크플로우 및 버전 관리 시스템 개선
+
+  - develop 브랜치에서 항상 베타 버전 보장하는 로직 추가
+  - peerDependencies를 현재 npm latest와 일치하도록 수정
+  - changeset이 없어도 베타 접미사가 자동으로 추가되도록 개선
+  - npm 배포 충돌 및 버전 불일치 문제 근본 해결
+
+## 1.1.6
+
+### Patch Changes
+
+- fix: 버전 관리 문제 해결을 위한 버전 범프
+
+  - develop 브랜치의 버전이 베타 접미사 없이 유지되는 문제 해결
+  - npm에 이미 배포된 버전과 충돌 방지
+
 ## 1.1.5
 
 ### Patch Changes
