@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Lock files (avoid version conflicts in CI)
+pnpm-lock.yaml
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
