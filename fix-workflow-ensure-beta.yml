@@ -1,0 +1,40 @@
+      - name: Ensure beta versions on develop branch
+        run: |
+          # Function to ensure beta version
+          ensure_beta_version() {
+            local pkg_path=$1
+            local pkg_json="$pkg_path/package.json"
+            
+            if [ -f "$pkg_json" ]; then
+              CURRENT_VERSION=$(node -p "require('$pkg_json').version")
+              
+              # Skip if already has beta suffix
+              if [[ "$CURRENT_VERSION" == *"-beta."* ]]; then
+                echo "✓ $pkg_path already has beta version: $CURRENT_VERSION"
+              else
+                # Add beta suffix
+                TIMESTAMP=$(date +%s)
+                NEW_VERSION="${CURRENT_VERSION}-beta.${TIMESTAMP}"
+                cd "$pkg_path"
+                npm version "$NEW_VERSION" --no-git-tag-version
+                cd -
+                echo "✓ $pkg_path updated to beta version: $NEW_VERSION"
+              fi
+            fi
+          }
+          
+          # Ensure main package has beta version
+          ensure_beta_version "."
+          
+          # Ensure all sub-packages have beta versions
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ]; then
+              ensure_beta_version "$pkg"
+            fi
+          done
+          
+          # Commit if there are changes
+          if ! git diff --quiet; then
+            git add -A
+            git commit -m "chore: ensure beta versions on develop branch"
+          fi
