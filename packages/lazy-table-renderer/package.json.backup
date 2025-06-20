@@ -1,18 +1,19 @@
 {
-  "name": "@vue-pivottable/plotly-renderer",
-  "version": "2.0.6",
+  "name": "@vue-pivottable/lazy-table-renderer",
+  "version": "1.1.6",
   "type": "module",
+  "description": "",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/plotly-renderer.es.js",
-      "require": "./dist/plotly-renderer.umd.js"
+      "import": "./dist/lazy-table-renderer.es.js",
+      "require": "./dist/lazy-table-renderer.umd.js"
     },
     "./dist/": "./dist/",
     "./package.json": "./package.json"
   },
-  "main": "./dist/plotly-renderer.umd.js",
-  "module": "./dist/plotly-renderer.es.js",
+  "main": "./dist/lazy-table-renderer.umd.js",
+  "module": "./dist/lazy-table-renderer.es.js",
   "types": "./dist/types/index.d.ts",
   "files": [
     "dist",
@@ -22,7 +23,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vue-pivottable/vue3-pivottable.git",
-    "directory": "packages/plotly-renderer"
+    "directory": "packages/lazy-table-renderer"
   },
   "keywords": [
     "vue",
@@ -31,22 +32,24 @@
     "pivottable",
     "vue-pivottable",
     "vue3-pivottable",
-    "@vue-pivottable/plotly-renderer"
+    "@vue-pivottable/lazy-table-renderer"
   ],
-  "homepage": "https://github.com/vue-pivottable/vue3-pivottable/tree/main/packages/plotly-renderer/README.md",
-  "author": "Sumin, Lee <lsumin1127@gmail.com>",
+  "sideEffects": [
+    "*.css",
+    "*.vue"
+  ],
+  "homepage": "https://github.com/vue-pivottable/vue3-pivottable/tree/main/packages/lazy-table-renderer/README.md",
+  "author": "Seungwoo, Lee <seungwoo321@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --scope lazy-table-renderer",
     "clean": "rimraf dist",
-    "build": "vite build"
-  },
-  "dependencies": {
-    "@clalarco/vue3-plotly": "^0.1.5",
-    "plotly.js-basic-dist": "^3.0.1"
+    "build": "vite build",
+    "lint": "eslint ."
   },
   "peerDependencies": {
     "vue": "^3.2.0",
-    "vue-pivottable": "^1.1.5"
+    "vue-pivottable": "^1.1.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",

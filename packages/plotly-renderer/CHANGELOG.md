@@ -4,6 +4,26 @@
 
 ### Patch Changes
 
+- 9dd7707: fix: 베타 릴리즈 프로세스 전체 개선
+
+  - 베타 버전 중복 문제 해결 (1.1.5-beta.xxx-beta.yyy → 1.1.5-beta.yyy)
+  - peerDependencies 베타 버전 오염 방지
+  - changeset 적용 전 package.json 백업 및 peerDependencies 복원 로직 추가
+  - 워크플로우에서 베타 버전이 의존성에 전파되지 않도록 개선
+
+- 9dd7707: fix: 베타 버전 중복 및 peerDependencies 오염 문제 긴급 수정
+
+  - 중복된 베타 버전 제거 (1.1.5-beta.xxx-beta.yyy → 1.1.5-beta.yyy)
+  - plotly-renderer의 peerDependencies를 원래 버전으로 복원
+
+- Updated dependencies [9dd7707]
+- Updated dependencies [9dd7707]
+  - vue-pivottable@1.1.5
+
+## 2.0.6
+
+### Patch Changes
+
 - 8c517e1: test: PR 자동 업데이트 두 번째 검증
   - vue-pivottable@1.1.5-beta.1750384228
 
