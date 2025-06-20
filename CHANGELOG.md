@@ -4,6 +4,16 @@
 
 ### Patch Changes
 
+- 5ef202b: fix: develop 브랜치를 베타 버전으로 복구
+
+  - develop 브랜치가 정식 버전으로 잘못 업데이트된 것을 수정
+  - 모든 패키지를 베타 버전으로 변경
+  - develop 브랜치는 항상 베타 버전을 유지해야 함
+
+## 1.1.5
+
+### Patch Changes
+
 - 9dd7707: fix: 베타 릴리즈 프로세스 전체 개선
 
   - 베타 버전 중복 문제 해결 (1.1.5-beta.xxx-beta.yyy → 1.1.5-beta.yyy)
