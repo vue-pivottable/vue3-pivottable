@@ -4,6 +4,18 @@
 
 ### Patch Changes
 
+- 646ada0: test: 2개 패키지 배포 시나리오 테스트
+
+  - plotly-renderer와 lazy-table-renderer만 변경
+  - vue-pivottable은 변경하지 않음
+  - GitHub Release 중복 방지 테스트
+  - peerDependencies 자동 업데이트 방지 테스트
+  - vue-pivottable@1.1.6-beta.1750400546
+
+## 1.1.7
+
+### Patch Changes
+
 - 9b0077c: fix: 워크플로우 및 버전 관리 시스템 개선
 
   - develop 브랜치에서 항상 베타 버전 보장하는 로직 추가
