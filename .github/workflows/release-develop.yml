@@ -68,7 +68,30 @@ jobs:
             fi
           done
           
-          # Apply changesets and consume them
+          # Remove beta suffixes temporarily so changeset can properly increment versions
+          echo "Temporarily removing beta suffixes for proper version increments..."
+          
+          # Remove beta suffix from main package
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          if [[ "$MAIN_VERSION" == *"-beta."* ]]; then
+            CLEAN_MAIN=$(echo "$MAIN_VERSION" | sed 's/-beta\.[0-9]*$//')
+            npm version $CLEAN_MAIN --no-git-tag-version
+            echo "✓ Main package: $MAIN_VERSION → $CLEAN_MAIN"
+          fi
+          
+          # Remove beta suffix from sub-packages
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              PKG_VERSION=$(node -p "require('./$pkg/package.json').version")
+              if [[ "$PKG_VERSION" == *"-beta."* ]]; then
+                CLEAN_PKG=$(echo "$PKG_VERSION" | sed 's/-beta\.[0-9]*$//')
+                cd "$pkg" && npm version $CLEAN_PKG --no-git-tag-version && cd ../..
+                echo "✓ $(basename $pkg): $PKG_VERSION → $CLEAN_PKG"
+              fi
+            fi
+          done
+          
+          # Apply changesets and consume them (now versions will properly increment)
           pnpm changeset version
           
           # Ensure beta versions on develop branch
@@ -89,44 +112,35 @@ jobs:
             fi
           }
           
-          # Check which packages were changed by changeset version
-          # Only apply beta timestamps to packages that were actually modified
-          echo "Checking which packages were modified by changeset..."
+          # Apply beta suffixes to packages processed by changeset
+          echo "Applying beta timestamps to packages processed by changeset..."
           
-          # Check main package
+          # Check main package - if no beta suffix, it was processed by changeset
           NEW_MAIN=$(node -p "require('./package.json').version")
-          if [ "$ORIGINAL_MAIN" != "$NEW_MAIN" ] || [[ "$NEW_MAIN" != *"-beta."* ]]; then
-            BETA_MAIN=$(update_beta_timestamp "$NEW_MAIN" "$TIMESTAMP")
-            if [ "$NEW_MAIN" != "$BETA_MAIN" ]; then
-              npm version $BETA_MAIN --no-git-tag-version
-              CHANGED_PACKAGES="vue-pivottable"
-              echo "✓ Updated vue-pivottable: $NEW_MAIN → $BETA_MAIN"
-            else
-              echo "✓ vue-pivottable already has correct beta version: $NEW_MAIN"
-            fi
+          if [[ "$NEW_MAIN" != *"-beta."* ]]; then
+            BETA_MAIN="${NEW_MAIN}-beta.${TIMESTAMP}"
+            npm version $BETA_MAIN --no-git-tag-version
+            CHANGED_PACKAGES="vue-pivottable"
+            echo "✓ Updated vue-pivottable: $NEW_MAIN → $BETA_MAIN"
           else
-            echo "✓ vue-pivottable unchanged: $NEW_MAIN"
+            echo "✓ vue-pivottable already has beta suffix: $NEW_MAIN"
           fi
           
-          # Check sub-packages
+          # Check sub-packages - if no beta suffix, they were processed by changeset
           for pkg in packages/*/; do
             if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
               cd "$pkg"
               PKG_NAME=$(basename "$pkg")
               NEW_VERSION=$(node -p "require('./package.json').version")
               
-              # Only update if package was changed by changeset OR doesn't have beta suffix
-              if [ "${ORIGINAL_VERSIONS[$PKG_NAME]}" != "$NEW_VERSION" ] || [[ "$NEW_VERSION" != *"-beta."* ]]; then
-                BETA_VERSION=$(update_beta_timestamp "$NEW_VERSION" "$TIMESTAMP")
-                if [ "$NEW_VERSION" != "$BETA_VERSION" ]; then
-                  npm version $BETA_VERSION --no-git-tag-version
-                  CHANGED_PACKAGES="$CHANGED_PACKAGES $PKG_NAME"
-                  echo "✓ Updated $PKG_NAME: $NEW_VERSION → $BETA_VERSION"
-                else
-                  echo "✓ $PKG_NAME already has correct beta version: $NEW_VERSION"
-                fi
+              # If no beta suffix, it was processed by changeset, so add beta
+              if [[ "$NEW_VERSION" != *"-beta."* ]]; then
+                BETA_VERSION="${NEW_VERSION}-beta.${TIMESTAMP}"
+                npm version $BETA_VERSION --no-git-tag-version
+                CHANGED_PACKAGES="$CHANGED_PACKAGES $PKG_NAME"
+                echo "✓ Updated $PKG_NAME: $NEW_VERSION → $BETA_VERSION"
               else
-                echo "✓ $PKG_NAME unchanged: $NEW_VERSION"
+                echo "✓ $PKG_NAME already has beta suffix: $NEW_VERSION"
               fi
               cd -
             fi
