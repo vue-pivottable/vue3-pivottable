@@ -4,6 +4,15 @@
 
 ### Patch Changes
 
+- 655b3b1: test: 단일 패키지 배포 시나리오 테스트
+
+  - vue-pivottable만 변경하여 1개 패키지 배포 테스트
+  - main PR이 있는 상태에서 추가 변경사항 반영 테스트
+
+## 1.1.6
+
+### Patch Changes
+
 - 9b0077c: fix: 워크플로우 및 버전 관리 시스템 개선
 
   - develop 브랜치에서 항상 베타 버전 보장하는 로직 추가
