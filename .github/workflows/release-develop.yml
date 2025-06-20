@@ -75,42 +75,58 @@ jobs:
           TIMESTAMP=$(date +%s)
           CHANGED_PACKAGES=""
           
-          # Function to ensure beta version with timestamp replacement
-          ensure_beta_version() {
+          # Function to update beta timestamp (preserving version increments)
+          update_beta_timestamp() {
             local current_version=$1
             local timestamp=$2
             
-            # If already has beta suffix, replace the timestamp
+            # If already has beta suffix, replace only the timestamp
             if [[ "$current_version" == *"-beta."* ]]; then
-              # Extract base version before first -beta
-              local base_version=$(echo "$current_version" | sed 's/-beta\..*//')
-              echo "${base_version}-beta.${timestamp}"
+              echo "$current_version" | sed "s/-beta\.[0-9]*$/-beta.${timestamp}/"
             else
-              # Add beta suffix
+              # Add beta suffix to non-beta versions
               echo "${current_version}-beta.${timestamp}"
             fi
           }
           
-          # Check main package - always ensure beta on develop
-          CURRENT_MAIN=$(node -p "require('./package.json').version")
-          BETA_MAIN=$(ensure_beta_version "$CURRENT_MAIN" "$TIMESTAMP")
+          # Check which packages were changed by changeset version
+          # Only apply beta timestamps to packages that were actually modified
+          echo "Checking which packages were modified by changeset..."
           
-          if [ "$CURRENT_MAIN" != "$BETA_MAIN" ]; then
-            npm version $BETA_MAIN --no-git-tag-version
-            CHANGED_PACKAGES="vue-pivottable"
+          # Check main package
+          NEW_MAIN=$(node -p "require('./package.json').version")
+          if [ "$ORIGINAL_MAIN" != "$NEW_MAIN" ] || [[ "$NEW_MAIN" != *"-beta."* ]]; then
+            BETA_MAIN=$(update_beta_timestamp "$NEW_MAIN" "$TIMESTAMP")
+            if [ "$NEW_MAIN" != "$BETA_MAIN" ]; then
+              npm version $BETA_MAIN --no-git-tag-version
+              CHANGED_PACKAGES="vue-pivottable"
+              echo "✓ Updated vue-pivottable: $NEW_MAIN → $BETA_MAIN"
+            else
+              echo "✓ vue-pivottable already has correct beta version: $NEW_MAIN"
+            fi
+          else
+            echo "✓ vue-pivottable unchanged: $NEW_MAIN"
           fi
           
-          # Check sub-packages - always ensure beta on develop
+          # Check sub-packages
           for pkg in packages/*/; do
             if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
               cd "$pkg"
               PKG_NAME=$(basename "$pkg")
-              CURRENT_VERSION=$(node -p "require('./package.json').version")
-              BETA_VERSION=$(ensure_beta_version "$CURRENT_VERSION" "$TIMESTAMP")
+              NEW_VERSION=$(node -p "require('./package.json').version")
               
-              if [ "$CURRENT_VERSION" != "$BETA_VERSION" ]; then
-                npm version $BETA_VERSION --no-git-tag-version
-                CHANGED_PACKAGES="$CHANGED_PACKAGES $PKG_NAME"
+              # Only update if package was changed by changeset OR doesn't have beta suffix
+              if [ "${ORIGINAL_VERSIONS[$PKG_NAME]}" != "$NEW_VERSION" ] || [[ "$NEW_VERSION" != *"-beta."* ]]; then
+                BETA_VERSION=$(update_beta_timestamp "$NEW_VERSION" "$TIMESTAMP")
+                if [ "$NEW_VERSION" != "$BETA_VERSION" ]; then
+                  npm version $BETA_VERSION --no-git-tag-version
+                  CHANGED_PACKAGES="$CHANGED_PACKAGES $PKG_NAME"
+                  echo "✓ Updated $PKG_NAME: $NEW_VERSION → $BETA_VERSION"
+                else
+                  echo "✓ $PKG_NAME already has correct beta version: $NEW_VERSION"
+                fi
+              else
+                echo "✓ $PKG_NAME unchanged: $NEW_VERSION"
               fi
               cd -
             fi
