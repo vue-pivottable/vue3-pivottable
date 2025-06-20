@@ -4,6 +4,20 @@
 
 ### Patch Changes
 
+- 9b0077c: fix: 워크플로우 및 버전 관리 시스템 개선
+
+  - develop 브랜치에서 항상 베타 버전 보장하는 로직 추가
+  - peerDependencies를 현재 npm latest와 일치하도록 수정
+  - changeset이 없어도 베타 접미사가 자동으로 추가되도록 개선
+  - npm 배포 충돌 및 버전 불일치 문제 근본 해결
+
+- Updated dependencies [9b0077c]
+  - vue-pivottable@1.1.6
+
+## 1.1.7
+
+### Patch Changes
+
 - 429cf68: fix: peerDependencies가 존재하지 않는 버전을 참조하는 문제 수정
 
   - vue-pivottable의 peerDependency를 ^1.1.5에서 ^1.1.4로 변경
