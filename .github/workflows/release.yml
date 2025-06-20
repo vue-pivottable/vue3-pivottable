@@ -246,7 +246,7 @@ jobs:
                 fs.readdirSync(packagesDir).forEach(dir => {
                   const pkgPath = path.join(packagesDir, dir, 'package.json');
                   if (fs.existsSync(pkgPath)) {
-                    const pkg = require(pkgPath);
+                    const pkg = require(path.resolve(pkgPath));
                     packages += \`\\n- \${pkg.name}@\${pkg.version}\`;
                   }
                 });
