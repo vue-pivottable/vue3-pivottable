@@ -1,5 +1,54 @@
 # Changelog
 
+## 2.0.5
+
+### Patch Changes
+
+- 47d4f39: fix: npm 배포 태그 수정 및 정식 버전 배포 문제 해결
+  - vue-pivottable@1.1.4
+
+## 2.0.4
+
+### Patch Changes
+
+- 639ff48: test: 베타 태그 배포 수정 테스트
+  - vue-pivottable@1.1.4
+
+## 2.0.3
+
+### Patch Changes
+
+- da9795b: fix: 잘못된 베타 버전이 latest 태그로 배포된 문제 수정
+  - vue-pivottable@1.1.4
+
+## 2.0.2
+
+### Patch Changes
+
+- 726ccb7: fix: 중복된 베타 버전 정리
+  - vue-pivottable@1.1.4
+
+## 2.0.1
+
+### Patch Changes
+
+- dc3b7dc: fix: 하위 패키지 빌드 오류 수정
+
+  - lazy-table-renderer: vue-pivottable 버전 의존성 업데이트 (^1.1.4)
+  - plotly-renderer: vue-pivottable 버전 의존성 업데이트 및 타입 오류 수정
+  - vite 설정에서 moduleResolution 관련 수정
+  - vue-pivottable@1.1.4
+
+## 2.0.0
+
+### Patch Changes
+
+- 34e74ef: fix: 프로덕션 배포가 release 브랜치에서 실행되도록 수정
+
+  - release.yml에서 release-packages.cjs 사용하도록 변경
+  - npm 배포 전 release 브랜치로 checkout하도록 수정
+  - 베타와 프로덕션 배포가 동일한 스크립트 사용
+
 ## 2.0.1
 
 ### Patch Changes

@@ -1,5 +1,77 @@
 # Changelog
 
+## 1.1.4
+
+### Patch Changes
+
+- ba78d0c: test: 릴리즈 워크플로우 개선 테스트 (메인 패키지)
+
+## 1.1.4
+
+### Patch Changes
+
+- d2ae696: test: 전체 릴리즈 프로세스 테스트를 위한 메인 패키지 업데이트
+
+## 1.1.3
+
+### Patch Changes
+
+- 0c3c5b0: fix: 하위 패키지 이중 베타 버전 문제 해결
+
+  - lazy-table-renderer와 plotly-renderer의 잘못된 베타 버전 수정
+  - 워크플로우 개선사항 적용을 위한 릴리스 준비
+
+## 1.1.3
+
+### Patch Changes
+
+- ad33eb8: fix: 프로덕션 릴리스를 위한 버전 업데이트
+
+  - 워크플로우 개선사항 반영
+  - 안정적인 배포 프로세스 확립
+
+## 1.1.2
+
+### Patch Changes
+
+- dae29ab: fix: 베타와 프로덕션 릴리스 워크플로우 개선
+
+  - 베타와 프로덕션 모두 동일한 release-packages.cjs 스크립트 사용
+  - changeset이 적용된 패키지만 베타 버전 생성하도록 수정
+  - 프로덕션 릴리스 시 기존 릴리스 브랜치 삭제 후 재생성
+  - 프로덕션 배포가 릴리스 브랜치에서 실행되도록 수정
+
+## 1.1.2
+
+### Patch Changes
+
+- 34e74ef: fix: 프로덕션 배포가 release 브랜치에서 실행되도록 수정
+
+  - release.yml에서 release-packages.cjs 사용하도록 변경
+  - npm 배포 전 release 브랜치로 checkout하도록 수정
+  - 베타와 프로덕션 배포가 동일한 스크립트 사용
+
+## 1.1.2
+
+### Patch Changes
+
+- c2d09a4: fix: 빌드 오류 처리 및 순서 개선
+
+  - set -e 추가로 빌드 실패 시 워크플로우 즉시 중단
+  - 메인 패키지를 먼저 빌드하여 타입 선언 파일 생성
+  - 하위 패키지들이 메인 패키지 타입을 참조할 수 있도록 순서 조정
+
+## 1.1.2
+
+### Patch Changes
+
+- 224a73a: fix: 베타 릴리스 워크플로우 근본 수정 (3번째 시도)
+
+  - step ID 누락 해결: 'id: version' 추가
+  - 베타 중복 방지: 기존 -beta.\* 제거 후 새로 추가
+  - 릴리스 순서 개선: GitHub Release → npm 퍼블리시
+  - 태그명 표준화: vue-pivottable@버전 형식 사용
+
 ## 1.0.16
 
 ### Patch Changes

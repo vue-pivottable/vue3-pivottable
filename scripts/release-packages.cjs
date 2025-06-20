@@ -3,9 +3,6 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 
-// Check if running in beta mode
-const isBeta = process.argv.includes('--beta') || process.env.RELEASE_TAG === 'beta';
-
 // Color codes for output
 const colors = {
   reset: '\x1b[0m',
@@ -23,26 +20,30 @@ const log = {
   warning: (msg) => console.log(`${colors.yellow}⚠${colors.reset} ${msg}`)
 };
 
+// Get release tag from environment variable
+const releaseTag = process.env.RELEASE_TAG || 'latest';
+log.info(`Publishing with tag: ${releaseTag}`);
+
 // Package configurations
 const packages = [
   {
     name: 'vue3-pivottable',
     path: '.',
-    buildCmd: 'pnpm build',
-    publishCmd: isBeta ? 'pnpm publish --tag beta --no-git-checks' : 'pnpm changeset publish'
+    buildCmd: 'pnpm clean && pnpm build',
+    publishCmd: `pnpm changeset publish --tag ${releaseTag}`
   },
   {
     name: '@vue-pivottable/plotly-renderer',
     path: './packages/plotly-renderer',
-    buildCmd: 'pnpm --filter @vue-pivottable/plotly-renderer build',
-    publishCmd: isBeta ? 'pnpm publish --filter @vue-pivottable/plotly-renderer --tag beta --no-git-checks' : 'pnpm changeset publish --filter @vue-pivottable/plotly-renderer',
+    buildCmd: 'pnpm --filter @vue-pivottable/plotly-renderer clean && pnpm --filter @vue-pivottable/plotly-renderer build',
+    publishCmd: `pnpm changeset publish --filter @vue-pivottable/plotly-renderer --tag ${releaseTag}`,
     tokenEnv: 'NPM_TOKEN_SUMIN'
   },
   {
     name: '@vue-pivottable/lazy-table-renderer',
     path: './packages/lazy-table-renderer',
-    buildCmd: 'pnpm --filter @vue-pivottable/lazy-table-renderer build',
-    publishCmd: isBeta ? 'pnpm publish --filter @vue-pivottable/lazy-table-renderer --tag beta --no-git-checks' : 'pnpm changeset publish --filter @vue-pivottable/lazy-table-renderer',
+    buildCmd: 'pnpm --filter @vue-pivottable/lazy-table-renderer clean && pnpm --filter @vue-pivottable/lazy-table-renderer build',
+    publishCmd: `pnpm changeset publish --filter @vue-pivottable/lazy-table-renderer --tag ${releaseTag}`,
     tokenEnv: 'NPM_TOKEN_SUMIN'
   }
 ];
@@ -63,6 +64,17 @@ async function releasePackages() {
       // Check if package directory exists
       if (!fs.existsSync(pkg.path)) {
         throw new Error(`Package directory not found: ${pkg.path}`);
+      }
+
+      // Get package version
+      const packageJsonPath = `${pkg.path}/package.json`;
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      const currentVersion = packageJson.version;
+
+      // Skip non-beta versions only when publishing with beta tag
+      if (releaseTag === 'beta' && !currentVersion.includes('-beta')) {
+        log.info(`Skipping ${pkg.name} - no beta version (${currentVersion})`);
+        continue;
       }
 
       // Build package

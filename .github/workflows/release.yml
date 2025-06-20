@@ -54,22 +54,52 @@ jobs:
       - name: Check beta versions
         id: check-versions
         run: |
-          # Check if packages have beta versions
+          # Check if any package has beta version
+          HAS_BETA=false
+          BETA_PACKAGES=""
+          
+          # Check main package
           MAIN_VERSION=$(node -p "require('./package.json').version")
           if [[ $MAIN_VERSION == *"-beta"* ]]; then
-            echo "has_beta=true" >> $GITHUB_OUTPUT
-            # Extract base version without beta suffix
+            HAS_BETA=true
+            BETA_PACKAGES="vue-pivottable"
+            # Extract base version without beta suffix for release branch
             BASE_VERSION=$(echo $MAIN_VERSION | sed 's/-beta.*//')
             echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
-          else
-            echo "has_beta=false" >> $GITHUB_OUTPUT
           fi
+          
+          # Check sub-packages
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              PKG_NAME=$(basename "$pkg")
+              PKG_VERSION=$(cd "$pkg" && node -p "require('./package.json').version")
+              if [[ $PKG_VERSION == *"-beta"* ]]; then
+                HAS_BETA=true
+                BETA_PACKAGES="$BETA_PACKAGES $PKG_NAME"
+              fi
+            fi
+          done
+          
+          echo "has_beta=$HAS_BETA" >> $GITHUB_OUTPUT
+          echo "beta_packages=$BETA_PACKAGES" >> $GITHUB_OUTPUT
+          
+          # Use main package version for release branch, or highest version
+          if [ -z "${BASE_VERSION}" ]; then
+            # If main package is not beta, use its version for release branch
+            BASE_VERSION=$(echo $MAIN_VERSION | sed 's/-beta.*//')
+            echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "Found beta packages: $BETA_PACKAGES"
 
       - name: Update versions to stable
         if: steps.check-versions.outputs.has_beta == 'true'
         run: |
-          # Update main package
-          npm version ${{ steps.check-versions.outputs.base_version }} --no-git-tag-version
+          # Update main package only if it has beta
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          if [[ $MAIN_VERSION == *"-beta"* ]]; then
+            npm version ${{ steps.check-versions.outputs.base_version }} --no-git-tag-version
+          fi
           
           # Update sub-packages
           for pkg in packages/*/; do
@@ -77,7 +107,8 @@ jobs:
               cd "$pkg"
               PKG_VERSION=$(node -p "require('./package.json').version")
               if [[ $PKG_VERSION == *"-beta"* ]]; then
-                PKG_BASE=$(echo $PKG_VERSION | sed 's/-beta.*//')
+                # Remove all beta suffixes (handle multiple -beta occurrences)
+                PKG_BASE=$(echo $PKG_VERSION | sed 's/-beta.*$//')
                 npm version $PKG_BASE --no-git-tag-version
               fi
               cd -
@@ -91,6 +122,9 @@ jobs:
           VERSION=${{ steps.check-versions.outputs.base_version }}
           RELEASE_BRANCH="release/v${VERSION}"
           
+          # Delete existing release branch if it exists
+          git push origin --delete $RELEASE_BRANCH 2>/dev/null || echo "No existing branch to delete"
+          
           git checkout -b $RELEASE_BRANCH
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -101,61 +135,126 @@ jobs:
           echo "release_branch=$RELEASE_BRANCH" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Checkout release branch
+        if: steps.check-versions.outputs.has_beta == 'true'
+        run: |
+          git checkout ${{ steps.create-release.outputs.release_branch }}
+          git pull origin ${{ steps.create-release.outputs.release_branch }}
+
       - name: Publish to npm
         if: steps.check-versions.outputs.has_beta == 'true'
         run: |
-          # Publish with latest tag (overwrites beta)
+          # Publish with latest tag
           node scripts/release-packages.cjs
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
 
-      - name: Create GitHub Release
-        if: steps.check-versions.outputs.has_beta == 'true'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.create-release.outputs.version }}
-          release_name: Release v${{ steps.create-release.outputs.version }}
-          draft: false
-          prerelease: false
-          body: |
-            ## 🚀 Stable Release
-            
-            This release promotes the beta version to stable.
-            
-            Install with: `npm install vue-pivottable@latest`
-
-      - name: Create PR to update main
+      - name: Create GitHub Releases
         if: steps.check-versions.outputs.has_beta == 'true'
         run: |
-          # Create PR from release branch back to main
+          # Create release for each package with stable version
+          create_release() {
+            local PKG_NAME=$1
+            local PKG_VERSION=$2
+            local NPM_NAME=$3
+            
+            echo "Creating release for $PKG_NAME@$PKG_VERSION"
+            
+            # Delete existing beta release if it exists
+            gh release delete "${PKG_NAME}@${PKG_VERSION}" --yes 2>/dev/null || true
+            
+            gh release create "${PKG_NAME}@${PKG_VERSION}" \
+              --title "${PKG_NAME}@${PKG_VERSION}" \
+              --notes "## 🚀 Stable Release
+          
+          This release promotes the beta version to stable.
+          
+          Install with: \`npm install ${NPM_NAME}@latest\`
+          
+          ### Version: ${PKG_VERSION}" \
+              --target ${{ github.sha }}
+          }
+          
+          # Get version info from current branch
+          VERSION="${{ steps.create-release.outputs.version }}"
+          
+          # Check main package
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          if [ "$MAIN_VERSION" = "$VERSION" ]; then
+            create_release "vue-pivottable" "$MAIN_VERSION" "vue-pivottable"
+          fi
+          
+          # Check sub-packages
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              FULL_PKG_NAME=$(cd "$pkg" && node -p "require('./package.json').name")
+              PKG_VERSION=$(cd "$pkg" && node -p "require('./package.json').version")
+              
+              # Only create release if version doesn't contain beta
+              if [[ $PKG_VERSION != *"-beta"* ]]; then
+                create_release "$FULL_PKG_NAME" "$PKG_VERSION" "$FULL_PKG_NAME"
+              fi
+            fi
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync with develop
+        if: steps.check-versions.outputs.has_beta == 'true'
+        run: |
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Fetch latest develop
+          git fetch origin develop:develop
+          
+          # Merge release branch into develop
+          git checkout develop
+          git merge ${{ steps.create-release.outputs.release_branch }} --no-edit -m "chore: sync release ${{ steps.create-release.outputs.release_branch }} to develop"
+          git push origin develop
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create PR to main
+        if: steps.check-versions.outputs.has_beta == 'true'
+        run: |
+          VERSION="${{ steps.create-release.outputs.release_branch }}"
+          
           gh pr create \
             --base main \
-            --head ${{ steps.create-release.outputs.release_branch }} \
-            --title "chore: update main with release v${{ steps.create-release.outputs.version }}" \
+            --head "${{ steps.create-release.outputs.release_branch }}" \
+            --title "chore: update main with $VERSION" \
             --body "## 📦 Release Update
             
             This PR updates main branch with:
             - ✅ Stable version numbers (beta suffix removed)
             - ✅ Updated package.json files
-            - ✅ Release commit
+            - ✅ npm packages published
+            - ✅ GitHub releases created
             
-            **Note**: Changesets were already consumed in develop branch." \
-            || echo "PR creation failed"
-          
-          # Also create PR to sync with develop
-          gh pr create \
-            --base develop \
-            --head ${{ steps.create-release.outputs.release_branch }} \
-            --title "chore: sync release v${{ steps.create-release.outputs.version }} to develop" \
-            --body "## 🔄 Release Sync
+            ### Published Packages
+            $(node -p "
+              const main = require('./package.json');
+              let packages = \`- vue-pivottable@\${main.version}\`;
+              const fs = require('fs');
+              const path = require('path');
+              const packagesDir = './packages';
+              if (fs.existsSync(packagesDir)) {
+                fs.readdirSync(packagesDir).forEach(dir => {
+                  const pkgPath = path.join(packagesDir, dir, 'package.json');
+                  if (fs.existsSync(pkgPath)) {
+                    const pkg = require(path.resolve(pkgPath));
+                    packages += \`\\n- \${pkg.name}@\${pkg.version}\`;
+                  }
+                });
+              }
+              packages
+            ")
             
-            This PR syncs the stable release back to develop:
-            - ✅ Version alignment
-            - ✅ Ensures develop has latest stable version
-            
-            **Important**: Review carefully for any conflicts with ongoing development." \
-            || echo "Sync PR creation failed"
+            **Note**: This release has been automatically synced with develop branch." \
+            || echo "PR to main already exists or creation failed"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
