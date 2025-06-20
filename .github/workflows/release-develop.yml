@@ -91,6 +91,24 @@ jobs:
             fi
           done
           
+          # Revert peerDependencies changes to prevent beta versions in dependencies
+          echo "Reverting peerDependencies changes..."
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              cd "$pkg"
+              # Reset peerDependencies to use 'latest' or specific non-beta versions
+              node -e "
+                const fs = require('fs');
+                const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+                if (pkg.peerDependencies && pkg.peerDependencies['vue-pivottable']) {
+                  pkg.peerDependencies['vue-pivottable'] = 'latest';
+                  fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\\n');
+                }
+              "
+              cd -
+            fi
+          done
+          
           # Commit all changes
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
