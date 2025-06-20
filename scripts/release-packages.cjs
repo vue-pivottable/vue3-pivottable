@@ -71,8 +71,8 @@ async function releasePackages() {
       const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
       const currentVersion = packageJson.version;
 
-      // Skip if not a beta version (no changeset)
-      if (!currentVersion.includes('-beta')) {
+      // Skip non-beta versions only when publishing with beta tag
+      if (releaseTag === 'beta' && !currentVersion.includes('-beta')) {
         log.info(`Skipping ${pkg.name} - no beta version (${currentVersion})`);
         continue;
       }
