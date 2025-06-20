@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.5
+
+### Patch Changes
+
+- 3769e71: test: release 워크플로우 직접 배포 테스트
+  - vue-pivottable@1.1.4
+
 ## 1.1.4
 
 ### Patch Changes
