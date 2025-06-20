@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.5
+
+### Patch Changes
+
+- 47d4f39: fix: npm 배포 태그 수정 및 정식 버전 배포 문제 해결
+  - vue-pivottable@1.1.4
+
 ## 2.0.4
 
 ### Patch Changes
