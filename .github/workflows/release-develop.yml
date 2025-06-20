@@ -91,6 +91,13 @@ jobs:
             fi
           done
           
+          # Store package.json files before changeset modifications
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              cp "$pkg/package.json" "$pkg/package.json.backup"
+            fi
+          done
+          
           # Commit all changes
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -98,6 +105,32 @@ jobs:
           git commit -m "chore: prepare beta release
           
           Changed packages: $CHANGED_PACKAGES"
+          
+          # Restore peerDependencies from backup to prevent beta version pollution
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json.backup" ]; then
+              cd "$pkg"
+              # Extract peerDependencies from backup and apply to current
+              node -e "
+                const fs = require('fs');
+                const backup = JSON.parse(fs.readFileSync('./package.json.backup', 'utf8'));
+                const current = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+                if (backup.peerDependencies) {
+                  current.peerDependencies = backup.peerDependencies;
+                }
+                fs.writeFileSync('./package.json', JSON.stringify(current, null, 2) + '\\n');
+              "
+              rm -f package.json.backup
+              cd -
+            fi
+          done
+          
+          # Commit peerDependencies fix if there are changes
+          if ! git diff --quiet; then
+            git add -A
+            git commit -m "fix: restore peerDependencies to prevent beta version pollution"
+          fi
+          
           git push origin develop
           
           # Always use current main package version for GitHub release tag
