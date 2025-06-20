@@ -75,14 +75,16 @@ jobs:
           TIMESTAMP=$(date +%s)
           CHANGED_PACKAGES=""
           
-          # Function to ensure beta version
+          # Function to ensure beta version with timestamp replacement
           ensure_beta_version() {
             local current_version=$1
             local timestamp=$2
             
-            # If already has beta suffix, keep it
+            # If already has beta suffix, replace the timestamp
             if [[ "$current_version" == *"-beta."* ]]; then
-              echo "$current_version"
+              # Extract base version before first -beta
+              local base_version=$(echo "$current_version" | sed 's/-beta\..*//')
+              echo "${base_version}-beta.${timestamp}"
             else
               # Add beta suffix
               echo "${current_version}-beta.${timestamp}"
