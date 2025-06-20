@@ -1,0 +1,8 @@
+{
+  "timestamp": "2025-06-20T01:57:00Z",
+  "title": "Release: 1.1.5-beta.1750384228",
+  "body": "## 🚀 Release 1.1.5-beta.1750384228\n    \n    This PR contains the latest beta release ready for production.\n    \n    ### Beta Version\n    - 1.1.5-beta.1750384228\n    \n    ### Packages to be released\n    - vue-pivottable: 1.1.5-beta.1750384228\n    - Check sub-packages for version updates\n    \n    ### Pre-release Testing\n    - Beta version has been published to npm with tag @beta\n    - Install with: `npm install vue-pivottable@beta`\n    \n    ### Release Notes\n    See [CHANGELOG.md](./CHANGELOG.md) for details.\n    \n    ---\n    ⚠️ **Note**: This PR will be automatically updated if new changes are pushed to develop.",
+  "labels": [],
+  "updatedAt": "2025-06-20T01:55:36Z",
+  "state": "OPEN"
+}
