@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.6
+
+### Patch Changes
+
+- 8c517e1: test: PR 자동 업데이트 두 번째 검증
+  - vue-pivottable@1.1.5-beta.1750384228
+
 ## 2.0.5
 
 ### Patch Changes
