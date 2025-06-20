@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.1.7
+
+### Patch Changes
+
+- 429cf68: fix: peerDependencies가 존재하지 않는 버전을 참조하는 문제 수정
+
+  - vue-pivottable의 peerDependency를 ^1.1.5에서 ^1.1.4로 변경
+  - 1.1.5는 아직 정식 릴리즈되지 않았으므로 1.1.4를 참조해야 함
+  - plotly-renderer와 lazy-table-renderer 모두 수정
+  - vue-pivottable@1.1.5
+
+## 1.1.6
+
+### Patch Changes
+
+- 5ef202b: fix: develop 브랜치를 베타 버전으로 복구
+
+  - develop 브랜치가 정식 버전으로 잘못 업데이트된 것을 수정
+  - 모든 패키지를 베타 버전으로 변경
+  - develop 브랜치는 항상 베타 버전을 유지해야 함
+
+- Updated dependencies [5ef202b]
+  - vue-pivottable@1.1.5
+
 ## 1.1.6
 
 ### Patch Changes
