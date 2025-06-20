@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.5
+
+### Patch Changes
+
+- 464d7d2: test: main PR 자동 업데이트 기능 검증
+
 ## 1.1.4
 
 ### Patch Changes
