@@ -1,6 +1,6 @@
 <template>
   <Draggable
-    v-if="showDraggable && modelItems.length > 0"
+    v-if="showDraggable"
     tag="td"
     :list="modelItems"
     :group="{ name: 'shared', pull: true, put: true }"
