@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- a6cd884: chore: 베타 버전 1.1.7-beta.1751886288 릴리즈
+  - develop sync 제거 후 재빌드된 베타 버전
+
+## 1.1.7
+
+### Patch Changes
+
 - 15ef3bb: fix: Release 워크플로우에서 develop 동기화 단계 제거
   - main 브랜치에서 stable 릴리즈 후 develop 브랜치와의 동기화 시 발생하는 버전 충돌 문제 해결
   - develop은 항상 베타 버전을 유지하고, main은 stable 버전만 유지하도록 워크플로우 개선

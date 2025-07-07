@@ -4,6 +4,16 @@
 
 ### Patch Changes
 
+- a6cd884: chore: 베타 버전 1.1.7-beta.1751886288 릴리즈
+  - develop sync 제거 후 재빌드된 베타 버전
+
+- Updated dependencies [a6cd884]
+  - vue-pivottable@1.1.7
+
+## 1.1.7
+
+### Patch Changes
+
 - 2de66de: chore: stable 버전 1.1.7 릴리즈 준비
 
   베타 테스트가 완료되어 stable 버전으로 릴리즈 준비합니다.
