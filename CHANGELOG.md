@@ -4,6 +4,14 @@
 
 ### Patch Changes
 
+- c9b80cb: fix: VDragAndDropCell이 속성이 없을 때 사라지는 문제 수정
+  - DragAndDropCell 컴포넌트에서 속성이 누락되었을 때 발생하는 문제 해결
+  - 이슈 #177 수정
+
+## 1.1.7
+
+### Patch Changes
+
 - df8c87d: fix: rows/cols가 비어있을 때 Vue2와 동일하게 렌더링되도록 수정
   - 디버그용 console.log 코드 제거
   - rows/cols가 모두 비어있을 때도 테이블 구조와 총계가 표시되도록 수정
