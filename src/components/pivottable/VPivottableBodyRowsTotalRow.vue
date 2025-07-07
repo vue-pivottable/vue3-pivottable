@@ -1,5 +1,5 @@
 <template>
-  <tr v-if="showColTotal">
+  <tr v-if="showColTotal || (colKeys.length === 0 && rowKeys.length === 0)">
     <th
       class="pvtTotalLabel"
       :colSpan="rowAttrs.length + (colAttrs.length === 0 ? 0 : 1)"
@@ -18,7 +18,7 @@
       {{ getAggregator([], colKey).format(getAggregator([], colKey).value()) }}
     </td>
     <td
-      v-if="showRowTotal"
+      v-if="showRowTotal || (colKeys.length === 0 && rowKeys.length === 0)"
       class="pvtGrandTotal"
       @click="handleCellClick(grandTotalValue, [], [])($event)"
     >
@@ -45,6 +45,7 @@ const {
   colAttrs,
   rowAttrs,
   colKeys,
+  rowKeys,
   pivotData
 } = useProvidePivotData()
 
