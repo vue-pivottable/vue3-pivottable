@@ -201,23 +201,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Sync with develop
-        if: steps.check-versions.outputs.has_beta == 'true'
-        run: |
-          # Configure git
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Fetch latest develop
-          git fetch origin develop:develop
-          
-          # Merge release branch into develop
-          git checkout develop
-          git merge ${{ steps.create-release.outputs.release_branch }} --no-edit -m "chore: sync release ${{ steps.create-release.outputs.release_branch }} to develop"
-          git push origin develop
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Create PR to main
         if: steps.check-versions.outputs.has_beta == 'true'
         run: |
