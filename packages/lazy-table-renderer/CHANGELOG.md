@@ -4,8 +4,23 @@
 
 ### Patch Changes
 
-- 646ada0: test: 2개 패키지 배포 시나리오 테스트
+- 2de66de: chore: stable 버전 1.1.7 릴리즈 준비
 
+  베타 테스트가 완료되어 stable 버전으로 릴리즈 준비합니다.
+
+  ### 포함된 변경사항
+  - fix: rows/cols가 비어있을 때 Vue2와 동일하게 렌더링되도록 수정
+  - fix: VDragAndDropCell이 속성이 없을 때 사라지는 문제 수정
+  - chore: 베타 버전 관리 및 릴리즈 프로세스 개선
+
+- Updated dependencies [2de66de]
+  - vue-pivottable@1.1.7
+
+## 1.1.7
+
+### Patch Changes
+
+- 646ada0: test: 2개 패키지 배포 시나리오 테스트
   - plotly-renderer와 lazy-table-renderer만 변경
   - vue-pivottable은 변경하지 않음
   - GitHub Release 중복 방지 테스트
@@ -17,7 +32,6 @@
 ### Patch Changes
 
 - 9b0077c: fix: 워크플로우 및 버전 관리 시스템 개선
-
   - develop 브랜치에서 항상 베타 버전 보장하는 로직 추가
   - peerDependencies를 현재 npm latest와 일치하도록 수정
   - changeset이 없어도 베타 접미사가 자동으로 추가되도록 개선
@@ -31,7 +45,6 @@
 ### Patch Changes
 
 - 429cf68: fix: peerDependencies가 존재하지 않는 버전을 참조하는 문제 수정
-
   - vue-pivottable의 peerDependency를 ^1.1.5에서 ^1.1.4로 변경
   - 1.1.5는 아직 정식 릴리즈되지 않았으므로 1.1.4를 참조해야 함
   - plotly-renderer와 lazy-table-renderer 모두 수정
@@ -42,7 +55,6 @@
 ### Patch Changes
 
 - 5ef202b: fix: develop 브랜치를 베타 버전으로 복구
-
   - develop 브랜치가 정식 버전으로 잘못 업데이트된 것을 수정
   - 모든 패키지를 베타 버전으로 변경
   - develop 브랜치는 항상 베타 버전을 유지해야 함
@@ -90,7 +102,6 @@
 ### Patch Changes
 
 - dc3b7dc: fix: 하위 패키지 빌드 오류 수정
-
   - lazy-table-renderer: vue-pivottable 버전 의존성 업데이트 (^1.1.4)
   - plotly-renderer: vue-pivottable 버전 의존성 업데이트 및 타입 오류 수정
   - vite 설정에서 moduleResolution 관련 수정
@@ -126,7 +137,6 @@
 ### Patch Changes
 
 - 34e74ef: fix: 프로덕션 배포가 release 브랜치에서 실행되도록 수정
-
   - release.yml에서 release-packages.cjs 사용하도록 변경
   - npm 배포 전 release 브랜치로 checkout하도록 수정
   - 베타와 프로덕션 배포가 동일한 스크립트 사용

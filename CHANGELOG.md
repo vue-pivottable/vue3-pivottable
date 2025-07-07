@@ -4,6 +4,26 @@
 
 ### Patch Changes
 
+- e38ae7e: chore: 워크플로우 재실행을 위한 changeset
+  - 이전 워크플로우 실행 시 npm 배포 중복 오류 해결을 위함
+
+## 1.1.7
+
+### Patch Changes
+
+- 2de66de: chore: stable 버전 1.1.7 릴리즈 준비
+
+  베타 테스트가 완료되어 stable 버전으로 릴리즈 준비합니다.
+
+  ### 포함된 변경사항
+  - fix: rows/cols가 비어있을 때 Vue2와 동일하게 렌더링되도록 수정
+  - fix: VDragAndDropCell이 속성이 없을 때 사라지는 문제 수정
+  - chore: 베타 버전 관리 및 릴리즈 프로세스 개선
+
+## 1.1.7
+
+### Patch Changes
+
 - c9b80cb: fix: VDragAndDropCell이 속성이 없을 때 사라지는 문제 수정
   - DragAndDropCell 컴포넌트에서 속성이 누락되었을 때 발생하는 문제 해결
   - 이슈 #177 수정
