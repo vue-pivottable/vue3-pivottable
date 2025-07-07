@@ -4,6 +4,16 @@
 
 ### Patch Changes
 
+- a79ca01: chore: 베타 릴리즈를 위한 changeset 추가
+  - PR #264 CI 체크 통과를 위한 changeset
+
+- Updated dependencies [a79ca01]
+  - vue-pivottable@1.1.7
+
+## 1.1.7
+
+### Patch Changes
+
 - a6cd884: chore: 베타 버전 1.1.7-beta.1751886288 릴리즈
   - develop sync 제거 후 재빌드된 베타 버전
 
