@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- e38ae7e: chore: 워크플로우 재실행을 위한 changeset
+  - 이전 워크플로우 실행 시 npm 배포 중복 오류 해결을 위함
+
+## 1.1.7
+
+### Patch Changes
+
 - 2de66de: chore: stable 버전 1.1.7 릴리즈 준비
 
   베타 테스트가 완료되어 stable 버전으로 릴리즈 준비합니다.
