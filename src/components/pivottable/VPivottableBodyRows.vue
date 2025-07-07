@@ -61,7 +61,6 @@ type VPivottableBodyRowsProps = Pick<
 }
 
 const props = defineProps<VPivottableBodyRowsProps>()
-
 const {
   pivotData,
   spanSize,

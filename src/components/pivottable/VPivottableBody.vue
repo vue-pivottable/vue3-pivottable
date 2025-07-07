@@ -1,6 +1,7 @@
 <template>
-  <tbody v-if="pivotData">
+  <tbody>
     <VPivottableBodyRows
+      v-if="rowKeys.length > 0"
       :row-keys="rowKeys"
       :col-keys="colKeys"
       :show-row-total="showRowTotal"
@@ -31,6 +32,5 @@ type Props = Pick<
 
 defineProps<Props>()
 
-const { pivotData, rowKeys, colKeys, rowAttrs, colAttrs } =
-  useProvidePivotData()
+const { rowKeys, colKeys, rowAttrs, colAttrs } = useProvidePivotData()
 </script>

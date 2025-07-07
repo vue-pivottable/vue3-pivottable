@@ -1,5 +1,5 @@
 <template>
-  <thead v-if="pivotData">
+  <thead>
     <tr
       v-for="(c, j) in colAttrs"
       :key="`colAttrs${j}`"
@@ -46,5 +46,5 @@ type Props = Pick<DefaultPropsType, 'showRowTotal' | 'languagePack'>
 
 defineProps<Props>()
 
-const { pivotData, colAttrs, rowAttrs, colKeys } = useProvidePivotData()
+const { colAttrs, rowAttrs, colKeys } = useProvidePivotData()
 </script>
