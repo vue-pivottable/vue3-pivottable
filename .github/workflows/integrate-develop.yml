@@ -31,7 +31,7 @@ jobs:
         id: check-pr
         run: |
           EXISTING_PR=$(gh pr list --base staging --head develop --json number --jq '.[0].number' || echo "")
-          
+
           if [ -n "$EXISTING_PR" ]; then
             echo "pr_exists=true" >> $GITHUB_OUTPUT
             echo "pr_number=$EXISTING_PR" >> $GITHUB_OUTPUT
@@ -48,7 +48,7 @@ jobs:
         run: |
           # Fetch staging branch
           git fetch origin staging:staging || echo "Staging branch not found"
-          
+
           # Get the latest commits from develop that aren't in staging
           if git rev-parse --verify origin/staging >/dev/null 2>&1; then
             COMMITS=$(git log --pretty=format:"- %s (%h)" origin/staging..HEAD | head -20)
@@ -57,17 +57,17 @@ jobs:
             COMMITS=$(git log --pretty=format:"- %s (%h)" HEAD | head -20)
             COMMIT_COUNT=$(git rev-list --count HEAD)
           fi
-          
+
           # Escape for GitHub Actions output
           COMMITS="${COMMITS//'%'/'%25'}"
           COMMITS="${COMMITS//$'\n'/'%0A'}"
           COMMITS="${COMMITS//$'\r'/'%0D'}"
-          
+
           echo "commits<<EOF" >> $GITHUB_OUTPUT
           echo "$COMMITS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
-          
+
           # Get timestamp
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
           echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
@@ -77,7 +77,7 @@ jobs:
         run: |
           COMMIT_COUNT="${{ steps.commit-info.outputs.commit_count }}"
           TIMESTAMP="${{ steps.commit-info.outputs.timestamp }}"
-          
+
           # Create PR body file
           {
             echo "## 🚀 Integration from develop to staging"
@@ -103,7 +103,7 @@ jobs:
             echo "- Multiple features can accumulate in this single PR"
             echo "- Approval triggers the beta release process"
           } > pr-body.md
-          
+
           gh pr create \
             --base staging \
             --head develop \
@@ -120,17 +120,17 @@ jobs:
           COMMIT_COUNT="${{ steps.commit-info.outputs.commit_count }}"
           TIMESTAMP="${{ steps.commit-info.outputs.timestamp }}"
           COMMITS="${{ steps.commit-info.outputs.commits }}"
-          
+
           # Update PR title with commit count
           gh pr edit $PR_NUMBER \
             --title "🔄 Integrate develop → staging (${COMMIT_COUNT} commits)"
-          
+
           # Get current PR body
           CURRENT_BODY=$(gh pr view $PR_NUMBER --json body --jq '.body')
-          
+
           # Create updated section
           UPDATED_SECTION="### 🔄 Last Updated: ${TIMESTAMP}\nNew commits: ${COMMIT_COUNT}\n\n### 📝 Recent Commits\n${COMMITS}"
-          
+
           # Update or append the updated section
           if echo "$CURRENT_BODY" | grep -q "### 🔄 Last Updated:"; then
             # Replace existing update section
@@ -140,18 +140,18 @@ jobs:
             # Append update section
             NEW_BODY="$CURRENT_BODY\n\n---\n\n$UPDATED_SECTION"
           fi
-          
+
           # Update PR body
           echo "$NEW_BODY" > pr-body-update.md
           gh pr edit $PR_NUMBER --body-file pr-body-update.md
-          
+
           # Add labels
           gh pr edit $PR_NUMBER \
             --add-label "needs-review"
-          
+
           # Set as ready for review
           gh pr ready $PR_NUMBER || true
-          
+
           echo "✅ Updated PR #${PR_NUMBER} with ${COMMIT_COUNT} new commits"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

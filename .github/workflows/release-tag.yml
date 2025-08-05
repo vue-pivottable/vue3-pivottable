@@ -25,17 +25,17 @@ jobs:
         run: |
           TAG_NAME=${GITHUB_REF#refs/tags/}
           echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
-          
+
           # Extract version from tag
           VERSION=${TAG_NAME#v}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          
+
           # Validate version format
           if ! [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$ ]]; then
             echo "❌ Invalid version format: $VERSION"
             exit 1
           fi
-          
+
           echo "✅ Valid tag: $TAG_NAME (version: $VERSION)"
 
       - name: Setup Node.js
@@ -55,7 +55,7 @@ jobs:
       - name: Verify versions match
         run: |
           TAG_VERSION="${{ steps.tag-info.outputs.version }}"
-          
+
           # Check main package version
           MAIN_VERSION=$(node -p "require('./package.json').version")
           if [ "$MAIN_VERSION" != "$TAG_VERSION" ]; then
@@ -70,7 +70,7 @@ jobs:
           echo "Running type checks..."
           pnpm typecheck
           pnpm -r typecheck || true
-          
+
           echo "Running linting..."
           pnpm lint
           pnpm -r lint || true
@@ -84,17 +84,17 @@ jobs:
         id: publish
         run: |
           echo "Publishing packages with @latest tag..."
-          
+
           # Publish packages
           node scripts/release-packages.cjs
-          
+
           # Collect published packages
           echo "published_packages<<EOF" >> $GITHUB_OUTPUT
-          
+
           # Check which packages were published
           MAIN_VERSION=$(node -p "require('./package.json').version")
           echo "- vue-pivottable@$MAIN_VERSION" >> $GITHUB_OUTPUT
-          
+
           for pkg in packages/*/; do
             if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
               PKG_NAME=$(cd "$pkg" && node -p "require('./package.json').name")
@@ -113,22 +113,22 @@ jobs:
         run: |
           # Try to extract release notes from CHANGELOG.md
           NOTES=""
-          
+
           if [ -f "CHANGELOG.md" ]; then
             # Extract notes for this version
             VERSION="${{ steps.tag-info.outputs.version }}"
             NOTES=$(awk "/^## $VERSION/,/^## [0-9]/" CHANGELOG.md | sed '1d;$d' | head -n 20)
           fi
-          
+
           if [ -z "$NOTES" ]; then
             NOTES="See CHANGELOG.md for details"
           fi
-          
+
           # Escape for GitHub Actions
           NOTES="${NOTES//'%'/'%25'}"
           NOTES="${NOTES//$'\n'/'%0A'}"
           NOTES="${NOTES//$'\r'/'%0D'}"
-          
+
           echo "notes<<EOF" >> $GITHUB_OUTPUT
           echo "$NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -139,33 +139,34 @@ jobs:
           VERSION="${{ steps.tag-info.outputs.version }}"
           PUBLISHED_PACKAGES="${{ steps.publish.outputs.published_packages }}"
           RELEASE_NOTES="${{ steps.release-notes.outputs.notes }}"
-          
-          cat > release-notes.md << EOF
-## 🚀 Production Release $VERSION
 
-### 📦 Published Packages
-$PUBLISHED_PACKAGES
+          # Create release notes file
+          {
+            echo "## 🚀 Production Release $VERSION"
+            echo ""
+            echo "### 📦 Published Packages"
+            echo "$PUBLISHED_PACKAGES"
+            echo ""
+            echo "### 📝 Release Notes"
+            echo "$RELEASE_NOTES"
+            echo ""
+            echo "### 💻 Installation"
+            echo '```bash'
+            echo "npm install vue-pivottable@latest"
+            echo "# or specific packages"
+            echo "npm install @vue-pivottable/plotly-renderer@latest"
+            echo "npm install @vue-pivottable/lazy-table-renderer@latest"
+            echo '```'
+            echo ""
+            echo "### 🔗 Links"
+            echo "- [npm: vue-pivottable](https://www.npmjs.com/package/vue-pivottable)"
+            echo "- [npm: @vue-pivottable/plotly-renderer](https://www.npmjs.com/package/@vue-pivottable/plotly-renderer)"
+            echo "- [npm: @vue-pivottable/lazy-table-renderer](https://www.npmjs.com/package/@vue-pivottable/lazy-table-renderer)"
+            echo ""
+            echo "---"
+            echo "*Released by GitHub Actions*"
+          } > release-notes.md
 
-### 📝 Release Notes
-$RELEASE_NOTES
-
-### 💻 Installation
-\`\`\`bash
-npm install vue-pivottable@latest
-# or specific packages
-npm install @vue-pivottable/plotly-renderer@latest
-npm install @vue-pivottable/lazy-table-renderer@latest
-\`\`\`
-
-### 🔗 Links
-- [npm: vue-pivottable](https://www.npmjs.com/package/vue-pivottable)
-- [npm: @vue-pivottable/plotly-renderer](https://www.npmjs.com/package/@vue-pivottable/plotly-renderer)
-- [npm: @vue-pivottable/lazy-table-renderer](https://www.npmjs.com/package/@vue-pivottable/lazy-table-renderer)
-
----
-*Released by GitHub Actions*
-EOF
-          
           gh release create "$TAG" \
             --title "Release $TAG" \
             --notes-file release-notes.md
