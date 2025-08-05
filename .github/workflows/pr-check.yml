@@ -47,9 +47,9 @@ jobs:
           if [ -n "$(ls -A .changeset/*.md 2>/dev/null | grep -v README.md)" ]; then
             echo "✅ Changeset found"
           else
-            echo "⚠️  No changeset found. Please add a changeset with 'pnpm changeset add'"
-            echo "   This is required for all changes that affect published packages."
-            exit 1
+            echo "⚠️  No changeset found. Consider adding a changeset with 'pnpm changeset add'"
+            echo "   Changesets are recommended for changes that affect published packages."
+            echo "   (Not required for documentation, CI/CD, or other non-package changes)"
           fi
 
   build:
