@@ -136,9 +136,22 @@ jobs:
 
       - name: Sync to develop
         run: |
-          echo "🔄 Creating PR to sync changes to develop branch..."
+          echo "🔄 Syncing changes to develop branch..."
 
-          # Create PR directly from main to develop
+          # Fetch latest develop
+          git fetch origin develop:develop
+
+          # Create sync branch
+          SYNC_BRANCH="sync/main-to-develop-$(date +%s)"
+          git checkout -b $SYNC_BRANCH
+
+          # Merge main changes
+          git merge main --no-ff -m "chore: sync version updates from main"
+
+          # Push sync branch
+          git push origin $SYNC_BRANCH
+
+          # Create PR
           VERSION="${{ steps.version-update.outputs.version }}"
 
           {
@@ -150,7 +163,7 @@ jobs:
             echo "Version: **v$VERSION**"
             echo ""
             echo "### ⚡ Auto-merge"
-            echo "This PR will be merged automatically to keep branches in sync."
+            echo "This PR should be merged automatically to keep branches in sync."
             echo ""
             echo "---"
             echo "*This PR was automatically created by the version update workflow*"
@@ -158,7 +171,7 @@ jobs:
 
           PR_URL=$(gh pr create \
             --base develop \
-            --head main \
+            --head $SYNC_BRANCH \
             --title "🔄 Sync: main → develop (v$VERSION)" \
             --body-file pr-body.md \
             --label "auto-updated")
@@ -174,9 +187,25 @@ jobs:
 
       - name: Sync to staging
         run: |
-          echo "🔄 Creating PR to sync changes to staging branch..."
+          echo "🔄 Syncing changes to staging branch..."
 
-          # Create PR directly from main to staging
+          # Checkout main again
+          git checkout main
+
+          # Fetch latest staging
+          git fetch origin staging:staging
+
+          # Create sync branch
+          SYNC_BRANCH="sync/main-to-staging-$(date +%s)"
+          git checkout -b $SYNC_BRANCH
+
+          # Merge main changes
+          git merge main --no-ff -m "chore: sync version updates from main"
+
+          # Push sync branch
+          git push origin $SYNC_BRANCH
+
+          # Create PR
           VERSION="${{ steps.version-update.outputs.version }}"
 
           {
@@ -188,7 +217,7 @@ jobs:
             echo "Version: **v$VERSION**"
             echo ""
             echo "### ⚡ Auto-merge"
-            echo "This PR will be merged automatically to keep branches in sync."
+            echo "This PR should be merged automatically to keep branches in sync."
             echo ""
             echo "---"
             echo "*This PR was automatically created by the version update workflow*"
@@ -196,7 +225,7 @@ jobs:
 
           PR_URL=$(gh pr create \
             --base staging \
-            --head main \
+            --head $SYNC_BRANCH \
             --title "🔄 Sync: main → staging (v$VERSION)" \
             --body-file pr-body-staging.md \
             --label "auto-updated")
