@@ -154,20 +154,20 @@ jobs:
           # Create PR
           VERSION="${{ steps.version-update.outputs.version }}"
           
-          cat > pr-body.md << EOF
-## 🔄 Version Sync from Main
-
-### 📦 Updated Versions
-This PR syncs the stable version updates from main to develop.
-
-Version: **v$VERSION**
-
-### ⚡ Auto-merge
-This PR should be merged automatically to keep branches in sync.
-
----
-*This PR was automatically created by the version update workflow*
-EOF
+          {
+            echo "## 🔄 Version Sync from Main"
+            echo ""
+            echo "### 📦 Updated Versions"
+            echo "This PR syncs the stable version updates from main to develop."
+            echo ""
+            echo "Version: **v$VERSION**"
+            echo ""
+            echo "### ⚡ Auto-merge"
+            echo "This PR should be merged automatically to keep branches in sync."
+            echo ""
+            echo "---"
+            echo "*This PR was automatically created by the version update workflow*"
+          } > pr-body.md
           
           gh pr create \
             --base develop \
@@ -202,20 +202,20 @@ EOF
           # Create PR
           VERSION="${{ steps.version-update.outputs.version }}"
           
-          cat > pr-body-staging.md << EOF
-## 🔄 Version Sync from Main
-
-### 📦 Updated Versions
-This PR syncs the stable version updates from main to staging.
-
-Version: **v$VERSION**
-
-### ⚡ Auto-merge
-This PR should be merged automatically to keep branches in sync.
-
----
-*This PR was automatically created by the version update workflow*
-EOF
+          {
+            echo "## 🔄 Version Sync from Main"
+            echo ""
+            echo "### 📦 Updated Versions"
+            echo "This PR syncs the stable version updates from main to staging."
+            echo ""
+            echo "Version: **v$VERSION**"
+            echo ""
+            echo "### ⚡ Auto-merge"
+            echo "This PR should be merged automatically to keep branches in sync."
+            echo ""
+            echo "---"
+            echo "*This PR was automatically created by the version update workflow*"
+          } > pr-body-staging.md
           
           gh pr create \
             --base staging \

@@ -78,37 +78,31 @@ jobs:
           COMMIT_COUNT="${{ steps.commit-info.outputs.commit_count }}"
           TIMESTAMP="${{ steps.commit-info.outputs.timestamp }}"
           
-          # Write PR body
-          cat > pr-body.md << EOF
-## 🚀 Integration from develop to staging
-
-### 📊 Summary
-- **Commits**: ${COMMIT_COUNT} new commits
-- **Created**: ${TIMESTAMP}
-- **Auto-generated**: This PR was automatically created by the integration workflow
-
-### 📝 Recent Commits
-EOF
-          
-          # Append commits safely
-          echo "${{ steps.commit-info.outputs.commits }}" >> pr-body.md
-          
-          # Append rest of PR body
-          cat >> pr-body.md << 'EOF'
-
-### 🔍 What happens next?
-1. Review the changes in this PR
-2. Run any necessary QA tests
-3. When approved and merged, the staging workflow will:
-   - Check for changesets
-   - If found, create beta releases
-   - Automatically create a PR to main
-
-### ⚡ Notes
-- This PR will be automatically updated with new commits to develop
-- Multiple features can accumulate in this single PR
-- Approval triggers the beta release process
-EOF
+          # Create PR body file
+          {
+            echo "## 🚀 Integration from develop to staging"
+            echo ""
+            echo "### 📊 Summary"
+            echo "- **Commits**: ${COMMIT_COUNT} new commits"
+            echo "- **Created**: ${TIMESTAMP}"
+            echo "- **Auto-generated**: This PR was automatically created by the integration workflow"
+            echo ""
+            echo "### 📝 Recent Commits"
+            echo "${{ steps.commit-info.outputs.commits }}"
+            echo ""
+            echo "### 🔍 What happens next?"
+            echo "1. Review the changes in this PR"
+            echo "2. Run any necessary QA tests"
+            echo "3. When approved and merged, the staging workflow will:"
+            echo "   - Check for changesets"
+            echo "   - If found, create beta releases"
+            echo "   - Automatically create a PR to main"
+            echo ""
+            echo "### ⚡ Notes"
+            echo "- This PR will be automatically updated with new commits to develop"
+            echo "- Multiple features can accumulate in this single PR"
+            echo "- Approval triggers the beta release process"
+          } > pr-body.md
           
           gh pr create \
             --base staging \
@@ -136,26 +130,16 @@ EOF
           CURRENT_BODY=$(gh pr view $PR_NUMBER --json body --jq '.body')
           
           # Create updated section
-          UPDATED_SECTION="### 🔄 Last Updated: ${TIMESTAMP}
-**New commits**: ${COMMIT_COUNT}
-
-### 📝 Recent Commits
-$COMMITS"
+          UPDATED_SECTION="### 🔄 Last Updated: ${TIMESTAMP}\nNew commits: ${COMMIT_COUNT}\n\n### 📝 Recent Commits\n${COMMITS}"
           
           # Update or append the updated section
           if echo "$CURRENT_BODY" | grep -q "### 🔄 Last Updated:"; then
             # Replace existing update section
             NEW_BODY=$(echo "$CURRENT_BODY" | sed '/### 🔄 Last Updated:/,/### 📝 Recent Commits/d' | sed '/^$/d')
-            NEW_BODY="$NEW_BODY
-
-$UPDATED_SECTION"
+            NEW_BODY="$NEW_BODY\n\n$UPDATED_SECTION"
           else
             # Append update section
-            NEW_BODY="$CURRENT_BODY
-
----
-
-$UPDATED_SECTION"
+            NEW_BODY="$CURRENT_BODY\n\n---\n\n$UPDATED_SECTION"
           fi
           
           # Update PR body
