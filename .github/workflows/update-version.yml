@@ -55,7 +55,6 @@ jobs:
   update-versions:
     name: Update Versions and Sync
     needs: check-versions
-    if: needs.check-versions.outputs.has_beta == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -86,6 +85,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Update versions
+        if: needs.check-versions.outputs.has_beta == 'true'
         id: version-update
         run: |
           echo "📝 Updating package versions..."
