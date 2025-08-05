@@ -77,8 +77,8 @@ jobs:
         run: |
           COMMIT_COUNT="${{ steps.commit-info.outputs.commit_count }}"
           TIMESTAMP="${{ steps.commit-info.outputs.timestamp }}"
-          COMMITS="${{ steps.commit-info.outputs.commits }}"
           
+          # Write PR body
           cat > pr-body.md << EOF
 ## 🚀 Integration from develop to staging
 
@@ -88,7 +88,13 @@ jobs:
 - **Auto-generated**: This PR was automatically created by the integration workflow
 
 ### 📝 Recent Commits
-${COMMITS}
+EOF
+          
+          # Append commits safely
+          echo "${{ steps.commit-info.outputs.commits }}" >> pr-body.md
+          
+          # Append rest of PR body
+          cat >> pr-body.md << 'EOF'
 
 ### 🔍 What happens next?
 1. Review the changes in this PR
@@ -134,7 +140,7 @@ EOF
 **New commits**: ${COMMIT_COUNT}
 
 ### 📝 Recent Commits
-${COMMITS}"
+$COMMITS"
           
           # Update or append the updated section
           if echo "$CURRENT_BODY" | grep -q "### 🔄 Last Updated:"; then
