@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+      - staging
 
 jobs:
   lint-and-type-check:
@@ -81,7 +82,7 @@ jobs:
             echo "❌ Main package build output not found"
             exit 1
           fi
-          
+
           # Check sub-packages
           for pkg in packages/*/; do
             if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
@@ -91,5 +92,5 @@ jobs:
               fi
             fi
           done
-          
+
           echo "✅ All packages built successfully"

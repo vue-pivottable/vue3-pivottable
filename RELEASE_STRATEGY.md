@@ -4,43 +4,43 @@
 
 ## Overview
 
-This document outlines the release strategy for the vue3-pivottable monorepo, which uses Changesets for version management and supports independent package releases.
+This document outlines the release strategy for the vue3-pivottable monorepo, which uses automated workflows, Changesets for version management, and tag-based releases for production deployment.
 
 ## Release Flow
 
 ```mermaid
 sequenceDiagram
-    participant F as feature branch
+    participant F as feature/fix branch
     participant D as develop
+    participant S as staging
     participant M as main
-    participant R as release/vX.X.X
+    participant T as Tags
     participant NPM as npm Registry
     
     Note over F,D: 1. Feature Development
     F->>D: PR with changesets
     D->>D: Code Review & Merge
     
-    Note over D,NPM: 2. Beta Release (Automatic)
-    D->>D: Changesets consumed
-    D->>D: Version bump + beta suffix
-    D->>D: Quality checks (lint, typecheck)
-    D->>D: Build all packages
-    D->>NPM: Publish @beta
-    D->>D: Commit changes
+    Note over D,S: 2. Auto PR to Staging
+    D->>S: Automatic PR creation
+    D->>S: Additional commits accumulate
     
-    Note over D,M: 3. Production Preparation
-    D->>M: PR (beta versions, no changesets)
-    M->>M: Review & Merge
+    Note over S,NPM: 3. Beta Release (PR Approval)
+    S->>S: Beta version generation
+    S->>S: Quality checks & Build
+    S->>NPM: Publish @beta
+    S->>M: Auto PR to main
     
-    Note over M,NPM: 4. Stable Release (Automatic)
-    M->>R: Create release branch
-    R->>R: Remove beta suffix only
-    R->>R: Quality checks & Build
-    R->>NPM: Publish @latest
+    Note over M,T: 4. Version Update (PR Approval)
+    M->>M: Changeset version update
+    M->>M: Update package.json & CHANGELOG
+    M->>D: Auto sync to develop
+    M->>S: Auto sync to staging
     
-    Note over R,M: 5. Sync Back
-    R->>M: PR to update main
-    M->>M: Merge (main now has stable versions)
+    Note over T,NPM: 5. Production Release (Tag)
+    T->>T: Create version tag (v1.2.0)
+    T->>NPM: Publish @latest
+    T->>T: Create GitHub Release
 ```
 
 ## Branch Responsibilities
@@ -48,30 +48,42 @@ sequenceDiagram
 ### develop Branch
 - **Purpose**: Integration branch for all features
 - **Automatic Actions**:
-  - Consume changesets (files are deleted)
-  - Bump versions based on changesets
-  - Add beta suffix with timestamp
-  - Run quality checks (ESLint, TypeScript)
-  - Build all packages
-  - Publish to npm with @beta tag
-  - Commit version changes back to develop
+  - Trigger auto PR to staging on push
+  - Accumulate changes in existing staging PR
+  - Continuous integration checks
+
+### staging Branch
+- **Purpose**: QA testing and beta releases
+- **Automatic Actions on PR merge**:
+  - Check for accumulated changesets
+  - If changesets exist:
+    - Consume changesets (delete files)
+    - Generate beta version (x.y.z-beta.timestamp)
+    - Run quality checks (ESLint, TypeScript)
+    - Build all packages
+    - Publish to npm with @beta tag
+    - Create auto PR to main
+  - If no changesets: skip release process
 
 ### main Branch
-- **Purpose**: Production-ready code only
-- **Protection**: Cannot push directly
-- **Automatic Actions**:
-  - Create release/vX.X.X branch
-  - No changeset processing (already done in develop)
-  - Trigger stable release process
+- **Purpose**: Production-ready code
+- **Protection**: No direct commits (only PRs)
+- **Automatic Actions on PR merge**:
+  - Execute `changeset version`
+  - Update package.json versions
+  - Generate/update CHANGELOG.md
+  - Commit version changes
+  - Sync changes to develop and staging
+  - **No npm publish**
 
-### release/vX.X.X Branch
-- **Purpose**: Temporary branch for stable releases
+### Tags (v*.*.*)
+- **Purpose**: Trigger production releases
+- **Created**: Manually after main update
 - **Automatic Actions**:
-  - Remove beta suffix from versions
-  - Run quality checks
+  - Checkout tagged commit
   - Build all packages
   - Publish to npm with @latest tag
-  - Create PR back to main
+  - Create GitHub Release
 
 ## Package Independence
 
@@ -114,14 +126,16 @@ This ensures each package:
 # Changeset for bug fix in main package
 "vue-pivottable": patch
 
-# Result in develop:
+# Result in staging:
 vue-pivottable: 1.1.1 → 1.1.2-beta.1234567890
 @vue-pivottable/plotly-renderer: 2.0.0 (unchanged)
 @vue-pivottable/lazy-table-renderer: 1.0.13 (unchanged)
 
-# Result in main/release:
-vue-pivottable: 1.1.2-beta.1234567890 → 1.1.2
-# Other packages not published
+# Result after main merge:
+vue-pivottable: 1.1.2 (version updated, not published)
+
+# Result after tag v1.1.2:
+vue-pivottable: 1.1.2 → npm @latest
 ```
 
 ### Scenario 2: Multiple Package Updates
@@ -130,15 +144,16 @@ vue-pivottable: 1.1.2-beta.1234567890 → 1.1.2
 "vue-pivottable": minor
 "@vue-pivottable/plotly-renderer": minor
 
-# Result in develop:
+# Result in staging:
 vue-pivottable: 1.1.1 → 1.2.0-beta.1234567890
 @vue-pivottable/plotly-renderer: 2.0.0 → 2.1.0-beta.1234567890
-@vue-pivottable/lazy-table-renderer: 1.0.13 (unchanged)
 
-# Result in main/release:
-vue-pivottable: 1.2.0-beta.1234567890 → 1.2.0
-@vue-pivottable/plotly-renderer: 2.1.0-beta.1234567890 → 2.1.0
-# lazy-table-renderer not published
+# Result after main merge:
+vue-pivottable: 1.2.0 (updated)
+@vue-pivottable/plotly-renderer: 2.1.0 (updated)
+
+# Result after tag v1.2.0:
+Both packages → npm @latest
 ```
 
 ## Quality Gates
@@ -158,19 +173,30 @@ vue-pivottable: 1.2.0-beta.1234567890 → 1.2.0
 ## Workflow Files
 
 ### 1. `.github/workflows/pr-check.yml`
-- **Triggers**: PR to main or develop
+- **Triggers**: PR to any branch
 - **Checks**: Lint, TypeCheck, Build, Changesets
 - **Purpose**: Ensure code quality before merge
 
-### 2. `.github/workflows/release-develop.yml`
+### 2. `.github/workflows/integrate-develop.yml`
 - **Triggers**: Push to develop
-- **Actions**: Version, Build, Publish @beta
-- **Key Feature**: Consumes changesets
+- **Actions**: Create/update PR to staging
+- **Key Feature**: Accumulates multiple changes
 
-### 3. `.github/workflows/release.yml`
-- **Triggers**: Push to main
-- **Actions**: Remove beta suffix, Build, Publish @latest
-- **Key Feature**: No changeset needed
+### 3. `.github/workflows/release-staging.yml`
+- **Triggers**: Push to staging
+- **Condition**: When changesets exist (accumulated from develop)
+- **Actions**: Beta version, Build, Publish @beta
+- **Key Feature**: Consumes changesets, Auto PR to main
+
+### 4. `.github/workflows/update-version.yml`
+- **Triggers**: Push to main (with beta versions)
+- **Actions**: Update versions, sync branches
+- **Key Feature**: No npm publish
+
+### 5. `.github/workflows/release-tag.yml`
+- **Triggers**: Tag push (v*.*.*)
+- **Actions**: Build, Publish @latest
+- **Key Feature**: Production deployment
 
 ## Security
 
@@ -181,15 +207,16 @@ vue-pivottable: 1.2.0-beta.1234567890 → 1.2.0
 
 ### Branch Protection
 - main: Requires PR, no direct push
-- develop: Open for CI commits
-- release/*: Temporary, auto-created
+- staging: Requires PR, no direct push
+- develop: Requires PR, no direct push
 
 ## Commands Reference
 
 | Command | Description |
 |---------|-------------|
-| `pnpm changeset add` | Add a changeset for your changes |
+| `pnpm changeset` | Add a changeset for your changes |
 | `pnpm changeset status` | Check pending changesets |
+| `pnpm changeset version` | Apply changesets to versions |
 | `pnpm build:all` | Build all packages |
 | `pnpm typecheck` | Run TypeScript checks |
 | `pnpm lint` | Run ESLint |
@@ -198,60 +225,87 @@ vue-pivottable: 1.2.0-beta.1234567890 → 1.2.0
 ## Best Practices
 
 1. **Always add changesets** for changes that should trigger releases
-2. **Test in beta first** - Check npm @beta before approving to main
-3. **Independent versions** - Don't bump unchanged packages
-4. **Quality first** - All checks must pass before publish
+2. **Test in beta first** - staging provides beta testing environment
+3. **Review auto PRs** - Check automated PRs before approving
+4. **Tag after main update** - Create tags only after version update in main
 
 ## Handling Updates During Release Process
 
-### Scenario: Changes to develop after PR to main
+### Scenario: Continuous Development Flow
 
-When a PR from develop to main is already open and new changes are pushed to develop:
+The workflow handles ongoing development seamlessly:
 
-1. **Automatic PR Update**
-   - The release-develop workflow automatically detects existing PR
-   - Updates PR title with new beta version
-   - Updates PR description with timestamp and new version info
-   - Adds `auto-updated` and `needs-review` labels
-   - Sets PR back to "ready for review" state
+1. **Automatic PR Updates**
+   - develop → staging PR accumulates new commits
+   - PR description updates with each addition
+   - Single PR for multiple features/fixes
 
-2. **Review Process**
-   - Reviewers are notified of the update via labels
-   - Previous approvals remain but re-review is recommended
-   - PR description shows clear "Updated" status with timestamp
+2. **Beta Version Management**
+   - Each staging merge creates new beta version
+   - Previous beta versions remain available
+   - Clear version progression tracking
 
-3. **Benefits**
-   - PR history and discussions are preserved
-   - No manual intervention required
-   - Clear audit trail of all beta versions
+3. **Synchronization**
+   - main updates flow back to develop/staging
+   - Prevents divergence between branches
+   - Maintains linear history
 
 ### Example Flow
 ```
-1. v1.2.0-beta.1234567890 → PR #123 created
-2. New fix pushed to develop
-3. v1.2.1-beta.2345678901 → PR #123 automatically updated
-4. Reviewers see "auto-updated" label and re-review
-5. Once approved, merge to main triggers stable release
+1. Feature A merged to develop → Auto PR #123 to staging
+2. Feature B merged to develop → PR #123 updated
+3. PR #123 approved → v1.2.0-beta.1234567890
+4. Auto PR #124 to main created
+5. PR #124 approved → Version 1.2.0 in main
+6. Tag v1.2.0 created → Published to npm
+7. develop/staging synced with main
 ```
+
+## Release Checklist
+
+### For Developers
+- [ ] Create feature/fix branch from develop
+- [ ] Add changeset with appropriate version bump
+- [ ] Create PR to develop
+- [ ] Ensure all checks pass
+
+### For QA Team
+- [ ] Review staging PR contents
+- [ ] Test beta version from npm
+- [ ] Approve staging PR when ready
+
+### For Release Manager
+- [ ] Review main PR from staging
+- [ ] Approve main PR (triggers version update)
+- [ ] Wait for sync completion
+- [ ] Create and push version tag:
+  ```bash
+  git checkout main
+  git pull origin main
+  git tag v1.2.0
+  git push origin v1.2.0
+  ```
+- [ ] Verify npm deployment
+- [ ] Check GitHub Release creation
 
 ## Troubleshooting
 
+### Auto PR not created?
+- Check GitHub Actions runs
+- Verify branch protections allow bot PRs
+- Check for existing open PRs
+
 ### Beta version not publishing?
-- Check if changesets exist
-- Verify build succeeds
+- Verify changesets were added
+- Check build success in staging
+- Verify npm token validity
+
+### Sync failed?
+- Check for merge conflicts
+- Review workflow logs
+- Manual sync may be needed
+
+### Tag release failed?
+- Ensure tag matches version pattern (v*.*.*)
 - Check npm token permissions
-
-### Package not updating?
-- Ensure changeset includes the package name
-- Check if package has build script
-- Verify package.json name matches
-
-### Type errors in CI but not locally?
-- Run `pnpm typecheck` locally
-- Check all workspace packages: `pnpm -r typecheck`
-- Ensure dependencies are up to date
-
-### PR not updating automatically?
-- Check GitHub Actions permissions
-- Verify GITHUB_TOKEN has write access to PRs
-- Check if PR is in open state
+- Verify package builds succeed

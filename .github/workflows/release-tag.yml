@@ -1,0 +1,186 @@
+name: Release Production (Tag)
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release-production:
+    name: Release to Production
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate tag
+        id: tag-info
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
+
+          # Extract version from tag
+          VERSION=${TAG_NAME#v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+          # Validate version format
+          if ! [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$ ]]; then
+            echo "❌ Invalid version format: $VERSION"
+            exit 1
+          fi
+
+          echo "✅ Valid tag: $TAG_NAME (version: $VERSION)"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.10.0'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Verify versions match
+        run: |
+          TAG_VERSION="${{ steps.tag-info.outputs.version }}"
+
+          # Check main package version
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          if [ "$MAIN_VERSION" != "$TAG_VERSION" ]; then
+            echo "⚠️ Warning: Main package version ($MAIN_VERSION) doesn't match tag ($TAG_VERSION)"
+            # This is not a fatal error as we might be releasing sub-packages
+          else
+            echo "✅ Main package version matches tag: $MAIN_VERSION"
+          fi
+
+      - name: Run quality checks
+        run: |
+          echo "Running type checks..."
+          pnpm typecheck
+          pnpm -r typecheck || true
+
+          echo "Running linting..."
+          pnpm lint
+          pnpm -r lint || true
+
+      - name: Build packages
+        run: |
+          echo "Building all packages..."
+          pnpm build:all
+
+      - name: Publish to npm
+        id: publish
+        run: |
+          echo "Publishing packages with @latest tag..."
+
+          # Publish packages
+          node scripts/release-packages.cjs
+
+          # Collect published packages
+          echo "published_packages<<EOF" >> $GITHUB_OUTPUT
+
+          # Check which packages were published
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          echo "- vue-pivottable@$MAIN_VERSION" >> $GITHUB_OUTPUT
+
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              PKG_NAME=$(cd "$pkg" && node -p "require('./package.json').name")
+              PKG_VERSION=$(cd "$pkg" && node -p "require('./package.json').version")
+              echo "- $PKG_NAME@$PKG_VERSION" >> $GITHUB_OUTPUT
+            fi
+          done
+          echo "EOF" >> $GITHUB_OUTPUT
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
+
+      - name: Get release notes
+        id: release-notes
+        run: |
+          # Try to extract release notes from CHANGELOG.md
+          NOTES=""
+
+          if [ -f "CHANGELOG.md" ]; then
+            # Extract notes for this version
+            VERSION="${{ steps.tag-info.outputs.version }}"
+            NOTES=$(awk "/^## $VERSION/,/^## [0-9]/" CHANGELOG.md | sed '1d;$d' | head -n 20)
+          fi
+
+          if [ -z "$NOTES" ]; then
+            NOTES="See CHANGELOG.md for details"
+          fi
+
+          # Escape for GitHub Actions
+          NOTES="${NOTES//'%'/'%25'}"
+          NOTES="${NOTES//$'\n'/'%0A'}"
+          NOTES="${NOTES//$'\r'/'%0D'}"
+
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        run: |
+          TAG="${{ steps.tag-info.outputs.tag }}"
+          VERSION="${{ steps.tag-info.outputs.version }}"
+          PUBLISHED_PACKAGES="${{ steps.publish.outputs.published_packages }}"
+          RELEASE_NOTES="${{ steps.release-notes.outputs.notes }}"
+
+          # Create release notes file
+          {
+            echo "## 🚀 Production Release $VERSION"
+            echo ""
+            echo "### 📦 Published Packages"
+            echo "$PUBLISHED_PACKAGES"
+            echo ""
+            echo "### 📝 Release Notes"
+            echo "$RELEASE_NOTES"
+            echo ""
+            echo "### 💻 Installation"
+            echo '```bash'
+            echo "npm install vue-pivottable@latest"
+            echo "# or specific packages"
+            echo "npm install @vue-pivottable/plotly-renderer@latest"
+            echo "npm install @vue-pivottable/lazy-table-renderer@latest"
+            echo '```'
+            echo ""
+            echo "### 🔗 Links"
+            echo "- [npm: vue-pivottable](https://www.npmjs.com/package/vue-pivottable)"
+            echo "- [npm: @vue-pivottable/plotly-renderer](https://www.npmjs.com/package/@vue-pivottable/plotly-renderer)"
+            echo "- [npm: @vue-pivottable/lazy-table-renderer](https://www.npmjs.com/package/@vue-pivottable/lazy-table-renderer)"
+            echo ""
+            echo "---"
+            echo "*Released by GitHub Actions*"
+          } > release-notes.md
+
+          gh release create "$TAG" \
+            --title "Release $TAG" \
+            --notes-file release-notes.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release summary
+        run: |
+          echo "## 🎉 Production Release Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Released Version: ${{ steps.tag-info.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📚 Published Packages" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.publish.outputs.published_packages }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 View Release" >> $GITHUB_STEP_SUMMARY
+          echo "[GitHub Release](https://github.com/${{ github.repository }}/releases/tag/${{ steps.tag-info.outputs.tag }})" >> $GITHUB_STEP_SUMMARY
