@@ -130,14 +130,24 @@ jobs:
           # Get current PR body
           CURRENT_BODY=$(gh pr view $PR_NUMBER --json body --jq '.body')
 
-          # Create updated section safely using file approach
-          {
-            echo "### 🔄 Last Updated: ${TIMESTAMP}"
-            echo "New commits: ${COMMIT_COUNT}"
-            echo ""
-            echo "### 📝 Recent Commits"
-            echo "${COMMITS}" | sed 's/%0A/\n/g' | sed 's/%0D//g' | sed 's/%25/%/g'
-          } > updated-section.md
+          # Create updated section with escaped content
+          cat > updated-section.md << 'EOF'
+### 🔄 Last Updated: TIMESTAMP_PLACEHOLDER
+New commits: COUNT_PLACEHOLDER
+
+### 📝 Recent Commits
+COMMITS_PLACEHOLDER
+EOF
+          
+          # Replace placeholders safely
+          sed -i "s/TIMESTAMP_PLACEHOLDER/${TIMESTAMP}/g" updated-section.md
+          sed -i "s/COUNT_PLACEHOLDER/${COMMIT_COUNT}/g" updated-section.md
+          
+          # Process commits separately and safely
+          echo "${COMMITS}" | sed 's/%0A/\n/g' | sed 's/%0D//g' | sed 's/%25/%/g' > commits-temp.txt
+          sed -i '/COMMITS_PLACEHOLDER/r commits-temp.txt' updated-section.md
+          sed -i '/COMMITS_PLACEHOLDER/d' updated-section.md
+          
           UPDATED_SECTION=$(cat updated-section.md)
 
           # Update or append the updated section
