@@ -204,9 +204,8 @@ npm install @vue-pivottable/lazy-table-renderer@beta
 
 ---
 *This PR was automatically created by the staging release workflow*" \
-            --label "release" \
-            --label "automated" \
-            --label "beta"
+            --label "released" \
+            --label "auto-updated"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -258,7 +257,6 @@ EOF
           
           # Update labels
           gh pr edit $PR_NUMBER \
-            --add-label "auto-updated" \
             --add-label "needs-review"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -174,8 +174,7 @@ jobs:
             --head $SYNC_BRANCH \
             --title "🔄 Sync: main → develop (v$VERSION)" \
             --body-file pr-body.md \
-            --label "sync" \
-            --label "automated"
+            --label "auto-updated"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -222,8 +221,7 @@ jobs:
             --head $SYNC_BRANCH \
             --title "🔄 Sync: main → staging (v$VERSION)" \
             --body-file pr-body-staging.md \
-            --label "sync" \
-            --label "automated"
+            --label "auto-updated"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

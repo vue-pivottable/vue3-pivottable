@@ -109,8 +109,7 @@ jobs:
             --head develop \
             --title "🔄 Integrate develop → staging" \
             --body-file pr-body.md \
-            --label "integration" \
-            --label "automated"
+            --label "auto-updated"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -148,7 +147,6 @@ jobs:
           
           # Add labels
           gh pr edit $PR_NUMBER \
-            --add-label "auto-updated" \
             --add-label "needs-review"
           
           # Set as ready for review
