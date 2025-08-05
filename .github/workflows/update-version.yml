@@ -169,12 +169,19 @@ jobs:
             echo "*This PR was automatically created by the version update workflow*"
           } > pr-body.md
 
-          gh pr create \
+          PR_URL=$(gh pr create \
             --base develop \
             --head $SYNC_BRANCH \
             --title "🔄 Sync: main → develop (v$VERSION)" \
             --body-file pr-body.md \
-            --label "auto-updated"
+            --label "auto-updated")
+          
+          # Extract PR number from URL
+          PR_NUMBER=$(echo $PR_URL | grep -oE '[0-9]+$')
+          
+          # Enable auto-merge
+          echo "Enabling auto-merge for PR #$PR_NUMBER..."
+          gh pr merge $PR_NUMBER --auto --merge
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -216,12 +223,19 @@ jobs:
             echo "*This PR was automatically created by the version update workflow*"
           } > pr-body-staging.md
 
-          gh pr create \
+          PR_URL=$(gh pr create \
             --base staging \
             --head $SYNC_BRANCH \
             --title "🔄 Sync: main → staging (v$VERSION)" \
             --body-file pr-body-staging.md \
-            --label "auto-updated"
+            --label "auto-updated")
+          
+          # Extract PR number from URL
+          PR_NUMBER=$(echo $PR_URL | grep -oE '[0-9]+$')
+          
+          # Enable auto-merge
+          echo "Enabling auto-merge for PR #$PR_NUMBER..."
+          gh pr merge $PR_NUMBER --auto --merge
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
