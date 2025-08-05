@@ -147,7 +147,7 @@ jobs:
 
           # Push directly to develop
           git push origin develop
-          
+
           echo "✅ Successfully synced main to develop"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -165,7 +165,7 @@ jobs:
 
           # Push directly to staging
           git push origin staging
-          
+
           echo "✅ Successfully synced main to staging"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
