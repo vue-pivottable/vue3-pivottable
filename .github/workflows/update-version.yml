@@ -142,8 +142,8 @@ jobs:
           git fetch origin develop:develop
           git checkout develop
 
-          # Merge main changes
-          git merge main --no-ff -m "chore: sync version updates from main"
+          # Merge main changes (allow fast-forward for clean sync)
+          git merge main
 
           # Push directly to develop
           git push origin develop
@@ -160,8 +160,8 @@ jobs:
           git fetch origin staging:staging
           git checkout staging
 
-          # Merge main changes
-          git merge main --no-ff -m "chore: sync version updates from main"
+          # Merge main changes (allow fast-forward for clean sync)
+          git merge main
 
           # Push directly to staging
           git push origin staging
