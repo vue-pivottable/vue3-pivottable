@@ -130,10 +130,15 @@ jobs:
           # Get current PR body
           CURRENT_BODY=$(gh pr view $PR_NUMBER --json body --jq '.body')
 
-          # Create updated section with proper escaping
-          # Decode %0A back to actual newlines for proper display
-          DECODED_COMMITS=$(echo "${COMMITS}" | sed 's/%0A/\n/g' | sed 's/%0D//g' | sed 's/%25/%/g')
-          UPDATED_SECTION="### 🔄 Last Updated: ${TIMESTAMP}\nNew commits: ${COMMIT_COUNT}\n\n### 📝 Recent Commits\n${DECODED_COMMITS}"
+          # Create updated section safely using file approach
+          {
+            echo "### 🔄 Last Updated: ${TIMESTAMP}"
+            echo "New commits: ${COMMIT_COUNT}"
+            echo ""
+            echo "### 📝 Recent Commits"
+            echo "${COMMITS}" | sed 's/%0A/\n/g' | sed 's/%0D//g' | sed 's/%25/%/g'
+          } > updated-section.md
+          UPDATED_SECTION=$(cat updated-section.md)
 
           # Update or append the updated section
           if echo "$CURRENT_BODY" | grep -q "### 🔄 Last Updated:"; then
