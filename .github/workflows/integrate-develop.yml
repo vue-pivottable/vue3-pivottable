@@ -46,9 +46,17 @@ jobs:
       - name: Get commit information
         id: commit-info
         run: |
+          # Fetch staging branch
+          git fetch origin staging:staging || echo "Staging branch not found"
+          
           # Get the latest commits from develop that aren't in staging
-          COMMITS=$(git log --pretty=format:"- %s (%h)" origin/staging..HEAD | head -20)
-          COMMIT_COUNT=$(git rev-list --count origin/staging..HEAD)
+          if git rev-parse --verify origin/staging >/dev/null 2>&1; then
+            COMMITS=$(git log --pretty=format:"- %s (%h)" origin/staging..HEAD | head -20)
+            COMMIT_COUNT=$(git rev-list --count origin/staging..HEAD)
+          else
+            COMMITS=$(git log --pretty=format:"- %s (%h)" HEAD | head -20)
+            COMMIT_COUNT=$(git rev-list --count HEAD)
+          fi
           
           # Escape for GitHub Actions output
           COMMITS="${COMMITS//'%'/'%25'}"
