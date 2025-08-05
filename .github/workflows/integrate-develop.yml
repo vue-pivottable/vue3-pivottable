@@ -13,6 +13,8 @@ jobs:
   create-or-update-pr:
     name: Create or Update PR to Staging
     runs-on: ubuntu-latest
+    # Skip if this is a sync commit from main
+    if: "!contains(github.event.head_commit.message, 'chore: sync version updates from main')"
     permissions:
       contents: write
       pull-requests: write
@@ -128,8 +130,25 @@ jobs:
           # Get current PR body
           CURRENT_BODY=$(gh pr view $PR_NUMBER --json body --jq '.body')
 
-          # Create updated section
-          UPDATED_SECTION="### 🔄 Last Updated: ${TIMESTAMP}\nNew commits: ${COMMIT_COUNT}\n\n### 📝 Recent Commits\n${COMMITS}"
+          # Create updated section with escaped content
+          cat > updated-section.md << 'EOF'
+### 🔄 Last Updated: TIMESTAMP_PLACEHOLDER
+New commits: COUNT_PLACEHOLDER
+
+### 📝 Recent Commits
+COMMITS_PLACEHOLDER
+EOF
+          
+          # Replace placeholders safely
+          sed -i "s/TIMESTAMP_PLACEHOLDER/${TIMESTAMP}/g" updated-section.md
+          sed -i "s/COUNT_PLACEHOLDER/${COMMIT_COUNT}/g" updated-section.md
+          
+          # Process commits separately and safely
+          echo "${COMMITS}" | sed 's/%0A/\n/g' | sed 's/%0D//g' | sed 's/%25/%/g' > commits-temp.txt
+          sed -i '/COMMITS_PLACEHOLDER/r commits-temp.txt' updated-section.md
+          sed -i '/COMMITS_PLACEHOLDER/d' updated-section.md
+          
+          UPDATED_SECTION=$(cat updated-section.md)
 
           # Update or append the updated section
           if echo "$CURRENT_BODY" | grep -q "### 🔄 Last Updated:"; then

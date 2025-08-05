@@ -138,43 +138,17 @@ jobs:
         run: |
           echo "🔄 Syncing changes to develop branch..."
 
-          # Fetch latest develop
+          # Fetch and checkout develop
           git fetch origin develop:develop
-
-          # Create sync branch
-          SYNC_BRANCH="sync/main-to-develop-$(date +%s)"
-          git checkout -b $SYNC_BRANCH
+          git checkout develop
 
           # Merge main changes
           git merge main --no-ff -m "chore: sync version updates from main"
 
-          # Push sync branch
-          git push origin $SYNC_BRANCH
+          # Push directly to develop
+          git push origin develop
 
-          # Create PR
-          VERSION="${{ steps.version-update.outputs.version }}"
-
-          {
-            echo "## 🔄 Version Sync from Main"
-            echo ""
-            echo "### 📦 Updated Versions"
-            echo "This PR syncs the stable version updates from main to develop."
-            echo ""
-            echo "Version: **v$VERSION**"
-            echo ""
-            echo "### ⚡ Auto-merge"
-            echo "This PR should be merged automatically to keep branches in sync."
-            echo ""
-            echo "---"
-            echo "*This PR was automatically created by the version update workflow*"
-          } > pr-body.md
-
-          gh pr create \
-            --base develop \
-            --head $SYNC_BRANCH \
-            --title "🔄 Sync: main → develop (v$VERSION)" \
-            --body-file pr-body.md \
-            --label "auto-updated"
+          echo "✅ Successfully synced main to develop"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -182,46 +156,17 @@ jobs:
         run: |
           echo "🔄 Syncing changes to staging branch..."
 
-          # Checkout main again
-          git checkout main
-
-          # Fetch latest staging
+          # Fetch and checkout staging
           git fetch origin staging:staging
-
-          # Create sync branch
-          SYNC_BRANCH="sync/main-to-staging-$(date +%s)"
-          git checkout -b $SYNC_BRANCH
+          git checkout staging
 
           # Merge main changes
           git merge main --no-ff -m "chore: sync version updates from main"
 
-          # Push sync branch
-          git push origin $SYNC_BRANCH
+          # Push directly to staging
+          git push origin staging
 
-          # Create PR
-          VERSION="${{ steps.version-update.outputs.version }}"
-
-          {
-            echo "## 🔄 Version Sync from Main"
-            echo ""
-            echo "### 📦 Updated Versions"
-            echo "This PR syncs the stable version updates from main to staging."
-            echo ""
-            echo "Version: **v$VERSION**"
-            echo ""
-            echo "### ⚡ Auto-merge"
-            echo "This PR should be merged automatically to keep branches in sync."
-            echo ""
-            echo "---"
-            echo "*This PR was automatically created by the version update workflow*"
-          } > pr-body-staging.md
-
-          gh pr create \
-            --base staging \
-            --head $SYNC_BRANCH \
-            --title "🔄 Sync: main → staging (v$VERSION)" \
-            --body-file pr-body-staging.md \
-            --label "auto-updated"
+          echo "✅ Successfully synced main to staging"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
