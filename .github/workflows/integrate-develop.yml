@@ -13,6 +13,8 @@ jobs:
   create-or-update-pr:
     name: Create or Update PR to Staging
     runs-on: ubuntu-latest
+    # Skip if this is a sync commit from main
+    if: "!contains(github.event.head_commit.message, 'chore: sync version updates from main')"
     permissions:
       contents: write
       pull-requests: write
@@ -128,8 +130,16 @@ jobs:
           # Get current PR body
           CURRENT_BODY=$(gh pr view $PR_NUMBER --json body --jq '.body')
 
-          # Create updated section
-          UPDATED_SECTION="### 🔄 Last Updated: ${TIMESTAMP}\nNew commits: ${COMMIT_COUNT}\n\n### 📝 Recent Commits\n${COMMITS}"
+          # Create updated section safely using echo commands
+          {
+            echo "### 🔄 Last Updated: ${TIMESTAMP}"
+            echo "New commits: ${COMMIT_COUNT}"
+            echo ""
+            echo "### 📝 Recent Commits"
+            echo "${COMMITS}" | sed 's/%0A/\n/g; s/%0D//g; s/%25/%/g'
+          } > updated-section.md
+
+          UPDATED_SECTION=$(cat updated-section.md)
 
           # Update or append the updated section
           if echo "$CURRENT_BODY" | grep -q "### 🔄 Last Updated:"; then
