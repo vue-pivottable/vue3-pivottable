@@ -67,7 +67,7 @@ jobs:
           echo "Running type checks..."
           pnpm typecheck
           pnpm -r typecheck || true
-          
+
           echo "Running linting..."
           pnpm lint
           pnpm -r lint || true
@@ -78,13 +78,13 @@ jobs:
           # Configure git
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           # Run changesets version with beta
           pnpm changeset version
-          
+
           # Add beta suffix to all updated packages
           TIMESTAMP=$(date +%s)
-          
+
           # Update main package if version changed
           if git diff --name-only | grep -q "^package.json$"; then
             CURRENT_VERSION=$(node -p "require('./package.json').version")
@@ -92,7 +92,7 @@ jobs:
             npm version $BETA_VERSION --no-git-tag-version
             echo "Main package: $CURRENT_VERSION → $BETA_VERSION"
           fi
-          
+
           # Update sub-packages if versions changed
           for pkg in packages/*/; do
             if [ -d "$pkg" ] && git diff --name-only | grep -q "^$pkg"; then
@@ -107,7 +107,7 @@ jobs:
               cd - > /dev/null
             fi
           done
-          
+
           # Commit all changes
           git add -A
           git commit -m "chore: version packages for beta release" || echo "No changes to commit"
@@ -122,15 +122,15 @@ jobs:
         run: |
           # Publish with beta tag
           RELEASE_TAG=beta node scripts/release-packages.cjs
-          
+
           # Collect published versions
           echo "published_versions<<EOF" >> $GITHUB_OUTPUT
           echo "### Published Beta Versions" >> $GITHUB_OUTPUT
-          
+
           # Check main package
           MAIN_VERSION=$(node -p "require('./package.json').version")
           echo "- vue-pivottable@$MAIN_VERSION" >> $GITHUB_OUTPUT
-          
+
           # Check sub-packages
           for pkg in packages/*/; do
             if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
@@ -153,7 +153,7 @@ jobs:
         id: check-pr
         run: |
           EXISTING_PR=$(gh pr list --base main --head staging --json number --jq '.[0].number' || echo "")
-          
+
           if [ -n "$EXISTING_PR" ]; then
             echo "pr_exists=true" >> $GITHUB_OUTPUT
             echo "pr_number=$EXISTING_PR" >> $GITHUB_OUTPUT
@@ -168,42 +168,48 @@ jobs:
         run: |
           # Get the main package version for PR title
           MAIN_VERSION=$(node -p "require('./package.json').version")
-          
+          PUBLISHED_VERSIONS="${{ steps.publish.outputs.published_versions }}"
+
+          # Create PR body file
+          {
+            echo "## 🎯 Beta Release Ready for Production"
+            echo ""
+            echo "$PUBLISHED_VERSIONS"
+            echo ""
+            echo "### 📋 What happens next?"
+            echo "1. Review and test the beta versions"
+            echo "2. When approved and merged, this will:"
+            echo "   - Update package.json versions (remove beta suffix)"
+            echo "   - Generate/update CHANGELOG.md files"
+            echo "   - Sync changes back to develop and staging"
+            echo "   - **Note**: npm publish happens only when you create a version tag"
+            echo ""
+            echo "### 🏷️ After merge:"
+            echo "Create a version tag to trigger production release:"
+            echo '```bash'
+            echo "git checkout main"
+            echo "git pull origin main"
+            echo "git tag v\${VERSION}"
+            echo "git push origin v\${VERSION}"
+            echo '```'
+            echo ""
+            echo "### 📦 Install beta versions:"
+            echo '```bash'
+            echo "npm install vue-pivottable@beta"
+            echo "# or specific sub-packages"
+            echo "npm install @vue-pivottable/plotly-renderer@beta"
+            echo "npm install @vue-pivottable/lazy-table-renderer@beta"
+            echo '```'
+            echo ""
+            echo "---"
+            echo "*This PR was automatically created by the staging release workflow*"
+          } > pr-body.md
+
           gh pr create \
             --base main \
             --head staging \
             --title "🚀 Release: Beta versions ready for production" \
-            --body "## 🎯 Beta Release Ready for Production
-
-${{ steps.publish.outputs.published_versions }}
-
-### 📋 What happens next?
-1. Review and test the beta versions
-2. When approved and merged, this will:
-   - Update package.json versions (remove beta suffix)
-   - Generate/update CHANGELOG.md files
-   - Sync changes back to develop and staging
-   - **Note**: npm publish happens only when you create a version tag
-
-### 🏷️ After merge:
-Create a version tag to trigger production release:
-\`\`\`bash
-git checkout main
-git pull origin main
-git tag v\${VERSION}
-git push origin v\${VERSION}
-\`\`\`
-
-### 📦 Install beta versions:
-\`\`\`bash
-npm install vue-pivottable@beta
-# or specific sub-packages
-npm install @vue-pivottable/plotly-renderer@beta
-npm install @vue-pivottable/lazy-table-renderer@beta
-\`\`\`
-
----
-*This PR was automatically created by the staging release workflow*" \
+            --body-file pr-body.md \
             --label "released" \
             --label "auto-updated"
         env:
@@ -215,46 +221,47 @@ npm install @vue-pivottable/lazy-table-renderer@beta
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
           PR_NUMBER="${{ steps.check-pr.outputs.pr_number }}"
           PUBLISHED_VERSIONS="${{ steps.publish.outputs.published_versions }}"
-          
-          cat > pr-body-update.md << EOF
-## 🎯 Beta Release Ready for Production
 
-### ⏰ Last Updated: $TIMESTAMP
+          # Create updated PR body
+          {
+            echo "## 🎯 Beta Release Ready for Production"
+            echo ""
+            echo "### ⏰ Last Updated: $TIMESTAMP"
+            echo ""
+            echo "$PUBLISHED_VERSIONS"
+            echo ""
+            echo "### 📋 What happens next?"
+            echo "1. Review and test the beta versions"
+            echo "2. When approved and merged, this will:"
+            echo "   - Update package.json versions (remove beta suffix)"
+            echo "   - Generate/update CHANGELOG.md files"
+            echo "   - Sync changes back to develop and staging"
+            echo "   - **Note**: npm publish happens only when you create a version tag"
+            echo ""
+            echo "### 🏷️ After merge:"
+            echo "Create a version tag to trigger production release:"
+            echo '```bash'
+            echo "git checkout main"
+            echo "git pull origin main"
+            echo "git tag v\${VERSION}"
+            echo "git push origin v\${VERSION}"
+            echo '```'
+            echo ""
+            echo "### 📦 Install beta versions:"
+            echo '```bash'
+            echo "npm install vue-pivottable@beta"
+            echo "# or specific sub-packages"
+            echo "npm install @vue-pivottable/plotly-renderer@beta"
+            echo "npm install @vue-pivottable/lazy-table-renderer@beta"
+            echo '```'
+            echo ""
+            echo "---"
+            echo "*This PR was automatically updated by the staging release workflow*"
+          } > pr-body-update.md
 
-$PUBLISHED_VERSIONS
-
-### 📋 What happens next?
-1. Review and test the beta versions
-2. When approved and merged, this will:
-   - Update package.json versions (remove beta suffix)
-   - Generate/update CHANGELOG.md files
-   - Sync changes back to develop and staging
-   - **Note**: npm publish happens only when you create a version tag
-
-### 🏷️ After merge:
-Create a version tag to trigger production release:
-\`\`\`bash
-git checkout main
-git pull origin main
-git tag v\${VERSION}
-git push origin v\${VERSION}
-\`\`\`
-
-### 📦 Install beta versions:
-\`\`\`bash
-npm install vue-pivottable@beta
-# or specific sub-packages
-npm install @vue-pivottable/plotly-renderer@beta
-npm install @vue-pivottable/lazy-table-renderer@beta
-\`\`\`
-
----
-*This PR was automatically updated by the staging release workflow*
-EOF
-          
           # Update PR body with new beta versions
           gh pr edit $PR_NUMBER --body-file pr-body-update.md
-          
+
           # Update labels
           gh pr edit $PR_NUMBER \
             --add-label "needs-review"
