@@ -121,7 +121,7 @@ jobs:
         id: publish
         run: |
           # Publish with beta tag
-          node scripts/release-packages.cjs beta
+          RELEASE_TAG=beta node scripts/release-packages.cjs
           
           # Collect published versions
           echo "published_versions<<EOF" >> $GITHUB_OUTPUT
