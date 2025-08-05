@@ -21,7 +21,7 @@ This component inherits all standard props from the `vue-pivottable` package, wi
 
 | Prop         | Type   | Default | Description                                                 |
 | ------------ | ------ | ------- | ----------------------------------------------------------- |
-| `chunkSize`  | Number | `20`    | Number of rows rendered per chunk                           |
+| `chunkSize`  | Number | `50`    | Number of rows rendered per chunk                           |
 | `bufferSize` | Number | `1`     | Number of chunks rendered before and after the visible area |
 
 All other props behave the same as in the original [`vue-pivottable`](https://github.com/vue-pivottable/vue3-pivottable) package.

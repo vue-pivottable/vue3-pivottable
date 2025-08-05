@@ -1,0 +1,262 @@
+name: Release Staging (Beta)
+
+on:
+  push:
+    branches:
+      - staging
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  check-changesets:
+    name: Check for Changesets
+    runs-on: ubuntu-latest
+    outputs:
+      has_changesets: ${{ steps.check.outputs.has_changesets }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for changesets
+        id: check
+        run: |
+          if [ -d ".changeset" ] && [ "$(ls -A .changeset/*.md 2>/dev/null | grep -v README.md)" ]; then
+            echo "has_changesets=true" >> $GITHUB_OUTPUT
+            echo "✅ Found changesets to process"
+          else
+            echo "has_changesets=false" >> $GITHUB_OUTPUT
+            echo "⏭️ No changesets found, skipping release"
+          fi
+
+  release-beta:
+    name: Release Beta Versions
+    needs: check-changesets
+    if: needs.check-changesets.outputs.has_changesets == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.10.0'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run quality checks
+        run: |
+          echo "Running type checks..."
+          pnpm typecheck
+          pnpm -r typecheck || true
+          
+          echo "Running linting..."
+          pnpm lint
+          pnpm -r lint || true
+
+      - name: Create beta versions
+        id: changesets
+        run: |
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Run changesets version with beta
+          pnpm changeset version
+          
+          # Add beta suffix to all updated packages
+          TIMESTAMP=$(date +%s)
+          
+          # Update main package if version changed
+          if git diff --name-only | grep -q "^package.json$"; then
+            CURRENT_VERSION=$(node -p "require('./package.json').version")
+            BETA_VERSION="${CURRENT_VERSION}-beta.${TIMESTAMP}"
+            npm version $BETA_VERSION --no-git-tag-version
+            echo "Main package: $CURRENT_VERSION → $BETA_VERSION"
+          fi
+          
+          # Update sub-packages if versions changed
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && git diff --name-only | grep -q "^$pkg"; then
+              cd "$pkg"
+              if git diff --name-only | grep -q "package.json"; then
+                CURRENT_VERSION=$(node -p "require('./package.json').version")
+                BETA_VERSION="${CURRENT_VERSION}-beta.${TIMESTAMP}"
+                npm version $BETA_VERSION --no-git-tag-version
+                PKG_NAME=$(basename "$pkg")
+                echo "$PKG_NAME: $CURRENT_VERSION → $BETA_VERSION"
+              fi
+              cd - > /dev/null
+            fi
+          done
+          
+          # Commit all changes
+          git add -A
+          git commit -m "chore: version packages for beta release" || echo "No changes to commit"
+
+      - name: Build packages
+        run: |
+          echo "Building all packages..."
+          pnpm build:all
+
+      - name: Publish beta packages
+        id: publish
+        run: |
+          # Publish with beta tag
+          RELEASE_TAG=beta node scripts/release-packages.cjs
+          
+          # Collect published versions
+          echo "published_versions<<EOF" >> $GITHUB_OUTPUT
+          echo "### Published Beta Versions" >> $GITHUB_OUTPUT
+          
+          # Check main package
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          echo "- vue-pivottable@$MAIN_VERSION" >> $GITHUB_OUTPUT
+          
+          # Check sub-packages
+          for pkg in packages/*/; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.json" ]; then
+              PKG_NAME=$(cd "$pkg" && node -p "require('./package.json').name")
+              PKG_VERSION=$(cd "$pkg" && node -p "require('./package.json').version")
+              echo "- $PKG_NAME@$PKG_VERSION" >> $GITHUB_OUTPUT
+            fi
+          done
+          echo "EOF" >> $GITHUB_OUTPUT
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN_SUMIN: ${{ secrets.NPM_TOKEN_SUMIN }}
+
+      - name: Push changes
+        run: |
+          git push origin staging
+
+      - name: Check for existing PR to main
+        id: check-pr
+        run: |
+          EXISTING_PR=$(gh pr list --base main --head staging --json number --jq '.[0].number' || echo "")
+          
+          if [ -n "$EXISTING_PR" ]; then
+            echo "pr_exists=true" >> $GITHUB_OUTPUT
+            echo "pr_number=$EXISTING_PR" >> $GITHUB_OUTPUT
+          else
+            echo "pr_exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create PR to main
+        if: steps.check-pr.outputs.pr_exists == 'false'
+        run: |
+          # Get the main package version for PR title
+          MAIN_VERSION=$(node -p "require('./package.json').version")
+          
+          gh pr create \
+            --base main \
+            --head staging \
+            --title "🚀 Release: Beta versions ready for production" \
+            --body "## 🎯 Beta Release Ready for Production
+
+${{ steps.publish.outputs.published_versions }}
+
+### 📋 What happens next?
+1. Review and test the beta versions
+2. When approved and merged, this will:
+   - Update package.json versions (remove beta suffix)
+   - Generate/update CHANGELOG.md files
+   - Sync changes back to develop and staging
+   - **Note**: npm publish happens only when you create a version tag
+
+### 🏷️ After merge:
+Create a version tag to trigger production release:
+\`\`\`bash
+git checkout main
+git pull origin main
+git tag v\${VERSION}
+git push origin v\${VERSION}
+\`\`\`
+
+### 📦 Install beta versions:
+\`\`\`bash
+npm install vue-pivottable@beta
+# or specific sub-packages
+npm install @vue-pivottable/plotly-renderer@beta
+npm install @vue-pivottable/lazy-table-renderer@beta
+\`\`\`
+
+---
+*This PR was automatically created by the staging release workflow*" \
+            --label "released" \
+            --label "auto-updated"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update existing PR
+        if: steps.check-pr.outputs.pr_exists == 'true'
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          PR_NUMBER="${{ steps.check-pr.outputs.pr_number }}"
+          PUBLISHED_VERSIONS="${{ steps.publish.outputs.published_versions }}"
+          
+          cat > pr-body-update.md << EOF
+## 🎯 Beta Release Ready for Production
+
+### ⏰ Last Updated: $TIMESTAMP
+
+$PUBLISHED_VERSIONS
+
+### 📋 What happens next?
+1. Review and test the beta versions
+2. When approved and merged, this will:
+   - Update package.json versions (remove beta suffix)
+   - Generate/update CHANGELOG.md files
+   - Sync changes back to develop and staging
+   - **Note**: npm publish happens only when you create a version tag
+
+### 🏷️ After merge:
+Create a version tag to trigger production release:
+\`\`\`bash
+git checkout main
+git pull origin main
+git tag v\${VERSION}
+git push origin v\${VERSION}
+\`\`\`
+
+### 📦 Install beta versions:
+\`\`\`bash
+npm install vue-pivottable@beta
+# or specific sub-packages
+npm install @vue-pivottable/plotly-renderer@beta
+npm install @vue-pivottable/lazy-table-renderer@beta
+\`\`\`
+
+---
+*This PR was automatically updated by the staging release workflow*
+EOF
+          
+          # Update PR body with new beta versions
+          gh pr edit $PR_NUMBER --body-file pr-body-update.md
+          
+          # Update labels
+          gh pr edit $PR_NUMBER \
+            --add-label "needs-review"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
