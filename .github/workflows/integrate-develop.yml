@@ -75,6 +75,10 @@ jobs:
       - name: Create PR to staging
         if: steps.check-pr.outputs.pr_exists == 'false'
         run: |
+          COMMIT_COUNT="${{ steps.commit-info.outputs.commit_count }}"
+          TIMESTAMP="${{ steps.commit-info.outputs.timestamp }}"
+          COMMITS="${{ steps.commit-info.outputs.commits }}"
+          
           gh pr create \
             --base staging \
             --head develop \
@@ -82,12 +86,12 @@ jobs:
             --body "## 🚀 Integration from develop to staging
 
 ### 📊 Summary
-- **Commits**: ${{ steps.commit-info.outputs.commit_count }} new commits
-- **Created**: ${{ steps.commit-info.outputs.timestamp }}
+- **Commits**: ${COMMIT_COUNT} new commits
+- **Created**: ${TIMESTAMP}
 - **Auto-generated**: This PR was automatically created by the integration workflow
 
 ### 📝 Recent Commits
-${{ steps.commit-info.outputs.commits }}
+${COMMITS}
 
 ### 🔍 What happens next?
 1. Review the changes in this PR
@@ -109,19 +113,24 @@ ${{ steps.commit-info.outputs.commits }}
       - name: Update existing PR
         if: steps.check-pr.outputs.pr_exists == 'true'
         run: |
+          PR_NUMBER="${{ steps.check-pr.outputs.pr_number }}"
+          COMMIT_COUNT="${{ steps.commit-info.outputs.commit_count }}"
+          TIMESTAMP="${{ steps.commit-info.outputs.timestamp }}"
+          COMMITS="${{ steps.commit-info.outputs.commits }}"
+          
           # Update PR title with commit count
-          gh pr edit ${{ steps.check-pr.outputs.pr_number }} \
-            --title "🔄 Integrate develop → staging (${{ steps.commit-info.outputs.commit_count }} commits)"
+          gh pr edit $PR_NUMBER \
+            --title "🔄 Integrate develop → staging (${COMMIT_COUNT} commits)"
           
           # Get current PR body
-          CURRENT_BODY=$(gh pr view ${{ steps.check-pr.outputs.pr_number }} --json body --jq '.body')
+          CURRENT_BODY=$(gh pr view $PR_NUMBER --json body --jq '.body')
           
           # Create updated section
-          UPDATED_SECTION="### 🔄 Last Updated: ${{ steps.commit-info.outputs.timestamp }}
-**New commits**: ${{ steps.commit-info.outputs.commit_count }}
+          UPDATED_SECTION="### 🔄 Last Updated: ${TIMESTAMP}
+**New commits**: ${COMMIT_COUNT}
 
 ### 📝 Recent Commits
-${{ steps.commit-info.outputs.commits }}"
+${COMMITS}"
           
           # Update or append the updated section
           if echo "$CURRENT_BODY" | grep -q "### 🔄 Last Updated:"; then
@@ -140,16 +149,16 @@ $UPDATED_SECTION"
           fi
           
           # Update PR body
-          gh pr edit ${{ steps.check-pr.outputs.pr_number }} --body "$NEW_BODY"
+          gh pr edit $PR_NUMBER --body "$NEW_BODY"
           
           # Add labels
-          gh pr edit ${{ steps.check-pr.outputs.pr_number }} \
+          gh pr edit $PR_NUMBER \
             --add-label "auto-updated" \
             --add-label "needs-review"
           
           # Set as ready for review
-          gh pr ready ${{ steps.check-pr.outputs.pr_number }} || true
+          gh pr ready $PR_NUMBER || true
           
-          echo "✅ Updated PR #${{ steps.check-pr.outputs.pr_number }} with ${{ steps.commit-info.outputs.commit_count }} new commits"
+          echo "✅ Updated PR #${PR_NUMBER} with ${COMMIT_COUNT} new commits"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
