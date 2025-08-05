@@ -137,16 +137,17 @@ jobs:
         run: |
           TAG="${{ steps.tag-info.outputs.tag }}"
           VERSION="${{ steps.tag-info.outputs.version }}"
+          PUBLISHED_PACKAGES="${{ steps.publish.outputs.published_packages }}"
+          RELEASE_NOTES="${{ steps.release-notes.outputs.notes }}"
           
-          gh release create "$TAG" \
-            --title "Release $TAG" \
-            --notes "## 🚀 Production Release $VERSION
+          cat > release-notes.md << EOF
+## 🚀 Production Release $VERSION
 
 ### 📦 Published Packages
-${{ steps.publish.outputs.published_packages }}
+$PUBLISHED_PACKAGES
 
 ### 📝 Release Notes
-${{ steps.release-notes.outputs.notes }}
+$RELEASE_NOTES
 
 ### 💻 Installation
 \`\`\`bash
@@ -162,7 +163,12 @@ npm install @vue-pivottable/lazy-table-renderer@latest
 - [npm: @vue-pivottable/lazy-table-renderer](https://www.npmjs.com/package/@vue-pivottable/lazy-table-renderer)
 
 ---
-*Released by GitHub Actions*"
+*Released by GitHub Actions*
+EOF
+          
+          gh release create "$TAG" \
+            --title "Release $TAG" \
+            --notes-file release-notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

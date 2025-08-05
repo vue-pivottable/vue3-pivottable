@@ -214,14 +214,15 @@ npm install @vue-pivottable/lazy-table-renderer@beta
         if: steps.check-pr.outputs.pr_exists == 'true'
         run: |
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          PR_NUMBER="${{ steps.check-pr.outputs.pr_number }}"
+          PUBLISHED_VERSIONS="${{ steps.publish.outputs.published_versions }}"
           
-          # Update PR body with new beta versions
-          gh pr edit ${{ steps.check-pr.outputs.pr_number }} \
-            --body "## 🎯 Beta Release Ready for Production
+          cat > pr-body-update.md << EOF
+## 🎯 Beta Release Ready for Production
 
 ### ⏰ Last Updated: $TIMESTAMP
 
-${{ steps.publish.outputs.published_versions }}
+$PUBLISHED_VERSIONS
 
 ### 📋 What happens next?
 1. Review and test the beta versions
@@ -249,10 +250,14 @@ npm install @vue-pivottable/lazy-table-renderer@beta
 \`\`\`
 
 ---
-*This PR was automatically updated by the staging release workflow*"
+*This PR was automatically updated by the staging release workflow*
+EOF
+          
+          # Update PR body with new beta versions
+          gh pr edit $PR_NUMBER --body-file pr-body-update.md
           
           # Update labels
-          gh pr edit ${{ steps.check-pr.outputs.pr_number }} \
+          gh pr edit $PR_NUMBER \
             --add-label "auto-updated" \
             --add-label "needs-review"
         env:

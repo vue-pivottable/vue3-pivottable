@@ -79,11 +79,8 @@ jobs:
           TIMESTAMP="${{ steps.commit-info.outputs.timestamp }}"
           COMMITS="${{ steps.commit-info.outputs.commits }}"
           
-          gh pr create \
-            --base staging \
-            --head develop \
-            --title "🔄 Integrate develop → staging" \
-            --body "## 🚀 Integration from develop to staging
+          cat > pr-body.md << EOF
+## 🚀 Integration from develop to staging
 
 ### 📊 Summary
 - **Commits**: ${COMMIT_COUNT} new commits
@@ -104,7 +101,14 @@ ${COMMITS}
 ### ⚡ Notes
 - This PR will be automatically updated with new commits to develop
 - Multiple features can accumulate in this single PR
-- Approval triggers the beta release process" \
+- Approval triggers the beta release process
+EOF
+          
+          gh pr create \
+            --base staging \
+            --head develop \
+            --title "🔄 Integrate develop → staging" \
+            --body-file pr-body.md \
             --label "integration" \
             --label "automated"
         env:
@@ -149,7 +153,8 @@ $UPDATED_SECTION"
           fi
           
           # Update PR body
-          gh pr edit $PR_NUMBER --body "$NEW_BODY"
+          echo "$NEW_BODY" > pr-body-update.md
+          gh pr edit $PR_NUMBER --body-file pr-body-update.md
           
           # Add labels
           gh pr edit $PR_NUMBER \

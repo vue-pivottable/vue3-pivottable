@@ -152,22 +152,28 @@ jobs:
           git push origin $SYNC_BRANCH
           
           # Create PR
-          gh pr create \
-            --base develop \
-            --head $SYNC_BRANCH \
-            --title "🔄 Sync: main → develop (v${{ steps.version-update.outputs.version }})" \
-            --body "## 🔄 Version Sync from Main
+          VERSION="${{ steps.version-update.outputs.version }}"
+          
+          cat > pr-body.md << EOF
+## 🔄 Version Sync from Main
 
 ### 📦 Updated Versions
 This PR syncs the stable version updates from main to develop.
 
-Version: **v${{ steps.version-update.outputs.version }}**
+Version: **v$VERSION**
 
 ### ⚡ Auto-merge
 This PR should be merged automatically to keep branches in sync.
 
 ---
-*This PR was automatically created by the version update workflow*" \
+*This PR was automatically created by the version update workflow*
+EOF
+          
+          gh pr create \
+            --base develop \
+            --head $SYNC_BRANCH \
+            --title "🔄 Sync: main → develop (v$VERSION)" \
+            --body-file pr-body.md \
             --label "sync" \
             --label "automated"
         env:
@@ -194,22 +200,28 @@ This PR should be merged automatically to keep branches in sync.
           git push origin $SYNC_BRANCH
           
           # Create PR
-          gh pr create \
-            --base staging \
-            --head $SYNC_BRANCH \
-            --title "🔄 Sync: main → staging (v${{ steps.version-update.outputs.version }})" \
-            --body "## 🔄 Version Sync from Main
+          VERSION="${{ steps.version-update.outputs.version }}"
+          
+          cat > pr-body-staging.md << EOF
+## 🔄 Version Sync from Main
 
 ### 📦 Updated Versions
 This PR syncs the stable version updates from main to staging.
 
-Version: **v${{ steps.version-update.outputs.version }}**
+Version: **v$VERSION**
 
 ### ⚡ Auto-merge
 This PR should be merged automatically to keep branches in sync.
 
 ---
-*This PR was automatically created by the version update workflow*" \
+*This PR was automatically created by the version update workflow*
+EOF
+          
+          gh pr create \
+            --base staging \
+            --head $SYNC_BRANCH \
+            --title "🔄 Sync: main → staging (v$VERSION)" \
+            --body-file pr-body-staging.md \
             --label "sync" \
             --label "automated"
         env:
