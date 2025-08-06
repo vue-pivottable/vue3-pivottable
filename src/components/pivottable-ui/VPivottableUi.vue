@@ -132,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import { PivotData, sortAs , locales, AggregatorTemplate, Locale } from '@/helper'
+import { aggregators as defaultAggregators, PivotData, sortAs , locales, AggregatorTemplate, Locale } from '@/helper'
 import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
@@ -181,6 +181,7 @@ const props = withDefaults(
     }
   >(),
   {
+    aggregators: () => defaultAggregators,
     hiddenAttributes: () => [],
     hiddenFromAggregators: () => [],
     pivotModel: undefined,
@@ -218,7 +219,7 @@ const propsWithModel = computed(() => {
   const base = {
     data: props.data,
     renderers: props.renderers,
-    aggregators: props.aggregators,
+    aggregators: props.aggregators || defaultAggregators,
     aggregatorName: props.aggregatorName || 'Count',
     heatmapMode: (props.heatmapMode || '') as 'full' | 'col' | 'row' | '',
     tableColorScaleGenerator: props.tableColorScaleGenerator,
