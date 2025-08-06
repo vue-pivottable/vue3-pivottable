@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.0
+
+### Minor Changes
+
+- feat: implement PivotModel two-way binding with complete feature set
+- fix: resolve critical memory leak in VPivottableUi component (#270)
+
+### Patch Changes
+
+- fix: improve release script to prevent unwanted package updates
+
 ## 1.1.7
 
 ### Patch Changes
