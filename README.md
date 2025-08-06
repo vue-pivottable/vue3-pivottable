@@ -22,6 +22,7 @@ Looking for the Vue 2 compatible version?
 - Built with Vue 3 Composition API
 - Supports multiple aggregators and renderers
 - Interactive UI with drag-and-drop field configuration
+- **PivotModel Two-way Binding** - v-model:pivotModel support for state tracking and management
 - Easy to customize and extend (renderers, aggregators, styles)
 
 <!-- 설치 방법 -->
@@ -44,6 +45,8 @@ pnpm add vue-pivottable
 
 ## Quick Start
 
+### Basic Usage
+
 ```vue
 <template>
   <VuePivottableUi
@@ -59,6 +62,50 @@ pnpm add vue-pivottable
 <script setup>
 import { VuePivottableUi } from 'vue-pivottable'
 import 'vue-pivottable/dist/vue-pivottable.css'
+</script>
+```
+
+### PivotModel Two-way Binding
+
+```vue
+<template>
+  <div>
+    <VuePivottableUi
+      v-model:pivot-model="pivotModel"
+      :data="data"
+      @change="onPivotModelChange"
+    />
+    
+    <!-- Display PivotModel state -->
+    <pre>{{ JSON.stringify(pivotModel, null, 2) }}</pre>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { VuePivottableUi } from 'vue-pivottable'
+import 'vue-pivottable/dist/vue-pivottable.css'
+
+const data = ref([
+  { color: 'blue', shape: 'circle' },
+  { color: 'red', shape: 'triangle' }
+])
+
+const pivotModel = ref({
+  rows: ['color'],
+  cols: ['shape'],
+  vals: [],
+  aggregatorName: 'Count',
+  rendererName: 'Table',
+  valueFilter: {},
+  rowOrder: 'key_a_to_z',
+  colOrder: 'key_a_to_z',
+  heatmapMode: ''
+})
+
+const onPivotModelChange = (model) => {
+  console.log('PivotModel changed:', model)
+}
 </script>
 ```
 

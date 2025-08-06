@@ -20,6 +20,7 @@ Vue 2 호환 버전을 찾고 계신가요?
 - Vue 3 Composition API로 구축
 - 다양한 집계기와 렌더러 지원
 - 드래그 앤 드롭 필드 구성이 가능한 대화형 UI
+- **PivotModel 양방향 바인딩** - v-model:pivotModel 지원으로 상태 추적 및 관리
 - 쉬운 사용자 정의 및 확장 (렌더러, 집계기, 스타일)
 
 ## 설치
@@ -38,6 +39,8 @@ pnpm add vue-pivottable
 
 ## 빠른 시작
 
+### 기본 사용법
+
 ```vue
 <template>
   <VuePivottableUi
@@ -53,6 +56,50 @@ pnpm add vue-pivottable
 <script setup>
 import { VuePivottableUi } from 'vue-pivottable'
 import 'vue-pivottable/dist/vue-pivottable.css'
+</script>
+```
+
+### PivotModel 양방향 바인딩
+
+```vue
+<template>
+  <div>
+    <VuePivottableUi
+      v-model:pivot-model="pivotModel"
+      :data="data"
+      @change="onPivotModelChange"
+    />
+    
+    <!-- PivotModel 상태 표시 -->
+    <pre>{{ JSON.stringify(pivotModel, null, 2) }}</pre>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { VuePivottableUi } from 'vue-pivottable'
+import 'vue-pivottable/dist/vue-pivottable.css'
+
+const data = ref([
+  { color: 'blue', shape: 'circle' },
+  { color: 'red', shape: 'triangle' }
+])
+
+const pivotModel = ref({
+  rows: ['color'],
+  cols: ['shape'],
+  vals: [],
+  aggregatorName: 'Count',
+  rendererName: 'Table',
+  valueFilter: {},
+  rowOrder: 'key_a_to_z',
+  colOrder: 'key_a_to_z',
+  heatmapMode: ''
+})
+
+const onPivotModelChange = (model) => {
+  console.log('PivotModel 변경됨:', model)
+}
 </script>
 ```
 
