@@ -144,7 +144,7 @@ import {
   usePivotUiState,
   provideFilterBox
 } from '@/composables'
-import { DefaultPropsType } from '@/types'
+import { DefaultPropsType, PivotModelInterface } from '@/types'
 
 const props = withDefaults(
   defineProps<
@@ -154,7 +154,7 @@ const props = withDefaults(
       hiddenFromDragDrop?: string[]
       restrictedFromDragDrop?: string[]
       menuLimit?: number
-      pivotModel?: any
+      pivotModel?: PivotModelInterface
       hideFilterBoxOfUnusedAttributes?: boolean
     }
   >(),
@@ -162,7 +162,7 @@ const props = withDefaults(
     aggregators: () => aggregators,
     hiddenAttributes: () => [],
     hiddenFromAggregators: () => [],
-    pivotModel: () => ({}),
+    pivotModel: undefined,
     hiddenFromDragDrop: () => [],
     restrictedFromDragDrop: () => [],
     menuLimit: 500,
@@ -173,6 +173,11 @@ const props = withDefaults(
     locale: 'en'
   }
 )
+
+const emit = defineEmits<{
+  'update:pivotModel': [model: PivotModelInterface]
+  'change': [model: PivotModelInterface]
+}>()
 
 const {
   state,
@@ -185,7 +190,7 @@ const {
   onUpdateRowOrder,
   onUpdateColOrder,
   onUpdateVals
-} = usePropsState(props)
+} = usePropsState(props, emit)
 
 const {
   state: pivotUiState,
@@ -268,6 +273,26 @@ const pivotProps = computed(() => ({
 onUpdateUnusedOrder(unusedAttrs.value)
 
 provideFilterBox(pivotProps.value)
+
+watch(
+  () => props.pivotModel,
+  (newModel) => {
+    if (newModel && Object.keys(newModel).length > 0) {
+      updateMultiple({
+        rows: newModel.rows || [],
+        cols: newModel.cols || [],
+        vals: newModel.vals || [],
+        aggregatorName: newModel.aggregatorName || 'Count',
+        rendererName: newModel.rendererName || 'Table',
+        valueFilter: newModel.valueFilter || {},
+        rowOrder: newModel.rowOrder || 'key_a_to_z',
+        colOrder: newModel.colOrder || 'key_a_to_z',
+        heatmapMode: newModel.heatmapMode || ''
+      } as Partial<typeof state>)
+    }
+  },
+  { deep: true, immediate: true }
+)
 
 watch(
   [allFilters, materializedInput],

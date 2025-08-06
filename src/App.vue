@@ -20,6 +20,7 @@
       <template #default="{ data }">
         <VuePivottableUi
           v-if="data.length > 0"
+          v-model:pivot-model="pivotModel"
           :data="data"
           :rows="rows"
           :cols="cols"
@@ -28,6 +29,7 @@
           :aggregator-name="aggregatorName"
           :renderer-name="rendererName"
           :sorters="sorters"
+          @change="onPivotModelChange"
         >
           <!-- [test] Scoped Slot: pvtAttr -->
           <!-- <template #pvtAttr="{ attrName }">
@@ -68,6 +70,16 @@
         </VuePivottableUi>
       </template>
     </CsvUploader>
+    
+    <!-- PivotModel 상태 표시 -->
+    <div style="margin: 20px; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+      <h3>PivotModel 양방향 바인딩 상태:</h3>
+      <textarea 
+        :value="JSON.stringify(pivotModel, null, 2)" 
+        readonly
+        style="width: 100%; height: 200px; font-family: monospace; font-size: 12px;"
+      />
+    </div>
   </div>
 </template>
 <script setup>
@@ -75,13 +87,13 @@ import { markRaw, ref } from 'vue'
 import tips from './tips.js'
 import CsvUploader from './CsvUploader.vue'
 import { PivotUtilities, VuePivottableUi, Renderer } from '@/'
-import LazyPivottableRenderer from '@vue-pivottable/lazy-table-renderer'
-import PlotlyRenderer from '@vue-pivottable/plotly-renderer'
+// import LazyPivottableRenderer from '@vue-pivottable/lazy-table-renderer'
+// import PlotlyRenderer from '@vue-pivottable/plotly-renderer'
 
 const renderers = markRaw({
   ...Renderer,
-  ...LazyPivottableRenderer,
-  ...PlotlyRenderer
+  // ...LazyPivottableRenderer,
+  // ...PlotlyRenderer
 })
 const initialData = ref(tips)
 const initialFilename = ref('샘플 데이터셋: Tips')
@@ -111,6 +123,23 @@ const sorters = ref({
 
 const vals = ref(['Tip'])
 const rendererName = ref('Table')
+
+const pivotModel = ref({
+  rows: rows.value,
+  cols: cols.value,
+  vals: vals.value,
+  aggregatorName: aggregatorName.value,
+  rendererName: rendererName.value,
+  valueFilter: {},
+  rowOrder: 'key_a_to_z',
+  colOrder: 'key_a_to_z',
+  heatmapMode: ''
+})
+
+const onPivotModelChange = (model) => {
+  console.log('PivotModel 변경됨:', model)
+}
+
 const onDataParsed = () => {
   rows.value = []
   cols.value = []
