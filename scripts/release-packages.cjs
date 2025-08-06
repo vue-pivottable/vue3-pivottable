@@ -30,20 +30,20 @@ const packages = [
     name: 'vue3-pivottable',
     path: '.',
     buildCmd: 'pnpm clean && pnpm build',
-    publishCmd: `pnpm changeset publish --tag ${releaseTag}`
+    publishCmd: `npm publish --tag ${releaseTag}`
   },
   {
     name: '@vue-pivottable/plotly-renderer',
     path: './packages/plotly-renderer',
     buildCmd: 'pnpm --filter @vue-pivottable/plotly-renderer clean && pnpm --filter @vue-pivottable/plotly-renderer build',
-    publishCmd: `pnpm changeset publish --filter @vue-pivottable/plotly-renderer --tag ${releaseTag}`,
+    publishCmd: `npm publish --tag ${releaseTag}`,
     tokenEnv: 'NPM_TOKEN_SUMIN'
   },
   {
     name: '@vue-pivottable/lazy-table-renderer',
     path: './packages/lazy-table-renderer',
     buildCmd: 'pnpm --filter @vue-pivottable/lazy-table-renderer clean && pnpm --filter @vue-pivottable/lazy-table-renderer build',
-    publishCmd: `pnpm changeset publish --filter @vue-pivottable/lazy-table-renderer --tag ${releaseTag}`,
+    publishCmd: `npm publish --tag ${releaseTag}`,
     tokenEnv: 'NPM_TOKEN_SUMIN'
   }
 ];
@@ -77,6 +77,17 @@ async function releasePackages() {
         continue;
       }
 
+      // Check if this version is already published
+      try {
+        const npmViewCmd = `npm view ${packageJson.name}@${currentVersion} version`;
+        execSync(npmViewCmd, { stdio: 'pipe' });
+        log.info(`Skipping ${pkg.name} - version ${currentVersion} already published`);
+        continue;
+      } catch (error) {
+        // Version not published, continue with publishing
+        log.info(`${pkg.name}@${currentVersion} not found on npm, proceeding with publish`);
+      }
+
       // Build package
       log.info(`Building ${pkg.name}...`);
       execSync(pkg.buildCmd, { 
@@ -94,7 +105,7 @@ async function releasePackages() {
       log.info(`Publishing ${pkg.name}...`);
       execSync(pkg.publishCmd, { 
         stdio: 'inherit',
-        cwd: process.cwd(),
+        cwd: pkg.path,
         env: process.env
       });
       
