@@ -83,7 +83,7 @@ async function releasePackages() {
         execSync(npmViewCmd, { stdio: 'pipe' });
         log.info(`Skipping ${pkg.name} - version ${currentVersion} already published`);
         continue;
-      } catch (error) {
+      } catch {
         // Version not published, continue with publishing
         log.info(`${pkg.name}@${currentVersion} not found on npm, proceeding with publish`);
       }
