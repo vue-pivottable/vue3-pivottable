@@ -1,4 +1,4 @@
-import { Ref, provide, inject, computed, ComputedRef, InjectionKey } from 'vue'
+import { Ref, provide, inject, computed, ComputedRef, InjectionKey, ShallowRef } from 'vue'
 import { PivotData } from '@/helper'
 import { usePivotData } from './'
 import type { ProvidePivotDataProps } from './usePivotData'
@@ -6,7 +6,7 @@ import type { ProvidePivotDataProps } from './usePivotData'
 
 
 export interface PivotDataContext {
-  pivotData: ComputedRef<PivotData | null>
+  pivotData: ShallowRef<PivotData | null>
   rowKeys: ComputedRef<any[][]>
   colKeys: ComputedRef<any[][]>
   colAttrs: ComputedRef<string[]>
