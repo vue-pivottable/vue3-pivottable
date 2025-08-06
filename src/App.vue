@@ -22,12 +22,7 @@
           v-if="data.length > 0"
           v-model:pivot-model="pivotModel"
           :data="data"
-          :rows="rows"
-          :cols="cols"
-          :vals="vals"
           :renderers="renderers"
-          :aggregator-name="aggregatorName"
-          :renderer-name="rendererName"
           :sorters="sorters"
           @change="onPivotModelChange"
         >
@@ -136,8 +131,8 @@ const pivotModel = ref({
   heatmapMode: ''
 })
 
-const onPivotModelChange = (model) => {
-  console.log('PivotModel 변경됨:', model)
+const onPivotModelChange = () => {
+  // PivotModel이 변경될 때 호출됩니다
 }
 
 const onDataParsed = () => {

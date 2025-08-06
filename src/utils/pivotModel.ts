@@ -21,6 +21,7 @@ export function pivotModelsEqual(
     'vals',
     'aggregatorName',
     'rendererName',
+    'valueFilter',
     'rowOrder',
     'colOrder',
     'heatmapMode'

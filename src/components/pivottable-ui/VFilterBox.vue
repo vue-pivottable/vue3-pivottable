@@ -116,7 +116,6 @@ const addValuesToFilter = (values: string[]) => {
     },
     Object.assign({}, unselectedValues.value)
   )
-  console.log('FilterBox emit addValues:', props.filterBoxKey, filterValues)
   emit('update:unselectedFilterValues', {
     key: props.filterBoxKey,
     value: filterValues
@@ -132,14 +131,12 @@ const removeValuesFromFilter = (values: string[]) => {
     },
     Object.assign({}, unselectedValues.value)
   )
-  console.log('FilterBox emit removeValues:', props.filterBoxKey, filterValues)
   emit('update:unselectedFilterValues', {
     key: props.filterBoxKey,
     value: filterValues
   })
 }
 const toggleValue = (value: string) => {
-  console.log('FilterBox toggleValue:', value, 'in unselected:', value in unselectedValues.value)
   if (value in unselectedValues.value) {
     removeValuesFromFilter([value])
   } else {

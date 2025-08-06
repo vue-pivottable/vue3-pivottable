@@ -4,7 +4,24 @@ import { debounce } from '@/utils/performance'
 import { pivotModelsEqual, clonePivotModel } from '@/utils/pivotModel'
 import { locales, LocaleStrings } from '@/helper'
 export type UsePropsStateProps = Pick<DefaultPropsType,
-  'aggregators' | 'languagePack' | 'locale' | 'valueFilter' | 'rendererName' | 'heatmapMode' | 'aggregatorName' | 'rowOrder' | 'colOrder' | 'vals' | 'rows' | 'cols'>
+  'aggregators' | 'languagePack' | 'locale' | 'valueFilter' | 'rendererName' | 'heatmapMode' | 'aggregatorName' | 'rowOrder' | 'colOrder' | 'vals' | 'rows' | 'cols'> & {
+  data?: any
+  renderers?: any
+  hiddenAttributes?: string[]
+  hiddenFromAggregators?: string[]
+  hiddenFromDragDrop?: string[]
+  restrictedFromDragDrop?: string[]
+  hideFilterBoxOfUnusedAttributes?: boolean
+  tableOptions?: any
+  showRowTotal?: boolean
+  showColTotal?: boolean
+  attributes?: string[]
+  sorters?: any
+  derivedAttributes?: any
+  tableMaxWidth?: number
+  allFilters?: any
+  materializedInput?: any
+}
 
 export interface UsePropsStateReturn<T extends UsePropsStateProps> {
   state: UnwrapRef<T>
@@ -26,7 +43,21 @@ export function usePropsState<T extends UsePropsStateProps> (
   emit?: (event: string, payload: any) => void
 ): UsePropsStateReturn<T> {
   const state = reactive({
-    ...initialProps
+    ...initialProps,
+    data: initialProps.data || [],
+    renderers: initialProps.renderers || {},
+    hiddenAttributes: initialProps.hiddenAttributes || [],
+    hiddenFromAggregators: initialProps.hiddenFromAggregators || [],
+    hiddenFromDragDrop: initialProps.hiddenFromDragDrop || [],
+    restrictedFromDragDrop: initialProps.restrictedFromDragDrop || [],
+    hideFilterBoxOfUnusedAttributes: initialProps.hideFilterBoxOfUnusedAttributes || false,
+    tableOptions: initialProps.tableOptions || {},
+    showRowTotal: initialProps.showRowTotal ?? true,
+    showColTotal: initialProps.showColTotal ?? true,
+    attributes: initialProps.attributes || [],
+    sorters: initialProps.sorters || {},
+    derivedAttributes: initialProps.derivedAttributes || {},
+    tableMaxWidth: initialProps.tableMaxWidth || 0
   }) as UnwrapRef<T>
   
   let previousModel: PivotModelInterface | null = null
@@ -36,7 +67,7 @@ export function usePropsState<T extends UsePropsStateProps> (
   )
   
   const buildPivotModel = (): PivotModelInterface => {
-    const model = {
+    return {
       rows: state.rows || [],
       cols: state.cols || [],
       vals: state.vals || [],
@@ -45,10 +76,10 @@ export function usePropsState<T extends UsePropsStateProps> (
       valueFilter: state.valueFilter || {},
       rowOrder: state.rowOrder || 'key_a_to_z',
       colOrder: state.colOrder || 'key_a_to_z',
-      heatmapMode: state.heatmapMode || ''
+      heatmapMode: state.heatmapMode || '',
+      timestamp: Date.now(),
+      version: '1.0'
     }
-    console.log('buildPivotModel - valueFilter:', model.valueFilter)
-    return model
   }
   
   const emitPivotModel = () => {
@@ -74,23 +105,26 @@ export function usePropsState<T extends UsePropsStateProps> (
     emitPivotModelDebounced()
   }
 
-  const updateMultiple = (updates: Partial<T>) => {
+  const updateMultiple = (updates: Partial<T> & { allFilters?: any, materializedInput?: any, data?: any }) => {
     Object.entries(updates).forEach(([key, value]) => {
-      if (key in state) {
+      if (key in state || key === 'allFilters' || key === 'materializedInput' || key === 'data') {
         (state as any)[key] = value
       }
     })
-    emitPivotModel()
+    if (updates.rows || updates.cols || updates.vals || updates.aggregatorName || 
+        updates.rendererName || updates.valueFilter || updates.rowOrder || 
+        updates.colOrder || updates.heatmapMode) {
+      emitPivotModel()
+    }
   }
 
   const onUpdateValueFilter = ({ key, value }: { key: string; value: any }) => {
-    console.log('usePropsState onUpdateValueFilter:', key, value)
-    const newFilter = {
-      ...(state.valueFilter || {}),
-      [key]: value
-    }
-    console.log('New valueFilter state:', newFilter)
-    updateState('valueFilter' as keyof T, newFilter)
+    updateMultiple({
+      valueFilter: {
+        ...(state.valueFilter || {}),
+        [key]: value
+      }
+    } as Partial<T>)
   }
 
   const onUpdateRendererName = (rendererName: string) => {

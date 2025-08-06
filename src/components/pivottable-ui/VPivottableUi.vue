@@ -132,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import { aggregators, PivotData, sortAs , locales } from '@/helper'
+import { PivotData, sortAs , locales, AggregatorTemplate, Locale } from '@/helper'
 import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
@@ -144,11 +144,13 @@ import {
   usePivotUiState,
   provideFilterBox
 } from '@/composables'
-import { DefaultPropsType, PivotModelInterface } from '@/types'
+import { DefaultPropsType, PivotModelInterface, RendererDefinition } from '@/types'
 
 const props = withDefaults(
   defineProps<
-    DefaultPropsType & {
+    Partial<DefaultPropsType> & {
+      data: any
+      renderers: Record<string, RendererDefinition>
       hiddenAttributes?: string[]
       hiddenFromAggregators?: string[]
       hiddenFromDragDrop?: string[]
@@ -156,10 +158,29 @@ const props = withDefaults(
       menuLimit?: number
       pivotModel?: PivotModelInterface
       hideFilterBoxOfUnusedAttributes?: boolean
+      aggregators?: Record<string, AggregatorTemplate>
+      aggregatorName?: string
+      heatmapMode?: 'full' | 'col' | 'row' | ''
+      tableColorScaleGenerator?: (...args: any[]) => any
+      tableOptions?: Record<string, any>
+      rendererName?: string
+      locale?: string
+      languagePack?: Record<string, Locale>
+      showRowTotal?: boolean
+      showColTotal?: boolean
+      cols?: string[]
+      rows?: string[]
+      vals?: string[]
+      attributes?: string[]
+      valueFilter?: Record<string, any>
+      sorters?: any
+      derivedAttributes?: any
+      rowOrder?: 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a'
+      colOrder?: 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a'
+      tableMaxWidth?: number
     }
   >(),
   {
-    aggregators: () => aggregators,
     hiddenAttributes: () => [],
     hiddenFromAggregators: () => [],
     pivotModel: undefined,
@@ -170,7 +191,20 @@ const props = withDefaults(
     rowOrder: 'key_a_to_z',
     colOrder: 'key_a_to_z',
     languagePack: () => locales,
-    locale: 'en'
+    locale: 'en',
+    rows: () => [],
+    cols: () => [],
+    vals: () => [],
+    aggregatorName: 'Count',
+    rendererName: 'Table',
+    valueFilter: () => ({}),
+    heatmapMode: '',
+    tableColorScaleGenerator: undefined,
+    tableOptions: () => ({}),
+    attributes: () => [],
+    sorters: () => ({}),
+    derivedAttributes: () => ({}),
+    tableMaxWidth: 0
   }
 )
 
@@ -178,6 +212,55 @@ const emit = defineEmits<{
   'update:pivotModel': [model: PivotModelInterface]
   'change': [model: PivotModelInterface]
 }>()
+
+// pivotModel이 제공되면 해당 값으로 props 오버라이드
+const propsWithModel = computed(() => {
+  const base = {
+    data: props.data,
+    renderers: props.renderers,
+    aggregators: props.aggregators,
+    aggregatorName: props.aggregatorName || 'Count',
+    heatmapMode: (props.heatmapMode || '') as 'full' | 'col' | 'row' | '',
+    tableColorScaleGenerator: props.tableColorScaleGenerator,
+    tableOptions: props.tableOptions,
+    rendererName: props.rendererName || 'Table',
+    locale: props.locale || 'en',
+    languagePack: props.languagePack || locales,
+    showRowTotal: props.showRowTotal,
+    showColTotal: props.showColTotal,
+    cols: props.cols || [],
+    rows: props.rows || [],
+    vals: props.vals || [],
+    attributes: props.attributes,
+    valueFilter: props.valueFilter || {},
+    sorters: props.sorters,
+    derivedAttributes: props.derivedAttributes,
+    rowOrder: (props.rowOrder || 'key_a_to_z') as 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a',
+    colOrder: (props.colOrder || 'key_a_to_z') as 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a',
+    tableMaxWidth: props.tableMaxWidth,
+    hiddenAttributes: props.hiddenAttributes || [],
+    hiddenFromAggregators: props.hiddenFromAggregators || [],
+    hiddenFromDragDrop: props.hiddenFromDragDrop || [],
+    restrictedFromDragDrop: props.restrictedFromDragDrop || [],
+    hideFilterBoxOfUnusedAttributes: props.hideFilterBoxOfUnusedAttributes || false
+  }
+  
+  if (props.pivotModel && Object.keys(props.pivotModel).length > 0) {
+    return {
+      ...base,
+      rows: props.pivotModel.rows || base.rows,
+      cols: props.pivotModel.cols || base.cols,
+      vals: props.pivotModel.vals || base.vals,
+      aggregatorName: props.pivotModel.aggregatorName || base.aggregatorName,
+      rendererName: props.pivotModel.rendererName || base.rendererName,
+      valueFilter: props.pivotModel.valueFilter || base.valueFilter,
+      rowOrder: (props.pivotModel.rowOrder || base.rowOrder) as 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a',
+      colOrder: (props.pivotModel.colOrder || base.colOrder) as 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a',
+      heatmapMode: (props.pivotModel.heatmapMode || base.heatmapMode) as 'full' | 'col' | 'row' | ''
+    }
+  }
+  return base
+})
 
 const {
   state,
@@ -190,7 +273,7 @@ const {
   onUpdateRowOrder,
   onUpdateColOrder,
   onUpdateVals
-} = usePropsState(props, emit)
+} = usePropsState(propsWithModel.value, emit)
 
 const {
   state: pivotUiState,
@@ -283,8 +366,8 @@ const pivotProps = computed(() => ({
   tableOptions: state.tableOptions,
   renderers: rendererItems.value,
   rendererName: state.rendererName,
-  locale: state.locale,
-  languagePack: state.languagePack,
+  locale: state.locale || 'en',
+  languagePack: state.languagePack || locales,
   showRowTotal: state.showRowTotal,
   showColTotal: state.showColTotal,
   cols: state.cols,
