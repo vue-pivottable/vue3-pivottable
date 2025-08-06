@@ -36,3 +36,27 @@ export interface DefaultPropsType {
 }
 
 export type RendererProps = DefaultPropsType & Record<string, unknown>
+
+export interface PivotModelInterface {
+  rows: string[]
+  cols: string[]
+  vals: string[]
+  aggregatorName: string
+  rendererName: string
+  heatmapMode?: 'full' | 'col' | 'row' | ''
+  valueFilter: Record<string, any>
+  rowOrder: 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a'
+  colOrder: 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a'
+  timestamp?: number
+  version?: string
+}
+
+export type PivotModelChangeEvent = {
+  type: 'field-move' | 'aggregator-change' | 'renderer-change' | 'filter-change' | 'sort-change'
+  field?: string
+  from?: string
+  to?: string
+  oldValue?: any
+  newValue?: any
+  timestamp: number
+}
