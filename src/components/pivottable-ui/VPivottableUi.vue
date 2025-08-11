@@ -330,10 +330,10 @@ const unusedAttrs = computed(() => {
 })
 
 // Use computed with proper memoization to prevent unnecessary PivotData recreations
-// Only recreate when critical properties change
+// Include data reference to detect actual data changes, not just length
 const pivotDataKey = computed(() => 
   JSON.stringify({
-    dataLength: state.data?.length || 0,
+    dataReference: state.data, // Include actual data reference to detect changes
     rows: state.rows,
     cols: state.cols,
     vals: state.vals,
