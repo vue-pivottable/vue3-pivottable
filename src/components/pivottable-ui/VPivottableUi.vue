@@ -137,6 +137,7 @@ import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
 import VPivottable from '../pivottable/VPivottable.vue'
+import TableRenderer from '../pivottable/renderer'
 import { computed, watch, shallowRef, watchEffect, onUnmounted } from 'vue'
 import {
   usePropsState,
@@ -182,6 +183,7 @@ const props = withDefaults(
   >(),
   {
     aggregators: () => defaultAggregators,
+    renderers: () => TableRenderer,
     hiddenAttributes: () => [],
     hiddenFromAggregators: () => [],
     pivotModel: undefined,
@@ -291,7 +293,7 @@ const { allFilters, materializedInput } = useMaterializeInput(
 )
 
 const rendererItems = computed(() =>
-  Object.keys(state.renderers).length ? state.renderers : {}
+  state.renderers && Object.keys(state.renderers).length ? state.renderers : {}
 )
 const aggregatorItems = computed(() => state.aggregators)
 const rowAttrs = computed(() => {
@@ -327,36 +329,90 @@ const unusedAttrs = computed(() => {
     .sort(sortAs(pivotUiState.unusedOrder))
 })
 
-// Use shallowRef instead of computed to prevent creating new PivotData instances on every access
-const pivotData = shallowRef(new PivotData(state))
+// Use computed with proper memoization to prevent unnecessary PivotData recreations
+// Only recreate when critical properties change
+const pivotDataKey = computed(() => 
+  JSON.stringify({
+    dataLength: state.data?.length || 0,
+    rows: state.rows,
+    cols: state.cols,
+    vals: state.vals,
+    aggregatorName: state.aggregatorName,
+    valueFilter: state.valueFilter,
+    rowOrder: state.rowOrder,
+    colOrder: state.colOrder
+  })
+)
 
-// Update pivotData when state changes, and clean up the watcher
-const stopWatcher = watchEffect(() => {
-  // Clean up old PivotData if exists
-  const oldPivotData = pivotData.value
-  pivotData.value = new PivotData(state)
+// Keep track of current PivotData instance
+const pivotData = shallowRef<PivotData | null>(null)
+let lastPivotDataKey = ''
+
+// Only create new PivotData when structure actually changes
+watchEffect(() => {
+  const currentKey = pivotDataKey.value
   
-  // Clear old data references
-  if (oldPivotData) {
-    oldPivotData.tree = {}
-    oldPivotData.rowKeys = []
-    oldPivotData.colKeys = []
-    oldPivotData.rowTotals = {}
-    oldPivotData.colTotals = {}
-    oldPivotData.filteredData = []
+  // Only recreate if key has changed
+  if (currentKey !== lastPivotDataKey) {
+    // Properly clean up old instance
+    const oldPivotData = pivotData.value
+    if (oldPivotData) {
+      // Deep cleanup to break circular references
+      if (oldPivotData.tree) {
+        for (const rowKey in oldPivotData.tree) {
+          for (const colKey in oldPivotData.tree[rowKey]) {
+            const agg = oldPivotData.tree[rowKey][colKey]
+            // Clear aggregator references
+            if (agg && typeof agg === 'object') {
+              Object.keys(agg).forEach(key => {
+                delete agg[key]
+              })
+            }
+          }
+          delete oldPivotData.tree[rowKey]
+        }
+      }
+      oldPivotData.tree = {}
+      oldPivotData.rowKeys = []
+      oldPivotData.colKeys = []
+      oldPivotData.rowTotals = {}
+      oldPivotData.colTotals = {}
+      oldPivotData.filteredData = []
+      oldPivotData.allTotal = null
+    }
+    
+    // Create new instance
+    pivotData.value = new PivotData(state)
+    lastPivotDataKey = currentKey
   }
 })
 
 // Clean up on unmount
 onUnmounted(() => {
-  stopWatcher()
-  if (pivotData.value) {
-    pivotData.value.tree = {}
-    pivotData.value.rowKeys = []
-    pivotData.value.colKeys = []
-    pivotData.value.rowTotals = {}
-    pivotData.value.colTotals = {}
-    pivotData.value.filteredData = []
+  const data = pivotData.value
+  if (data) {
+    // Deep cleanup to ensure memory is freed
+    if (data.tree) {
+      for (const rowKey in data.tree) {
+        for (const colKey in data.tree[rowKey]) {
+          const agg = data.tree[rowKey][colKey]
+          if (agg && typeof agg === 'object') {
+            Object.keys(agg).forEach(key => {
+              delete agg[key]
+            })
+          }
+        }
+        delete data.tree[rowKey]
+      }
+    }
+    data.tree = {}
+    data.rowKeys = []
+    data.colKeys = []
+    data.rowTotals = {}
+    data.colTotals = {}
+    data.filteredData = []
+    data.allTotal = null
+    pivotData.value = null
   }
 })
 const pivotProps = computed(() => ({
