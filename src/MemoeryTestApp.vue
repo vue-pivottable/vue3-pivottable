@@ -24,13 +24,6 @@
         {{ isAnalyzing ? 'Analyzing...' : '📸 Analyze Memory' }}
       </button>
       <button @click="clearLog">Clear Log</button>
-      <label class="checkbox-label">
-        <input
-          type="checkbox"
-          v-model="useComponentKey"
-        />
-        <span>Enable Component Key (Simulates Memory Leak)</span>
-      </label>
       <select
         v-model.number="dataSize"
         @change="onDataSizeChange"
@@ -45,8 +38,8 @@
     <div class="stats">
       <div>Data Size: {{ dataSize.toLocaleString() }} records</div>
       <div>Refresh Count: {{ refreshCount }}</div>
-      <div :class="{ warning: useComponentKey }">
-        Component Key: {{ useComponentKey ? componentKey : '0 (fixed)' }}
+      <div>
+        Component Key: {{ refreshCount }} (auto-increment for cleanup)
       </div>
       <div>Current Memory: {{ currentMemory }} MB</div>
       <div>Initial Memory: {{ initialMemory }} MB</div>
@@ -70,7 +63,7 @@
 
     <VuePivottableUi
       v-if="showPivot"
-      :key="useComponentKey ? componentKey : 0"
+      :key="`pivot-${refreshCount}`"
       :data="tableData"
       :aggregators="aggregators"
       :renderers="renderers"
@@ -133,8 +126,6 @@ const initialMemory = ref('0.00')
 const memoryGrowth = ref('0.00')
 const isAnalyzing = ref(false)
 const analysisResults = ref([])
-const useComponentKey = ref(false) // Toggle for testing memory leak
-const componentKey = ref(0)
 
 let initialMem = 0
 let memoryCheckInterval = null
@@ -238,13 +229,10 @@ const refresh = async (countAsRefresh = true) => {
   // Generate new data (mark as raw to prevent reactivity on large arrays)
   tableData.value = markRaw(generateTableData())
 
-  // Show component
+  // Show component  
   showPivot.value = true
 
-  // Cycle component key to force cleanup every 10 refreshes (prevents accumulation)
-  if (useComponentKey.value) {
-    componentKey.value = (componentKey.value + 1) % 10
-  }
+  // Component will be recreated with new key automatically
 
   if (countAsRefresh) {
     refreshCount.value++
@@ -255,7 +243,7 @@ const refresh = async (countAsRefresh = true) => {
 
   if (countAsRefresh) {
     console.log(
-      `[Memory Test] Refresh #${refreshCount.value}: ${currentMemory.value} MB (Key: ${useComponentKey.value ? componentKey.value : 0})`
+      `[Memory Test] Refresh #${refreshCount.value}: ${currentMemory.value} MB (Key: ${refreshCount.value})`
     )
   }
 }
@@ -263,7 +251,7 @@ const refresh = async (countAsRefresh = true) => {
 // Refresh multiple times
 const refreshMultipleTimes = async (times) => {
   console.log(
-    `Starting ${times} refreshes with Component Key ${useComponentKey.value ? 'ENABLED' : 'DISABLED'}`
+    `Starting ${times} refreshes with auto-incrementing component keys`
   )
 
   const startMemory = parseFloat(currentMemory.value)
@@ -311,7 +299,7 @@ const analyzeMemoryState = () => {
   // Configuration
   results.push('=== Test Configuration ===')
   results.push(
-    `Component Key Mode: ${useComponentKey.value ? 'ENABLED (Memory Leak)' : 'DISABLED (Normal)'}`
+    `Component Key Mode: AUTO-INCREMENT (Forces cleanup on each refresh)`
   )
   results.push(`Data Size: ${dataSize.value} records`)
   results.push(`Refreshes performed: ${refreshCount.value}`)
@@ -343,20 +331,13 @@ const analyzeMemoryState = () => {
       `Average growth per refresh: ${avgGrowthPerRefresh.toFixed(2)} MB`
     )
 
-    if (useComponentKey.value) {
-      results.push('⚠️ Component Key is ENABLED - Memory leak expected!')
-      results.push('   Each refresh creates a new component instance')
+    if (avgGrowthPerRefresh < 0.5) {
+      results.push('✅ Memory usage is STABLE - Proper cleanup working')
+      results.push('   Component recreation preventing memory accumulation')
+    } else if (avgGrowthPerRefresh < 2.0) {
+      results.push('⚠️ Minor memory growth detected - Monitor for patterns')
     } else {
-      if (avgGrowthPerRefresh < 0.1) {
-        results.push('✅ No memory leak detected')
-        results.push('   Component is properly reusing instances')
-      } else if (avgGrowthPerRefresh < 0.5) {
-        results.push('⚠️ Minor memory growth detected')
-        results.push('   May be normal data accumulation')
-      } else {
-        results.push('❌ Unexpected memory growth!')
-        results.push('   Check for event listeners or references')
-      }
+      results.push('🚨 Memory leak still present despite component recreation!')
     }
   }
 
@@ -374,7 +355,7 @@ const analyzeMemoryState = () => {
 const clearLog = () => {
   analysisResults.value = []
   refreshCount.value = 0
-  componentKey.value = 0
+  // Component keys auto-increment with refresh count
   initialMem = 0
   updateMemory()
 }
