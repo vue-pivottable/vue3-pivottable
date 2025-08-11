@@ -14,6 +14,7 @@ import { aggregators, locales } from '@/helper'
 const props = withDefaults(defineProps<DefaultPropsType>(), {
   aggregators: () => aggregators,
   aggregatorName: 'Count',
+  renderers: () => TableRenderer,
   rendererName: 'Table',
   rowOrder: 'key_a_to_z',
   colOrder: 'key_a_to_z',
@@ -29,6 +30,6 @@ const props = withDefaults(defineProps<DefaultPropsType>(), {
 })
 
 const rendererComponent = computed(
-  () => props.renderers[props.rendererName] || TableRenderer.Table
+  () => (props.renderers || TableRenderer)[props.rendererName || 'Table'] || TableRenderer.Table
 )
 </script>

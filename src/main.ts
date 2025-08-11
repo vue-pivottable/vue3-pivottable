@@ -1,10 +1,10 @@
 import { createApp } from 'vue'
 
 // import App from './App.vue'
-import MemoeryTestApp from './MemoeryTestApp.vue'
+import SimpleApp from './SimpleApp.vue'
 // import VuePivottable from '@/'
 
-const app = createApp(MemoeryTestApp)
+const app = createApp(SimpleApp)
 
 // app.component('VuePivottableUi', VuePivottableUi)
 
