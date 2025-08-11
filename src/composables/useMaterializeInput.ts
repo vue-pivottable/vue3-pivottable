@@ -1,4 +1,4 @@
-import { Ref, ref, watch } from 'vue'
+import { Ref, ref, watch, markRaw } from 'vue'
 import { PivotData } from '@/helper'
 
 export interface UseMaterializeInputOptions {
@@ -57,7 +57,7 @@ export function useMaterializeInput (
     )
 
     allFilters.value = newAllFilters
-    materializedInput.value = newMaterializedInput
+    materializedInput.value = markRaw(newMaterializedInput) // Prevent reactivity on large arrays
 
     return {
       AllFilters: newAllFilters,

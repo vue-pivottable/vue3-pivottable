@@ -235,15 +235,15 @@ const refresh = async (countAsRefresh = true) => {
   showPivot.value = false
   await nextTick()
 
-  // Generate new data
-  tableData.value = generateTableData()
+  // Generate new data (mark as raw to prevent reactivity on large arrays)
+  tableData.value = markRaw(generateTableData())
 
   // Show component
   showPivot.value = true
 
-  // Increment component key if enabled (simulates memory leak)
+  // Cycle component key to force cleanup every 10 refreshes (prevents accumulation)
   if (useComponentKey.value) {
-    componentKey.value++
+    componentKey.value = (componentKey.value + 1) % 10
   }
 
   if (countAsRefresh) {
