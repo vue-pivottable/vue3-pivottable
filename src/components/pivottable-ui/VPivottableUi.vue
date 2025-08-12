@@ -137,7 +137,8 @@ import VRendererCell from './VRendererCell.vue'
 import VAggregatorCell from './VAggregatorCell.vue'
 import VDragAndDropCell from './VDragAndDropCell.vue'
 import VPivottable from '../pivottable/VPivottable.vue'
-import { computed, watch, shallowRef, watchEffect, onUnmounted } from 'vue'
+import TableRenderer from '../pivottable/renderer'
+import { computed, watch, toRaw } from 'vue'
 import {
   usePropsState,
   useMaterializeInput,
@@ -182,6 +183,7 @@ const props = withDefaults(
   >(),
   {
     aggregators: () => defaultAggregators,
+    renderers: () => TableRenderer,
     hiddenAttributes: () => [],
     hiddenFromAggregators: () => [],
     pivotModel: undefined,
@@ -291,9 +293,10 @@ const { allFilters, materializedInput } = useMaterializeInput(
 )
 
 const rendererItems = computed(() =>
-  Object.keys(state.renderers).length ? state.renderers : {}
+  state.renderers && Object.keys(state.renderers).length ? state.renderers : {}
 )
 const aggregatorItems = computed(() => state.aggregators)
+
 const rowAttrs = computed(() => {
   return state.rows.filter(
     (e) =>
@@ -327,38 +330,11 @@ const unusedAttrs = computed(() => {
     .sort(sortAs(pivotUiState.unusedOrder))
 })
 
-// Use shallowRef instead of computed to prevent creating new PivotData instances on every access
-const pivotData = shallowRef(new PivotData(state))
-
-// Update pivotData when state changes, and clean up the watcher
-const stopWatcher = watchEffect(() => {
-  // Clean up old PivotData if exists
-  const oldPivotData = pivotData.value
-  pivotData.value = new PivotData(state)
-  
-  // Clear old data references
-  if (oldPivotData) {
-    oldPivotData.tree = {}
-    oldPivotData.rowKeys = []
-    oldPivotData.colKeys = []
-    oldPivotData.rowTotals = {}
-    oldPivotData.colTotals = {}
-    oldPivotData.filteredData = []
-  }
-})
-
-// Clean up on unmount
-onUnmounted(() => {
-  stopWatcher()
-  if (pivotData.value) {
-    pivotData.value.tree = {}
-    pivotData.value.rowKeys = []
-    pivotData.value.colKeys = []
-    pivotData.value.rowTotals = {}
-    pivotData.value.colTotals = {}
-    pivotData.value.filteredData = []
-  }
-})
+const pivotData = computed(() => new PivotData({
+  ...state,
+  data: toRaw(state.data),
+  aggregators: toRaw(state.aggregators)
+}))
 const pivotProps = computed(() => ({
   data: state.data,
   aggregators: state.aggregators,
@@ -408,22 +384,19 @@ watch(
       } as Partial<typeof state>)
     }
   },
-  { deep: true, immediate: true }
+  { immediate: true }
 )
 
 watch(
-  [allFilters, materializedInput],
+  materializedInput,
   () => {
-    // Only update the changed properties, not the entire state
+    // Only update data when materializedInput changes
     updateMultiple({
-      allFilters: allFilters.value,
-      materializedInput: materializedInput.value,
-      data: materializedInput.value  // Ensure data is also updated
+      data: materializedInput.value
     })
   },
   {
-    immediate: true  // Add immediate to ensure initial update
-    // Removed deep: true - this was causing 80% of memory leak
+    immediate: true
   }
 )
 </script>
