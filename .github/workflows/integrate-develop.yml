@@ -90,7 +90,7 @@ jobs:
             echo "- **Auto-generated**: This PR was automatically created by the integration workflow"
             echo ""
             echo "### 📝 Recent Commits"
-            echo "${{ steps.commit-info.outputs.commits }}"
+            echo "${{ steps.commit-info.outputs.commits }}" | sed 's/%0A/\n/g; s/%0D//g; s/%25/%/g'
             echo ""
             echo "### 🔍 What happens next?"
             echo "1. Review the changes in this PR"
