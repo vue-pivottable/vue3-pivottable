@@ -27,7 +27,7 @@ const headerRow = computed(() => {
   const header = [...pivotData.value.props.rows]
 
   if (colKeys.value.length === 1 && colKeys.value[0].length === 0) {
-    header.push(props.aggregatorName)
+    header.push(props.aggregatorName || 'Count')
   } else {
     colKeys.value.forEach((c: any[]) => header.push(c.join('-')))
   }

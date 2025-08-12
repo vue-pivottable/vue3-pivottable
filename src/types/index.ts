@@ -13,18 +13,18 @@ export interface RendererDefinition {
 export interface DefaultPropsType {
   data: any
   aggregators?: Record<string, AggregatorTemplate>
-  aggregatorName: string
+  aggregatorName?: string
   heatmapMode?: 'full' | 'col' | 'row' | ''
   tableColorScaleGenerator?: (...args: any[]) => any
   tableOptions?: Record<string, any>
-  renderers: Record<string, RendererDefinition>
-  rendererName: string
+  renderers?: Record<string, RendererDefinition>
+  rendererName?: string
   locale?: string
   languagePack?: Record<string, Locale>
   showRowTotal?: boolean
   showColTotal?: boolean
-  cols: string[]
-  rows: string[]
+  cols?: string[]
+  rows?: string[]
   vals?: string[]
   attributes?: string[]
   valueFilter?: Record<string, any>
