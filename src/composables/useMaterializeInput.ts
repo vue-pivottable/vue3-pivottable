@@ -1,4 +1,4 @@
-import { Ref, ref, watch, markRaw } from 'vue'
+import { Ref, ref, watch, shallowRef, ShallowRef, onUnmounted } from 'vue'
 import { PivotData } from '@/helper'
 
 export interface UseMaterializeInputOptions {
@@ -7,8 +7,8 @@ export interface UseMaterializeInputOptions {
 
 export interface UseMaterializeInputReturn {
   rawData: Ref<any>
-  allFilters: Ref<Record<string, Record<string, number>>>
-  materializedInput: Ref<any[]>
+  allFilters: ShallowRef<Record<string, Record<string, number>>>
+  materializedInput: ShallowRef<any[]>
   processData: (data: any) => { AllFilters: Record<string, Record<string, number>>; materializedInput: any[] } | void
 }
 
@@ -17,8 +17,9 @@ export function useMaterializeInput (
   options: UseMaterializeInputOptions
 ): UseMaterializeInputReturn {
   const rawData = ref<any>(null)
-  const allFilters = ref<Record<string, Record<string, number>>>({})
-  const materializedInput = ref<any[]>([])
+  // Use shallowRef to prevent deep reactivity on large objects
+  const allFilters = shallowRef<Record<string, Record<string, number>>>({})
+  const materializedInput = shallowRef<any[]>([])
 
   function processData (data: any) {
     if (!data || rawData.value === data) return
@@ -57,7 +58,7 @@ export function useMaterializeInput (
     )
 
     allFilters.value = newAllFilters
-    materializedInput.value = markRaw(newMaterializedInput) // Prevent reactivity on large arrays
+    materializedInput.value = newMaterializedInput
 
     return {
       AllFilters: newAllFilters,
@@ -73,6 +74,12 @@ export function useMaterializeInput (
       processData(dataSource.value)
     }
   )
+
+  onUnmounted(() => {
+    allFilters.value = {}
+    materializedInput.value = []
+    rawData.value = null
+  })
 
   return {
     rawData,
