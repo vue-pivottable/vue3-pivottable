@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.2.1
+
+### Patch Changes
+
+- a80fab8: Fix main.ts import reference issue and optimize memory usage
+
+  Fixed undefined SimpleApp reference to use App component in main.ts entry point. This resolves runtime errors and improves application startup reliability.
+
+- f4122ad: Fix VuePivottable component props and type issues
+  - Fix "Cannot read properties of undefined" error when using VuePivottable without VuePivottableUi
+  - Remove unnecessary composables export from main index to prevent VuePivottableUi code execution
+  - Make aggregatorName, renderers, rendererName optional in DefaultPropsType with proper defaults
+  - Add proper default values in VPivottable component
+  - Fix TSVExportRenderers to handle undefined aggregatorName
+  - Resolve Vue warning messages for missing required props
+
+  This ensures VuePivottable can be used independently without requiring VuePivottableUi-specific props.
+
 ## 1.2.0
 
 ### Minor Changes
