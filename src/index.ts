@@ -7,5 +7,7 @@ const Renderer: Record<string, Component> = {
   ...TableRenderer
 }
 
+export * from './composables'
+
 export { VuePivottable, VuePivottableUi, PivotUtilities, Renderer }
 export default { VuePivottable, VuePivottableUi, PivotUtilities, Renderer }
