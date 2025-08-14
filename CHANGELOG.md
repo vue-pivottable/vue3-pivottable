@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.2
+
+### Patch Changes
+
+- 6f72c8d: Export all composables for external packages to enable custom renderer development
+  - Added `export * from './composables'` to main index.ts
+  - Resolves import errors for `useProvidePivotData` and `providePivotData` in external packages
+  - Enables plotly-renderer and lazy-table-renderer to properly import required functions
+  - No circular dependency issues detected after thorough analysis
+  - Maintains backward compatibility while improving extensibility
+
 ## 1.2.1
 
 ### Patch Changes
