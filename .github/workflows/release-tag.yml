@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*.*.*'
+      - 'vue-pivottable@*.*.*'
+      - '@vue-pivottable/*@*.*.*'
 
 jobs:
   release-production:
@@ -27,8 +29,23 @@ jobs:
           echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
 
           # Extract version from tag
-          VERSION=${TAG_NAME#v}
+          # Handle different tag formats:
+          # - v1.2.3 -> 1.2.3
+          # - vue-pivottable@1.2.3 -> 1.2.3
+          # - @vue-pivottable/package@1.2.3 -> 1.2.3
+          if [[ $TAG_NAME == v*.*.* ]]; then
+            VERSION=${TAG_NAME#v}
+            PACKAGE_NAME="vue-pivottable"
+          elif [[ $TAG_NAME == *@*.*.* ]]; then
+            VERSION=${TAG_NAME##*@}
+            PACKAGE_NAME=${TAG_NAME%@*}
+          else
+            echo "❌ Unrecognized tag format: $TAG_NAME"
+            exit 1
+          fi
+          
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
 
           # Validate version format
           if ! [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$ ]]; then
@@ -36,7 +53,7 @@ jobs:
             exit 1
           fi
 
-          echo "✅ Valid tag: $TAG_NAME (version: $VERSION)"
+          echo "✅ Valid tag: $TAG_NAME (package: $PACKAGE_NAME, version: $VERSION)"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
