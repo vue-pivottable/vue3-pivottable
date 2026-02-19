@@ -33,6 +33,7 @@ export interface DefaultPropsType {
   rowOrder?: 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a'
   colOrder?: 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a'
   tableMaxWidth?: number
+  aggregatorMap?: Record<string, string>
 }
 
 export type RendererProps = DefaultPropsType & Record<string, unknown>

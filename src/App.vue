@@ -65,14 +65,26 @@
         </VuePivottableUi>
       </template>
     </CsvUploader>
-    
+
     <!-- PivotModel 상태 표시 -->
-    <div style="margin: 20px; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+    <div
+      style="
+        margin: 20px;
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 5px;
+      "
+    >
       <h3>PivotModel 양방향 바인딩 상태:</h3>
-      <textarea 
-        :value="JSON.stringify(pivotModel, null, 2)" 
+      <textarea
+        :value="JSON.stringify(pivotModel, null, 2)"
         readonly
-        style="width: 100%; height: 200px; font-family: monospace; font-size: 12px;"
+        style="
+          width: 100%;
+          height: 200px;
+          font-family: monospace;
+          font-size: 12px;
+        "
       />
     </div>
   </div>
@@ -82,13 +94,13 @@ import { markRaw, ref } from 'vue'
 import tips from './tips.js'
 import CsvUploader from './CsvUploader.vue'
 import { PivotUtilities, VuePivottableUi, Renderer } from '@/'
-// import LazyPivottableRenderer from '@vue-pivottable/lazy-table-renderer'
-// import PlotlyRenderer from '@vue-pivottable/plotly-renderer'
+import LazyPivottableRenderer from '@vue-pivottable/lazy-table-renderer'
+import PlotlyRenderer from '@vue-pivottable/plotly-renderer'
 
 const renderers = markRaw({
   ...Renderer,
-  // ...LazyPivottableRenderer,
-  // ...PlotlyRenderer
+  ...LazyPivottableRenderer,
+  ...PlotlyRenderer
 })
 const initialData = ref(tips)
 const initialFilename = ref('샘플 데이터셋: Tips')
