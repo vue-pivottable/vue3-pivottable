@@ -26,7 +26,8 @@ const props = withDefaults(defineProps<DefaultPropsType>(), {
   valueFilter: () => ({}),
   sorters: () => ({}),
   derivedAttributes: () => ({}),
-  tableMaxWidth: 0
+  tableMaxWidth: 0,
+  aggregatorMap: () => ({})
 })
 
 const rendererComponent = computed(

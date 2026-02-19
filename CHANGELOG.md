@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.3.0-beta.0](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.2.2...v1.3.0-beta.0) (2026-02-19)
+
+### Bug Fixes
+
+* support package@version tag format in release workflow ([bb0b77c](https://github.com/vue-pivottable/vue3-pivottable/commit/bb0b77c2b161046d402b30214223be47eb42dcd5))
+
+### Refactoring
+
+* update component types and structure ([bca0c06](https://github.com/vue-pivottable/vue3-pivottable/commit/bca0c06bda29c075990395a33446ab8bd7c8502c))
+
 ## 1.2.2
 
 ### Patch Changes

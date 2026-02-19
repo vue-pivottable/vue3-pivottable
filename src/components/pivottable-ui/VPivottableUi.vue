@@ -179,6 +179,7 @@ const props = withDefaults(
       rowOrder?: 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a'
       colOrder?: 'key_a_to_z' | 'value_a_to_z' | 'value_z_to_a'
       tableMaxWidth?: number
+      aggregatorMap?: Record<string, string>
     }
   >(),
   {
@@ -207,7 +208,8 @@ const props = withDefaults(
     attributes: () => [],
     sorters: () => ({}),
     derivedAttributes: () => ({}),
-    tableMaxWidth: 0
+    tableMaxWidth: 0,
+    aggregatorMap: () => ({})
   }
 )
 
@@ -358,7 +360,8 @@ const pivotProps = computed(() => ({
   colOrder: state.colOrder,
   tableMaxWidth: state.tableMaxWidth,
   localeStrings: localeStrings.value,
-  menuLimit: props.menuLimit
+  menuLimit: props.menuLimit,
+  aggregatorMap: props.aggregatorMap
 }))
 
 onUpdateUnusedOrder(unusedAttrs.value)
