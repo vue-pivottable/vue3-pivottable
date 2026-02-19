@@ -13,7 +13,7 @@ dist-ssr
 *.local
 
 # Lock files (avoid version conflicts in CI)
-pnpm-lock.yaml
+# pnpm-lock.yaml
 
 # Backup files
 *.backup
