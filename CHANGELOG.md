@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.0-beta.0](https://github.com/vue-pivottable/vue3-pivottable/compare/v1.3.0...v1.4.0-beta.0) (2026-02-21)
+
+### Features
+
+* **pivottable:** add external prop change synchronization ([634716d](https://github.com/vue-pivottable/vue3-pivottable/commit/634716d0c381aef47128ca92ed996656a41aadc9))
+
 ## [1.3.0](https://github.com/vue-pivottable/vue3-pivottable/compare/v1.3.0-beta.0...v1.3.0) (2026-02-19)
 
 ## [1.3.0-beta.0](https://github.com/vue-pivottable/vue3-pivottable/compare/vue-pivottable@1.2.2...v1.3.0-beta.0) (2026-02-19)

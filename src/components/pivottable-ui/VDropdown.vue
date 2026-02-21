@@ -31,6 +31,16 @@ const props = withDefaults(defineProps<DropdownProps>(), {
 
 const valueModel = ref<string>(props.value || props.options[0] || '')
 
+// Watch for external changes to props.value
+watch(
+  () => props.value,
+  (newVal) => {
+    if (newVal !== undefined && newVal !== valueModel.value) {
+      valueModel.value = newVal
+    }
+  }
+)
+
 watch(
   valueModel,
   (newVal) => {

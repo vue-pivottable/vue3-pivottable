@@ -402,4 +402,51 @@ watch(
     immediate: true
   }
 )
+
+// Watch for external prop changes (vals, rows, cols, aggregatorName, rendererName)
+// This is needed when parent component updates these props directly
+watch(
+  () => props.vals,
+  (newVals) => {
+    if (newVals && JSON.stringify(newVals) !== JSON.stringify(state.vals)) {
+      updateMultiple({ vals: newVals } as any)
+    }
+  }
+)
+
+watch(
+  () => props.rows,
+  (newRows) => {
+    if (newRows && JSON.stringify(newRows) !== JSON.stringify(state.rows)) {
+      updateMultiple({ rows: newRows } as any)
+    }
+  }
+)
+
+watch(
+  () => props.cols,
+  (newCols) => {
+    if (newCols && JSON.stringify(newCols) !== JSON.stringify(state.cols)) {
+      updateMultiple({ cols: newCols } as any)
+    }
+  }
+)
+
+watch(
+  () => props.aggregatorName,
+  (newAggregatorName) => {
+    if (newAggregatorName && newAggregatorName !== state.aggregatorName) {
+      updateMultiple({ aggregatorName: newAggregatorName } as any)
+    }
+  }
+)
+
+watch(
+  () => props.rendererName,
+  (newRendererName) => {
+    if (newRendererName && newRendererName !== state.rendererName) {
+      updateMultiple({ rendererName: newRendererName } as any)
+    }
+  }
+)
 </script>
