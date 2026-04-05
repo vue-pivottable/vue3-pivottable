@@ -1,5 +1,7 @@
 # Changelog
 
+## [1.4.1](https://github.com/vue-pivottable/vue3-pivottable/compare/v1.4.1-beta.0...v1.4.1) (2026-04-05)
+
 ## [1.4.1-beta.0](https://github.com/vue-pivottable/vue3-pivottable/compare/v1.4.0...v1.4.1-beta.0) (2026-04-05)
 
 ## [1.4.0](https://github.com/vue-pivottable/vue3-pivottable/compare/v1.4.0-beta.0...v1.4.0) (2026-02-21)
